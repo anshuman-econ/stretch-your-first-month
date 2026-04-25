@@ -348,11 +348,11 @@ const builderSummaries = (pathway: Pathway, planCards: MonthBlock[]): MonthCardS
   const byName = Object.fromEntries(planCards.map((block) => [block.name, block]));
   const progressBlock: MonthBlock = { name: "Progress", selection: "0 of 5 actions complete", why: "Complete one guided action at a time.", status: "Recommended", includes: "Care reviewed, pods viewed, pass chosen, kit built, progress checked.", plain: "Your progress shows what is done, what is next, and what is locked for later.", discovery: "A simple roadmap instead of a task dump.", swappable: false };
   return [
-    { title: "Care", recommendation: copy[key].Care, reason: "Safe route matched to your answers.", status: "Ready", progress: "Selected", cta: "Review care", block: byName.Care },
-    { title: "Coach", recommendation: copy[key].Coach, reason: "Guidance to make week one doable.", status: "Included", progress: "Included", cta: "View coaching", block: byName.Coach },
-    { title: "Pods", recommendation: copy[key].Pods, reason: "Two guided sessions for this month.", status: "Needs input", progress: "Choose seats", cta: "View pods", block: byName.Pods },
-    { title: "Pass", recommendation: copy[key]["Experience Pass"], reason: "One real-world reset to book.", status: "Choose", progress: "Needs input", cta: "Choose pass", block: byName.Pass },
-    { title: "Kit", recommendation: copy[key].Kit, reason: "At-home support matched to symptoms.", status: "Build", progress: "Future", cta: "Build kit", block: byName.Kit },
+    { title: "Care", recommendation: copy[key].Care, reason: "Who helps me: the right expert route and safe next steps.", status: "Ready", progress: "Selected", cta: "Review care", block: byName.Care },
+    { title: "Coach", recommendation: copy[key].Coach, reason: "What I do this week: simple actions and accountability.", status: "Included", progress: "Included", cta: "View coaching", block: byName.Coach },
+    { title: "Pods", recommendation: copy[key].Pods, reason: "Guided group sessions for the thing I’m working on now.", status: "Needs input", progress: "Choose seats", cta: "View pods", block: byName.Pods },
+    { title: "Pass", recommendation: copy[key]["Experience Pass"], reason: "My real-world experience to book this month.", status: "Choose", progress: "Needs input", cta: "Choose pass", block: byName.Pass },
+    { title: "Kit", recommendation: copy[key].Kit, reason: "What I use at home between care and coaching.", status: "Build", progress: "Future", cta: "Build kit", block: byName.Kit },
     { title: "Progress", recommendation: "0 of 5 actions complete", reason: "Track what is done and what opens next.", status: "Next", progress: "Future", cta: "Continue", block: progressBlock },
     { title: "Unlocks", recommendation: copy[key].Unlocks, reason: "Preview only until your pattern is clearer.", status: "Locked preview", progress: "Locked", cta: "See unlocks", block: byName.Unlocks },
   ];
