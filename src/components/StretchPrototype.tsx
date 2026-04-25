@@ -602,6 +602,7 @@ export default function StretchPrototype() {
     } else setQuizIndex((current) => current + 1);
   };
   const resetQuiz = () => { setAnswers([]); setQuizIndex(0); setStep("goal"); };
+  const openControlledSwap = () => setStep("swap");
 
   return (
     <main className="min-h-screen bg-background font-sans text-foreground" onPointerMove={(event) => {
@@ -645,7 +646,7 @@ export default function StretchPrototype() {
           {step === "quiz" && <QuizScreen quizIndex={quizIndex} chooseAnswer={chooseAnswer} onExplain={() => setStep("explainer")} />}
           {step === "built" && <BuiltScreen pathway={pathway} resetQuiz={resetQuiz} onUnlocks={() => setStep("unlocks")} />}
           {step === "swap" && <SwapScreen pathway={pathway} reason={answers.slice(0, 3).join(", ") || goal || pathway.reason} onBack={() => setStep("builder")} onCoach={() => setShowRebalance(true)} />}
-          {step === "unlocks" && <UnlocksScreen pathway={pathway} answers={answers} onBuild={() => setStep("builder")} onKeep={() => setStep("confirm")} onSwap={() => setStep("swap")} />}
+          {step === "unlocks" && <UnlocksScreen pathway={pathway} answers={answers} onBuild={() => setStep("builder")} onKeep={() => setStep("confirm")} onSwap={openControlledSwap} />}
           {step === "confirm" && <ConfirmScreen pathway={pathway} resetQuiz={resetQuiz} onBuild={() => setStep("builder")} onOpenJourney={() => openJourney(pathwayKey)} />}
           {step === "builder" && <BuilderScreen pathway={pathway} onStart={() => setStep("week")} onCoach={() => setShowRebalance(true)} onSwap={() => setStep("swap")} />}
           {step === "week" && <WeekScreen onHome={() => setStep("home")} />}
