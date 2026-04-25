@@ -626,17 +626,18 @@ function ConfirmScreen({ pathway, resetQuiz, onBuild, onOpenJourney }: { pathway
 function BuilderScreen({ pathway, onStart, onCoach }: { pathway: Pathway; onStart: () => void; onCoach: () => void }) {
   const [drawerBlock, setDrawerBlock] = useState<MonthBlock | null>(null);
   const [demoTile, setDemoTile] = useState<DemoTile | null>(null);
-  const [showBlocks, setShowBlocks] = useState(false);
   const [swapBlock, setSwapBlock] = useState<MonthBlock | null>(null);
   const planCards = buildPlanCards(pathway);
-  const stepCards = [
-    { title: "1. Confirm Care", copy: "See who guides your care and what stays protected.", block: planCards[0], action: "Open care" },
-    { title: "2. Choose Pods", copy: "Peek into the guided circles that keep you moving.", block: planCards[2], action: "Open pods" },
-    { title: "3. Build Kit", copy: "Open the at-home support matched to this month.", block: planCards[3], action: "Open kit" },
-    { title: "4. Pick Experience Pass", copy: "Preview one real-world reset for your body.", block: planCards[4], action: "Open pass" },
-    { title: "5. Review Future Unlocks", copy: "See what could open next, without adding it today.", block: planCards[5], action: "Open unlocks" },
+  const journey = [
+    { label: "Pathway", state: "completed", block: planCards[0] },
+    { label: "Stack", state: "selected", block: planCards[0] },
+    { label: "Pods", state: "needs input", block: planCards[2] },
+    { label: "Pass", state: "needs input", block: planCards[3] },
+    { label: "Kit", state: "future", block: planCards[4] },
+    { label: "Progress", state: "future", block: planCards[5] },
+    { label: "Unlocks", state: "locked", block: planCards[5] },
   ];
-  return <section className="space-y-6 px-5 py-7"><div className="rounded-[2rem] bg-hero p-6 shadow-float"><p className="mb-3 text-sm font-semibold text-accent">Guided monthly care stack</p><SectionTitle title="We built your month." copy="Open a section, preview one swap, then start gently." /><button onClick={() => setShowBlocks(true)} className="mt-5 inline-flex items-center gap-2 rounded-full bg-card px-4 py-3 text-sm font-semibold text-accent shadow-card"><Sparkles className="size-4" /> Explore building blocks</button></div><div className="space-y-3">{stepCards.map((step) => <details key={step.title} className="group rounded-3xl bg-card p-5 shadow-card" open={step.title.startsWith("1.")}><summary className="flex cursor-pointer list-none items-start justify-between gap-3"><div><p className="font-display text-2xl leading-tight">{step.title}</p><p className="mt-1 text-sm leading-6 text-muted-foreground">{step.copy}</p></div><span className="rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-accent group-open:bg-primary group-open:text-primary-foreground">Open</span></summary><div className="mt-4 space-y-4"><PlanCard block={step.block} onOpen={() => setDrawerBlock(step.block)} /><Button variant="hero" size="lg" className="w-full" onClick={() => setDrawerBlock(step.block)}>{step.action}</Button></div></details>)}</div><SwapImpactSummary block={swapBlock || planCards[0]} onPick={setSwapBlock} onOpen={setDrawerBlock} options={planCards.filter((block) => block.swappable)} /><Button variant="hero" size="xl" className="w-full" onClick={onStart}>Start week one</Button>{drawerBlock && <BlockDrawer block={drawerBlock} pathway={pathway} onClose={() => setDrawerBlock(null)} onCoach={onCoach} />}{showBlocks && <BlocksDemoDrawer onClose={() => setShowBlocks(false)} onTile={setDemoTile} />}{demoTile && <DemoTileDrawer tile={demoTile} onClose={() => setDemoTile(null)} />}</section>;
+  return <section className="space-y-5 px-5 pb-32 pt-6"><div className="rounded-[2rem] bg-hero p-5 shadow-float"><div className="flex items-start justify-between gap-4"><div className="min-w-0"><p className="text-sm font-semibold text-accent">Your Stretch Month</p><h1 className="mt-1 font-display text-4xl leading-tight">{pathway.title}</h1><p className="mt-1 text-sm font-semibold text-foreground/80">Month 1: Foundation</p><p className="mt-3 text-base leading-6 text-muted-foreground">{pathway.monthlyPromise}</p></div><ProgressRing value={38} /></div><div className="mt-5 grid gap-2"><Button variant="hero" size="lg" onClick={onStart}>Keep recommended month</Button><div className="grid grid-cols-2 gap-2"><Button variant="soft" size="lg" onClick={() => setDrawerBlock(swapBlock || planCards[0])}><RefreshCw className="size-4" /> Swap one block</Button><Button variant="soft" size="lg" onClick={onCoach}><MessageCircle className="size-4" /> Ask coach</Button></div></div></div><div className="grid gap-4">{planCards.map((block, index) => <StackCard key={block.name} block={block} index={index} onOpen={() => setDrawerBlock(block)} />)}</div><SwapImpactSummary block={swapBlock || planCards[0]} onPick={setSwapBlock} onOpen={setDrawerBlock} options={planCards.filter((block) => block.swappable)} />{drawerBlock && <BlockDrawer block={drawerBlock} pathway={pathway} onClose={() => setDrawerBlock(null)} onCoach={onCoach} />}{demoTile && <DemoTileDrawer tile={demoTile} onClose={() => setDemoTile(null)} />}<JourneyBar items={journey} onOpen={setDrawerBlock} /></section>;
 }
 
 function PlanCard({ block, onOpen }: { block: MonthBlock; onOpen: () => void }) {
