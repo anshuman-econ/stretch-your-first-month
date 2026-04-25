@@ -309,7 +309,7 @@ const planPlain: Record<string, { plain: string; discovery: string }> = {
   Care: { plain: "The right expert route, body support, and only the labs that matter.", discovery: "Clear next steps without shopping for care." },
   Coach: { plain: "A real person helps turn the month into simple weekly moves.", discovery: "Less guessing. More gentle follow-through." },
   Pods: { plain: "Small guided circles for the thing you are working on now.", discovery: "A rhythm, a checklist, and people moving with you." },
-  "Experience Pass": { plain: "One bookable reset: movement, breathwork, recovery, LED, or a workshop.", discovery: "A moment in the real world, not another task." },
+  Pass: { plain: "One bookable reset: movement, breathwork, recovery, LED, or a workshop.", discovery: "A moment in the real world, not another task." },
   Kit: { plain: "A small at-home set matched to sleep, comfort, skin, pantry, recovery, or focus.", discovery: "Something you can actually use between sessions." },
   Unlocks: { plain: "Packs, devices, deeper labs, and add-ons that may open later.", discovery: "Preview the path without being pushed into it today." },
 };
@@ -331,7 +331,7 @@ const buildPlanCards = (pathway: Pathway): MonthBlock[] => {
     card("Care", byName.Specialist.selection, "Included", [byName.Specialist.includes, byName["Functional Care"].includes, byName["Clinical / LED / Review"].includes, byName.Labs.includes].join(" • "), true),
     card("Coach", byName.Coaching.selection, "Included", [byName.Coaching.includes, byName["Mental Support"].includes, "coaching linked to your selected pod"].join(" • "), false),
     card("Pods", byName.Pods.selection, "Included", [byName.Pods.includes, "agenda + outputs included"].join(" • "), true),
-    card("Experience Pass", byName["Experience Pass"].selection, "Recommended", [byName["Experience Pass"].includes, "Tier-Low included • Tier-High may be inventory-gated"].join(" • "), true),
+    card("Pass", byName["Experience Pass"].selection, "Recommended", [byName["Experience Pass"].includes, "Tier-Low included • Tier-High may be inventory-gated"].join(" • "), true),
     card("Kit", byName.Kit.selection, "Recommended", [byName.Kit.includes, "one swap option • pack / top-up preview when relevant"].join(" • "), true),
     card("Unlocks", byName["Future Unlocks"].selection, "Locked preview", [byName.Packs.includes, byName["Future Unlocks"].includes, "MBC progress"].join(" • "), false),
   ];
@@ -351,7 +351,7 @@ const builderSummaries = (pathway: Pathway, planCards: MonthBlock[]): MonthCardS
     { title: "Care", recommendation: copy[key].Care, status: "Ready", cta: "Review care", block: byName.Care },
     { title: "Coach", recommendation: copy[key].Coach, status: "Included", cta: "View coaching plan", block: byName.Coach },
     { title: "Pods", recommendation: copy[key].Pods, status: "Needs input", cta: "View pods", block: byName.Pods },
-    { title: "Pass", recommendation: copy[key]["Experience Pass"], status: "Choose", cta: "Choose pass", block: byName["Experience Pass"] },
+    { title: "Pass", recommendation: copy[key]["Experience Pass"], status: "Choose", cta: "Choose pass", block: byName.Pass },
     { title: "Kit", recommendation: copy[key].Kit, status: "Build", cta: "Build kit", block: byName.Kit },
     { title: "Progress", recommendation: "0 of 5 actions complete", status: "Next", cta: "Continue", block: progressBlock },
     { title: "Unlocks", recommendation: copy[key].Unlocks, status: "Locked preview", cta: "See future unlocks", block: byName.Unlocks },
