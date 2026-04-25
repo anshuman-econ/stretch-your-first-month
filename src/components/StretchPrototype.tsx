@@ -450,7 +450,7 @@ const pathwaySwapCatalog: Record<PathwayKey, Record<string, { rule: string; opti
 const controlledSwapOptions = (pathway: Pathway, reason: string): ControlledSwap[] => {
   const key = pathwayKeyFromTitle(pathway);
   const d = pathwayDefaults[key];
-  const details: Record<PathwayKey, Omit<ControlledSwap, "why">[]> = {
+  const details: Record<PathwayKey, (Omit<ControlledSwap, "why" | "stays"> & { stays?: string })[]> = {
     peri: [
       { name: "Care route", current: "peri-aware women’s health review", includes: "Women’s health review, safe next steps, and protected labs when useful.", alternatives: ["internal medicine / metabolic review — if metabolic drift is selected", "skin-hair derm review — only if skin / hair support is selected"], change: "Your expert route changes.", stays: "Diagnostics, prescriptions, riders, devices, and pathway identity stay protected.", action: "Swap this block" },
       { name: "Functional session", current: "cooling / sleep reset workshop or acupuncture or mobility", includes: "One body-support session matched to sleep, temperature, energy, or recovery.", alternatives: ["RDN", "mobility / physio", "Pilates / Barre"], change: "Your functional session changes.", stays: "Your care route, lab plan, and safety checks stay unchanged.", action: "Swap this block" },
@@ -485,8 +485,14 @@ const controlledSwapOptions = (pathway: Pathway, reason: string): ControlledSwap
     ],
   };
   return details[key]
-    .filter((swap) => ["Care route", "Functional session", "Pods", "Experience pass"].includes(swap.name))
-    .map((swap) => ({ ...swap, why: reason }));
+    .filter((swap) => ["Care route", "Functional session", "Pods", "Experience pass", "Kit item", "Sticky perk"].includes(swap.name))
+    .map((swap) => ({
+      ...swap,
+      alternatives: swap.alternatives.slice(0, 3),
+      action: swap.name === "Pods" ? "Swap one pod" : "Swap this block",
+      why: reason,
+      stays: swap.stays || "Your diagnostics, prescriptions, devices, riders, high-cost procedures, and major pathway identity stay unchanged.",
+    }));
 };
 const catalogForBlock = (block: MonthBlock, pathway: Pathway): { rule: string; options: CatalogOption[]; agenda?: string } => {
   const key = pathwayKeyFromTitle(pathway);
