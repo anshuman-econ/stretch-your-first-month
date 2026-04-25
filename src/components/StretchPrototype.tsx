@@ -28,6 +28,7 @@ type Step =
   | "explainer"
   | "quiz"
   | "built"
+  | "swap"
   | "unlocks"
   | "confirm"
   | "builder"
@@ -192,6 +193,7 @@ type StackStatus = "Included" | "Recommended" | "Swap available" | "Locked previ
 type MonthBlock = { name: string; selection: string; why: string; status: StackStatus; includes: string; plain: string; discovery: string; alternatives?: string[]; change?: string; swappable?: boolean };
 type DemoTile = { column: string; name: string; what: string; where: string; pathways: string; status: string };
 type CatalogOption = { name: string; state?: string };
+type ControlledSwap = { name: string; current: string; why: string; includes: string; alternatives: string[]; change: string; action: string };
 const rebalanceOptions = ["more sleep support", "more energy support", "more glow / visible vitality", "more mood support", "more movement support", "less intensity this month"];
 const pathwayKeyFromTitle = (pathway: Pathway): PathwayKey => pathwayKeys.find((key) => pathways[key].title === pathway.title) || "peri";
 const pathwayDefaults: Record<PathwayKey, Record<string, string>> = {
