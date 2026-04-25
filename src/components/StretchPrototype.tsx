@@ -194,7 +194,7 @@ type MonthBlock = { name: string; selection: string; why: string; status: StackS
 type DemoTile = { column: string; name: string; what: string; where: string; pathways: string; status: string; connects?: string };
 type CatalogOption = { name: string; state?: string };
 type ControlledSwap = { name: string; current: string; why: string; includes: string; alternatives: string[]; change: string; action: string };
-type MonthCardSummary = { title: string; recommendation: string; status: string; cta: string; block: MonthBlock };
+type MonthCardSummary = { title: string; recommendation: string; reason: string; status: string; progress: string; cta: string; block: MonthBlock };
 const rebalanceOptions = ["more sleep support", "more energy support", "more glow / visible vitality", "more mood support", "more movement support", "less intensity this month"];
 const pathwayKeyFromTitle = (pathway: Pathway): PathwayKey => pathwayKeys.find((key) => pathways[key].title === pathway.title) || "peri";
 const pathwayDefaults: Record<PathwayKey, Record<string, string>> = {
@@ -348,13 +348,13 @@ const builderSummaries = (pathway: Pathway, planCards: MonthBlock[]): MonthCardS
   const byName = Object.fromEntries(planCards.map((block) => [block.name, block]));
   const progressBlock: MonthBlock = { name: "Progress", selection: "0 of 5 actions complete", why: "Complete one guided action at a time.", status: "Recommended", includes: "Care reviewed, pods viewed, pass chosen, kit built, progress checked.", plain: "Your progress shows what is done, what is next, and what is locked for later.", discovery: "A simple roadmap instead of a task dump.", swappable: false };
   return [
-    { title: "Care", recommendation: copy[key].Care, status: "Ready", cta: "Review care", block: byName.Care },
-    { title: "Coach", recommendation: copy[key].Coach, status: "Included", cta: "View coaching plan", block: byName.Coach },
-    { title: "Pods", recommendation: copy[key].Pods, status: "Needs input", cta: "View pods", block: byName.Pods },
-    { title: "Pass", recommendation: copy[key]["Experience Pass"], status: "Choose", cta: "Choose pass", block: byName.Pass },
-    { title: "Kit", recommendation: copy[key].Kit, status: "Build", cta: "Build kit", block: byName.Kit },
-    { title: "Progress", recommendation: "0 of 5 actions complete", status: "Next", cta: "Continue", block: progressBlock },
-    { title: "Unlocks", recommendation: copy[key].Unlocks, status: "Locked preview", cta: "See future unlocks", block: byName.Unlocks },
+    { title: "Care", recommendation: copy[key].Care, reason: "Safe route matched to your answers.", status: "Ready", progress: "Selected", cta: "Review care", block: byName.Care },
+    { title: "Coach", recommendation: copy[key].Coach, reason: "Guidance to make week one doable.", status: "Included", progress: "Included", cta: "View coaching", block: byName.Coach },
+    { title: "Pods", recommendation: copy[key].Pods, reason: "Two guided sessions for this month.", status: "Needs input", progress: "Choose seats", cta: "View pods", block: byName.Pods },
+    { title: "Pass", recommendation: copy[key]["Experience Pass"], reason: "One real-world reset to book.", status: "Choose", progress: "Needs input", cta: "Choose pass", block: byName.Pass },
+    { title: "Kit", recommendation: copy[key].Kit, reason: "At-home support matched to symptoms.", status: "Build", progress: "Future", cta: "Build kit", block: byName.Kit },
+    { title: "Progress", recommendation: "0 of 5 actions complete", reason: "Track what is done and what opens next.", status: "Next", progress: "Future", cta: "Continue", block: progressBlock },
+    { title: "Unlocks", recommendation: copy[key].Unlocks, reason: "Preview only until your pattern is clearer.", status: "Locked preview", progress: "Locked", cta: "See unlocks", block: byName.Unlocks },
   ];
 };
 
