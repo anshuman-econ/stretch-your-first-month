@@ -301,6 +301,38 @@ const buildMonthStack = (pathway: Pathway): MonthBlock[] => {
   ];
 };
 
+const planPlain: Record<string, { plain: string; discovery: string }> = {
+  Care: { plain: "Care is your specialist route, any useful labs, and the safe review loop that decides what should happen now versus later.", discovery: "You get clarity without having to shop for care or guess which expert to start with." },
+  Coach: { plain: "Coaching turns your plan into a simple weekly routine and helps adjust sleep, food, symptoms, stress, or follow-through.", discovery: "Your coach keeps the month realistic, checks what is working, and helps you ask for changes safely." },
+  Pods: { plain: "Pods are small guided sessions with people working on a similar goal, such as sleep, flare support, skin, focus, or energy.", discovery: "Each pod gives you a plan, a checklist, and a reason to keep going between appointments." },
+  Kit: { plain: "Your kit is the at-home support matched to your plan, such as comfort, sleep, skin, pantry, recovery, or focus items.", discovery: "It gives you tangible tools to use during the month instead of leaving care inside the app." },
+  Pass: { plain: "Your pass is one bookable experience, such as recovery, movement, breathwork, LED, or a workshop.", discovery: "It makes the plan feel alive and gives you a restorative moment to look forward to." },
+  Unlocks: { plain: "Unlocks are future previews like packs, devices, advanced labs, or riders that only open when your progress or care route supports them.", discovery: "You can see what may come next without being pushed into add-ons on day one." },
+};
+
+const buildPlanCards = (pathway: Pathway): MonthBlock[] => {
+  const stack = buildMonthStack(pathway);
+  const byName = Object.fromEntries(stack.map((block) => [block.name, block]));
+  const card = (name: keyof typeof planPlain, selection: string, status: StackStatus, includes: string, swappable: boolean): MonthBlock => ({
+    name,
+    selection,
+    status,
+    includes,
+    swappable,
+    why: name === "Unlocks" ? "These stay gated so the month stays focused and safe." : "Stretch pre-built this piece from your pathway so you are not starting from scratch.",
+    plain: planPlain[name].plain,
+    discovery: planPlain[name].discovery,
+  });
+  return [
+    card("Care", byName.Specialist.selection, "Included", [byName.Specialist.includes, byName["Functional Care"].includes, byName.Labs.includes].join(" • "), true),
+    card("Coach", byName.Coaching.selection, "Included", [byName.Coaching.includes, byName["Mental Support"].includes].join(" • "), false),
+    card("Pods", byName.Pods.selection, "Included", byName.Pods.includes, true),
+    card("Kit", byName.Kit.selection, "Recommended", byName.Kit.includes, true),
+    card("Pass", byName["Experience Pass"].selection, "Recommended", byName["Experience Pass"].includes, true),
+    card("Unlocks", byName["Future Unlocks"].selection, "Locked preview", [byName.Packs.includes, byName["Future Unlocks"].includes].join(" • "), false),
+  ];
+};
+
 const demoTiles: DemoTile[] = ["Care", "Coach", "Labs", "Pods", "Experience", "Kit", "Unlocks"].flatMap((column) => [
   { column, name: `${column} core`, what: `${column} core is the simple member-facing version: the recommended ${column.toLowerCase()} piece is already chosen and explained in plain language.`, where: "Your Month Stack and pathway dashboards", pathways: "Peri Sleep + Energy, Endo Flare + Function, MetaboGlow, Longevity Brain + Focus", status: column === "Unlocks" ? "Milestone unlock" : "Included" },
   { column, name: `${column} advanced`, what: `${column} advanced shows the operator logic: safe swaps, gated previews, inventory limits, or clinician review before a bigger step opens.`, where: "Demo mode and detail drawers", pathways: "Pathway-dependent", status: ["Labs", "Unlocks"].includes(column) ? "Clinician-gated" : "Swap available" },
