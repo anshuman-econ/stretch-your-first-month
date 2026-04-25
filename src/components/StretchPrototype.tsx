@@ -964,7 +964,7 @@ function PathwayPreviewList({ onOpen, compact = false }: { onOpen: (key: Pathway
 }
 
 function PathwaysScreen({ onOpen, onScale }: { onOpen: (key: PathwayKey) => void; onScale: () => void }) {
-  return <section className="space-y-6 px-5 py-7"><div className="space-y-4"><SectionTitle title="Explore pathways" copy="Four guided monthly journeys are unlocked. Each keeps choices simple." /><button onClick={onScale} className="inline-flex items-center gap-2 rounded-full bg-card px-4 py-3 text-sm font-bold text-accent shadow-card transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><Sparkles className="size-4" /> How Stretch scales</button></div><PathwayPreviewList onOpen={onOpen} /></section>;
+  return <section className="space-y-6 px-5 py-7"><SectionTitle title="Explore pathways" copy="Four guided monthly journeys are unlocked. Each keeps choices simple." /><PathwayPreviewList onOpen={onOpen} /><div className="border-t border-border pt-4 text-center"><p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">For demo / investors</p><button onClick={onScale} className="mt-2 text-sm font-bold text-accent underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">How Stretch scales</button></div></section>;
 }
 
 function CareScreen() {
