@@ -442,7 +442,7 @@ const catalogForBlock = (block: MonthBlock, pathway: Pathway): { rule: string; o
     },
     Pods: pathwaySwapCatalog[key].Pods,
     Kit: pathwaySwapCatalog[key].Kit,
-    Pass: pathwaySwapCatalog[key]["Experience Pass"],
+    "Experience Pass": pathwaySwapCatalog[key]["Experience Pass"],
     Unlocks: {
       rule: "Unlocks are previews only. They open later through progress, coach review, clinical need, inventory, or rider eligibility.",
       options: [
