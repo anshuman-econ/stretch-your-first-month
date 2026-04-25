@@ -6,7 +6,6 @@ import {
   ChevronLeft,
   ClipboardList,
   Home,
-  Info,
   Leaf,
   Lock,
   MessageCircle,
@@ -629,7 +628,6 @@ export default function StretchPrototype() {
     }}>
       <div className="pointer-events-none fixed inset-0 bg-spotlight" />
       <div className="relative mx-auto flex min-h-screen w-full max-w-md flex-col overflow-hidden bg-shell shadow-shell sm:my-6 sm:min-h-[860px] sm:rounded-[2rem]">
-        <button onClick={() => setShowBehindScenes(true)} className="absolute right-5 top-5 z-40 rounded-full bg-card/90 p-2 text-accent shadow-card backdrop-blur transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label="Open Investor / Demo Mode"><Info className="size-4" /></button>
         {step !== "landing" && step !== "home" && (
           <header className="sticky top-0 z-20 flex items-center justify-between border-b border-border/70 bg-shell/90 px-5 py-4 backdrop-blur-xl">
             <button className="rounded-full bg-secondary p-2 text-foreground transition-smooth hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" onClick={() => setStep("landing")} aria-label="Back to landing"><ChevronLeft className="size-5" /></button>
@@ -654,7 +652,7 @@ export default function StretchPrototype() {
               </div>
               <div className="rounded-[2rem] bg-card p-5 shadow-card"><p className="mb-3 text-sm font-semibold text-accent">Unlocked pathways</p><div className="grid gap-2">{pathwayKeys.map((key) => <button key={key} onClick={() => openJourney(key)} className="flex items-center justify-between rounded-2xl bg-secondary px-4 py-3 text-left text-sm font-semibold transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><span>{pathways[key].title}</span><ArrowRight className="size-4 text-accent" /></button>)}</div></div>
               <div className="rounded-[2rem] bg-secondary p-5 shadow-card"><p className="mb-3 text-sm font-semibold text-muted-foreground">Locked previews</p><div className="flex flex-wrap gap-2">{lockedCards.map((item) => <span key={item} className="inline-flex items-center gap-2 rounded-full bg-card px-3 py-2 text-xs font-semibold text-muted-foreground shadow-card"><Lock className="size-3" />{item}</span>)}</div></div>
-              <button onClick={() => setShowBlocksDemo(true)} className="mx-auto block text-xs font-semibold text-muted-foreground underline-offset-4 hover:text-accent hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Investor demo: view platform blocks</button>
+              <div className="flex justify-center gap-4"><button onClick={() => setShowBehindScenes(true)} className="text-xs font-semibold text-muted-foreground underline-offset-4 hover:text-accent hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Investor demo</button><button onClick={() => setShowBlocksDemo(true)} className="text-xs font-semibold text-muted-foreground underline-offset-4 hover:text-accent hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">View platform blocks</button></div>
             </section>
           )}
 
@@ -670,7 +668,7 @@ export default function StretchPrototype() {
           {step === "home" && <HomeScreen pathway={pathway} answers={answers} onCare={() => setStep("care")} onFuture={() => setStep("future")} onJourney={() => setStep("builder")} onStamp={setSelectedStamp} />}
           {step === "wallet" && <WalletScreen pathwayTitle={pathway.title} onFuture={() => setStep("future")} onStamp={setSelectedStamp} />}
           {step === "future" && <FutureScreen />}
-          {step === "pathways" && <PathwaysScreen onOpen={openJourney} />}
+          {step === "pathways" && <PathwaysScreen onOpen={openJourney} onScale={() => setShowBehindScenes(true)} />}
           {step === "journey" && <JourneyScreen pathway={pathways[selectedJourney]} activeTab={journeyTab} setActiveTab={setJourneyTab} onAdjacent={() => openJourney(pathways[selectedJourney].adjacent)} onCoach={() => setStep("care")} />}
           {step === "care" && <CareScreen />}
         </div>
@@ -978,8 +976,8 @@ function PathwayPreviewList({ onOpen, compact = false }: { onOpen: (key: Pathway
   return <div className="space-y-3"><p className="text-sm font-semibold text-muted-foreground">Unlocked pathways</p>{pathwayKeys.map((key) => { const card = pathways[key]; return <SoftCard key={card.title} onClick={() => onOpen(key)}><div className="flex items-start justify-between gap-4"><div className="space-y-3"><h2 className="font-display text-2xl text-foreground">{card.title}</h2><p className="text-sm text-muted-foreground">Best for {card.bestFor}</p>{!compact && <p className="text-sm leading-6 text-muted-foreground">{card.monthlyPromise}</p>}<div className="grid gap-2 text-sm"><span className="flex items-center gap-2 text-foreground"><Sparkles className="size-4 text-accent" /> {card.firstUnlock}</span><span className="flex items-center gap-2 text-muted-foreground"><Lock className="size-4" /> Later: {card.futureUnlock}</span></div></div><ArrowRight className="mt-1 size-5 text-accent" /></div></SoftCard>; })}</div>;
 }
 
-function PathwaysScreen({ onOpen }: { onOpen: (key: PathwayKey) => void }) {
-  return <section className="space-y-6 px-5 py-7"><SectionTitle title="Explore pathways" copy="Four guided monthly journeys are unlocked. Each keeps choices simple." /><PathwayPreviewList onOpen={onOpen} /></section>;
+function PathwaysScreen({ onOpen, onScale }: { onOpen: (key: PathwayKey) => void; onScale: () => void }) {
+  return <section className="space-y-6 px-5 py-7"><div className="space-y-4"><SectionTitle title="Explore pathways" copy="Four guided monthly journeys are unlocked. Each keeps choices simple." /><button onClick={onScale} className="inline-flex items-center gap-2 rounded-full bg-card px-4 py-3 text-sm font-bold text-accent shadow-card transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><Sparkles className="size-4" /> How Stretch scales</button></div><PathwayPreviewList onOpen={onOpen} /></section>;
 }
 
 function CareScreen() {
