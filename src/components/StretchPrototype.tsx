@@ -581,6 +581,8 @@ export default function StretchPrototype() {
   const [journeyTab, setJourneyTab] = useState<JourneyTab>("Experience");
   const [selectedStamp, setSelectedStamp] = useState<PassportStamp | null>(null);
   const [showBehindScenes, setShowBehindScenes] = useState(false);
+  const [showBlocksDemo, setShowBlocksDemo] = useState(false);
+  const [demoTile, setDemoTile] = useState<DemoTile | null>(null);
   const [showRebalance, setShowRebalance] = useState(false);
 
   const pathwayKey = useMemo(() => detectPathway(answers, goal), [answers, goal]);
@@ -609,7 +611,7 @@ export default function StretchPrototype() {
     }}>
       <div className="pointer-events-none fixed inset-0 bg-spotlight" />
       <div className="relative mx-auto flex min-h-screen w-full max-w-md flex-col overflow-hidden bg-shell shadow-shell sm:my-6 sm:min-h-[860px] sm:rounded-[2rem]">
-        <button onClick={() => setShowBehindScenes(true)} className="absolute right-5 top-5 z-40 inline-flex items-center gap-2 rounded-full bg-card/90 px-3 py-2 text-xs font-bold text-accent shadow-card backdrop-blur transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label="Open Investor / Demo Mode"><Info className="size-4" /> Demo</button>
+        <button onClick={() => setShowBehindScenes(true)} className="absolute right-5 top-5 z-40 rounded-full bg-card/90 p-2 text-accent shadow-card backdrop-blur transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label="Open Investor / Demo Mode"><Info className="size-4" /></button>
         {step !== "landing" && step !== "home" && (
           <header className="sticky top-0 z-20 flex items-center justify-between border-b border-border/70 bg-shell/90 px-5 py-4 backdrop-blur-xl">
             <button className="rounded-full bg-secondary p-2 text-foreground transition-smooth hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" onClick={() => setStep("landing")} aria-label="Back to landing"><ChevronLeft className="size-5" /></button>
@@ -634,6 +636,7 @@ export default function StretchPrototype() {
               </div>
               <div className="rounded-[2rem] bg-card p-5 shadow-card"><p className="mb-3 text-sm font-semibold text-accent">Unlocked pathways</p><div className="grid gap-2">{pathwayKeys.map((key) => <button key={key} onClick={() => openJourney(key)} className="flex items-center justify-between rounded-2xl bg-secondary px-4 py-3 text-left text-sm font-semibold transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><span>{pathways[key].title}</span><ArrowRight className="size-4 text-accent" /></button>)}</div></div>
               <div className="rounded-[2rem] bg-secondary p-5 shadow-card"><p className="mb-3 text-sm font-semibold text-muted-foreground">Locked previews</p><div className="flex flex-wrap gap-2">{lockedCards.map((item) => <span key={item} className="inline-flex items-center gap-2 rounded-full bg-card px-3 py-2 text-xs font-semibold text-muted-foreground shadow-card"><Lock className="size-3" />{item}</span>)}</div></div>
+              <button onClick={() => setShowBlocksDemo(true)} className="mx-auto block text-xs font-semibold text-muted-foreground underline-offset-4 hover:text-accent hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Investor demo: view platform blocks</button>
             </section>
           )}
 
@@ -664,6 +667,8 @@ export default function StretchPrototype() {
         {selectedStamp && <StampDrawer stamp={selectedStamp} onClose={() => setSelectedStamp(null)} />}
         {showRebalance && <RebalanceModal onClose={() => setShowRebalance(false)} />}
         {showBehindScenes && <BehindScenesPanel onClose={() => setShowBehindScenes(false)} />}
+        {showBlocksDemo && <BlocksDemoDrawer onClose={() => setShowBlocksDemo(false)} onTile={setDemoTile} />}
+        {demoTile && <DemoTileDrawer tile={demoTile} onClose={() => setDemoTile(null)} />}
       </div>
     </main>
   );
