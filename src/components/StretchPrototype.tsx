@@ -72,7 +72,7 @@ const pathways: Record<PathwayKey, Pathway> = {
     foundation: ["Women’s health routing", "Choose one calming experience", "Two coach touches", "Mood Check + Micro-CBT", "Peri Reset Pod"],
     deepen: ["Adjust your symptom routine", "Review sleep, mood, energy", "Add one targeted support if useful"],
     sustain: ["Unlock next-step prevention", "Consider a future device", "Open adjacent glow or focus support"],
-    roadmap: { now: "Set up your night routine and first coach touch", next: "Tune adherence and choose one monthly micro-pass", later: "Open Smart Ring or a targeted rider if useful" },
+    roadmap: { now: "this month’s Sleep + Energy care stack", next: "Sleep Reset Pack or Mood / Fog Pack", later: "Smart Ring + PeriShield Rx + Skin/Hair crossover" },
     tabs: {
       Experience: ["Cooling / sleep reset workshop", "Mobility or Pilates / Barre", "Acupuncture or recovery coaching", "30-minute LED for face, body, or hair-scalp"],
       Coach: ["Touch 1: symptom routine setup", "Touch 2: adherence + adjustment", "Mood Check + Micro-CBT", "Pod choice: Sleep Reset, Mood/Fog, Metabolic Drift, Skin/Hair, or Bone/Joint"],
@@ -98,7 +98,7 @@ const pathways: Record<PathwayKey, Pathway> = {
     foundation: ["Endo-aware gyne routing", "Choose one pain-aware experience", "Two coach touches", "Pain psychology micro-support", "Endo Toolkit Pod"],
     deepen: ["Refine pacing and GI routine", "Export clean symptom notes", "Add function-day support"],
     sustain: ["Unlock relief burst support", "Preview surgery or IVF bridge only if needed", "Keep documentation ready"],
-    roadmap: { now: "Create your flare map and comfort ritual", next: "Adjust pacing, GI support, and routine", later: "Open confirmation or coverage support only if needed" },
+    roadmap: { now: "Flare & Function stabilization", next: "Endo Relief Burst Pack", later: "EndoShield + Surgery Track preview + IVF Bridge preview" },
     tabs: {
       Experience: ["Pelvic-floor PT", "Acupuncture", "Pain-aware Pilates / mobility", "Recovery movement", "Pelvic relaxation / breathwork or restorative yoga"],
       Coach: ["Touch 1: flare map + pacing plan", "Touch 2: function / GI / routine adjustment", "Pain psychology micro-support + Mood Check", "Pod choice: GI/Function Support, Pain Pacing, or Fatigue Support"],
@@ -124,7 +124,7 @@ const pathways: Record<PathwayKey, Pathway> = {
     foundation: ["Derm Glow / Camera-Ready focus", "Metabolic Drift Lite support", "Two coach touches", "Skin Sunday Pod", "One glow pass"],
     deepen: ["Tune hydration and meal timing", "Add event-week support", "Accrue a procedure token"],
     sustain: ["Unlock actives or Camera-Ready Sprint", "Open LED Mask preview", "Add coverage support when relevant"],
-    roadmap: { now: "Set glow routine, hydration, and meal timing", next: "Adjust for an event week or swap one layer", later: "Open procedure tokens or LED Mask support" },
+    roadmap: { now: "Camera-Ready + Drift Lite monthly stack", next: "Derma Actives Pack or Camera-Ready Sprint", later: "LED Mask + DermaShield+ + MetaboGlow expanded lanes" },
     tabs: {
       Experience: ["LED booth", "Aftercare workshop", "Pilates / Barre intro", "Skin routine demo", "RDN consult if metabolic signals show up"],
       Coach: ["Touch 1: glow routine + hydration + meal timing", "Touch 2: adherence + event-week or swap adjustment", "Body image / stress / adherence support when relevant", "Pods: Skin Sunday and Insight Night / Metabolic Drift Lite"],
@@ -150,7 +150,7 @@ const pathways: Record<PathwayKey, Pathway> = {
     foundation: ["Brain, Focus & Cognitive Resilience", "Executive Performance & Travel support", "Two coach touches", "Brain & Focus Pod", "One recovery pass"],
     deepen: ["Tune caffeine and meal timing", "Review fatigue patterns", "Prepare for travel or high-output weeks"],
     sustain: ["Unlock Brain Sprint", "Open Smart Ring preview", "Add lab or sleep support if useful"],
-    roadmap: { now: "Set workday, caffeine, and meal timing", next: "Review fatigue and recovery patterns", later: "Open Smart Ring, Brain Sprint, or lab support" },
+    roadmap: { now: "Brain + Focus monthly stack", next: "Brain Sprint or Nootropic Builder", later: "Smart Ring + Longevity Lab Rider + NeuroSleep Rider" },
     tabs: {
       Experience: ["Strength + VO2 prep", "RDN consult", "Breathwork reset", "Mobility", "Recovery / red-light where available"],
       Coach: ["Touch 1: focus / workday / caffeine / meal timing setup", "Touch 2: adherence + fatigue pattern review", "Mood Check + Micro-CBT if stress or sleep-linked", "Pods: Brain & Focus and Executive Performance & Travel"],
@@ -184,6 +184,19 @@ const kits = ["Sleep + cooling kit", "Comfort + recovery kit", "Glow + rhythm ki
 const pods = ["Calm nights pod", "Flare-days pod", "High-output pod"];
 const passes = ["Restorative studio pass", "Recovery session pass", "Glow appointment pass"];
 
+type PassportStamp = { title: string; means: string; complete: string; unlocks: string; mbc?: string };
+const passportStamps: PassportStamp[] = [
+  { title: "Plan selected", means: "Your first monthly pathway is confirmed.", complete: "Choose Keep this recommendation or finish the Month Builder.", unlocks: "Your guided first week opens." },
+  { title: "Kit built", means: "Your support items are selected for this month.", complete: "Pick your kit defaults and confirm shipping preferences.", unlocks: "Badge, no cash unless configured.", mbc: "complete kit build = badge, no cash unless configured" },
+  { title: "Pods selected", means: "Your guided group seats are reserved.", complete: "Choose and join your pod sessions.", unlocks: "+MBC indicator.", mbc: "attend pod = +MBC indicator" },
+  { title: "Experience pass booked", means: "Your monthly restorative or movement experience is scheduled.", complete: "Book one available pass this month.", unlocks: "+MBC indicator.", mbc: "book experience pass = +MBC indicator" },
+  { title: "First coaching touch done", means: "Your coach has helped set your first routine.", complete: "Complete your first coach check-in.", unlocks: "Adjustment support for week two." },
+  { title: "Labs scheduled or uploaded", means: "Your baseline information is ready for review.", complete: "Schedule labs or upload recent results.", unlocks: "+MBC indicator.", mbc: "complete baseline labs = +MBC indicator" },
+  { title: "Seven-day streak", means: "You kept a simple tracking rhythm for one week.", complete: "Check in daily for seven days.", unlocks: "+MBC indicator.", mbc: "seven-day tracking streak = +MBC indicator" },
+  { title: "Month 1 complete", means: "You completed the core steps that make your plan work.", complete: "Finish your selected care, kit, pods, pass, and check-ins.", unlocks: "Future unlock eligibility.", mbc: "month 1 complete = future unlock eligibility" },
+  { title: "Future unlock eligible", means: "Stretch can show the next useful option without overwhelming you.", complete: "Complete Month 1 and review your pattern with your coach.", unlocks: "Selected packs, devices, or upgrades." },
+];
+
 const detectPathway = (answers: string[], goal: string): PathwayKey => {
   const text = `${goal} ${answers.join(" ")}`.toLowerCase();
   if (/pelvic|flare|bloating|gi|cycle|painful/.test(text)) return "endo";
@@ -216,6 +229,7 @@ export default function StretchPrototype() {
   const [selectedPass, setSelectedPass] = useState(passes[0]);
   const [selectedJourney, setSelectedJourney] = useState<PathwayKey>("peri");
   const [journeyTab, setJourneyTab] = useState<JourneyTab>("Experience");
+  const [selectedStamp, setSelectedStamp] = useState<PassportStamp | null>(null);
 
   const pathwayKey = useMemo(() => detectPathway(answers, goal), [answers, goal]);
   const pathway = pathways[pathwayKey];
@@ -229,7 +243,7 @@ export default function StretchPrototype() {
     setAnswers(next);
     if (quizIndex === quiz.length - 1) {
       setSelectedJourney(detectPathway(next, goal));
-      setStep("built");
+      setStep("unlocks");
       setQuizIndex(0);
     } else setQuizIndex((current) => current + 1);
   };
@@ -273,12 +287,12 @@ export default function StretchPrototype() {
           {step === "goal" && <GoalScreen setGoal={setGoal} setStep={setStep} />}
           {step === "quiz" && <QuizScreen quizIndex={quizIndex} chooseAnswer={chooseAnswer} />}
           {step === "built" && <BuiltScreen pathway={pathway} resetQuiz={resetQuiz} onUnlocks={() => setStep("unlocks")} onOpenJourney={() => openJourney(pathwayKey)} />}
-          {step === "unlocks" && <UnlocksScreen onNext={() => setStep("confirm")} />}
+          {step === "unlocks" && <UnlocksScreen pathway={pathway} answers={answers} onBuild={() => setStep("builder")} onKeep={() => setStep("confirm")} onSwap={resetQuiz} />}
           {step === "confirm" && <ConfirmScreen pathway={pathway} resetQuiz={resetQuiz} onBuild={() => setStep("builder")} onOpenJourney={() => openJourney(pathwayKey)} />}
           {step === "builder" && <BuilderScreen selectedKit={selectedKit} selectedPod={selectedPod} selectedPass={selectedPass} setSelectedKit={setSelectedKit} setSelectedPod={setSelectedPod} setSelectedPass={setSelectedPass} onStart={() => setStep("week")} />}
           {step === "week" && <WeekScreen onHome={() => setStep("home")} />}
-          {step === "home" && <HomeScreen pathway={pathway} onCare={() => setStep("care")} onFuture={() => setStep("future")} onJourney={() => openJourney(pathwayKey)} />}
-          {step === "wallet" && <WalletScreen pathwayTitle={pathway.title} onFuture={() => setStep("future")} />}
+          {step === "home" && <HomeScreen pathway={pathway} answers={answers} onCare={() => setStep("care")} onFuture={() => setStep("future")} onJourney={() => openJourney(pathwayKey)} onStamp={setSelectedStamp} />}
+          {step === "wallet" && <WalletScreen pathwayTitle={pathway.title} onFuture={() => setStep("future")} onStamp={setSelectedStamp} />}
           {step === "future" && <FutureScreen />}
           {step === "pathways" && <PathwaysScreen onOpen={openJourney} />}
           {step === "journey" && <JourneyScreen pathway={pathways[selectedJourney]} activeTab={journeyTab} setActiveTab={setJourneyTab} onAdjacent={() => openJourney(pathways[selectedJourney].adjacent)} onCoach={() => setStep("care")} />}
@@ -292,6 +306,7 @@ export default function StretchPrototype() {
           <NavItem icon={<MessageCircle className="size-5" />} label="Care" active={step === "care"} onClick={() => setStep("care")} />
           <NavItem icon={<Wallet className="size-5" />} label="Wallet" active={step === "wallet"} onClick={() => setStep("wallet")} />
         </nav>
+        {selectedStamp && <StampDrawer stamp={selectedStamp} onClose={() => setSelectedStamp(null)} />}
       </div>
     </main>
   );
@@ -309,8 +324,19 @@ function BuiltScreen({ pathway, resetQuiz, onUnlocks, onOpenJourney }: { pathway
   return <section className="space-y-6 px-5 py-7"><div className="rounded-[2rem] bg-primary p-6 text-primary-foreground shadow-float"><Sparkles className="mb-5 size-8" /><SectionTitle title="Stretch built your first month." copy="We built your month. Keep it, swap one thing, or ask your coach." /></div><SoftCard onClick={onOpenJourney} className="space-y-4"><p className="text-sm font-semibold text-accent">Recommended pathway</p><h2 className="font-display text-3xl">{pathway.title}</h2><p className="leading-7 text-muted-foreground">{pathway.reason}</p></SoftCard><div className="rounded-3xl bg-secondary p-5 shadow-card"><p className="mb-3 font-semibold">Your first month includes</p><div className="grid gap-3">{pathway.foundation.slice(0, 5).map((item) => <span key={item} className="flex items-center gap-3 text-sm"><Check className="size-4 text-accent" />{item}</span>)}</div></div><div className="grid gap-3"><Button variant="hero" size="xl" onClick={onUnlocks}>Show my unlocks</Button><Button variant="soft" size="xl" onClick={resetQuiz}>Change answers</Button></div></section>;
 }
 
-function UnlocksScreen({ onNext }: { onNext: () => void }) {
-  return <section className="space-y-6 px-5 py-7"><SectionTitle eyebrow="Instant Unlocks" title="Your first set is ready." copy="These are available now. More opens as your month takes shape." />{["Care", "Coach", "Kit", "Pods", "Pass", "Progress", "Unlocks"].map((item, index) => <div key={item} className="flex items-center gap-4 rounded-3xl bg-card p-5 shadow-card animate-slide-up" style={{ animationDelay: `${index * 70}ms` }}><div className="rounded-full bg-secondary p-3 text-accent"><Check className="size-5" /></div><div><p className="font-display text-xl">{item}</p><p className="text-sm text-muted-foreground">Ready for your first month</p></div></div>)}<Button variant="hero" size="xl" className="w-full" onClick={onNext}>Choose my plan</Button></section>;
+function UnlocksScreen({ pathway, answers, onBuild, onKeep, onSwap }: { pathway: Pathway; answers: string[]; onBuild: () => void; onKeep: () => void; onSwap: () => void }) {
+  const answerText = answers.slice(0, 3).join(", ") || "your answers";
+  const cards = [
+    { title: "Your pathway", lead: pathway.title, copy: `We recommended this because you selected ${answerText}.` },
+    { title: "Your plan", lead: "Month 1 Foundation", copy: pathway.monthlyPromise },
+    { title: "Your specialist route", lead: pathway.tabs["Clinician Loop"][0], copy: "You’ll start with one clinician touch to interpret symptoms and create a safe next-step plan." },
+    { title: "Your pod seats", lead: pathway.title.includes("Peri") ? "Peri Reset Pod + Sleep Reset Pod" : pathway.tabs.Coach[pathway.tabs.Coach.length - 1].replace("Pod choice: ", ""), copy: "You have 2 guided group sessions this month." },
+    { title: "Your monthly kit", lead: "Guided kit builder", copy: "You’ll build a guided kit with support items, food-structure tools, and one visible-vitality item." },
+    { title: "Your experience pass", lead: "One monthly pass", copy: "You’ll pick one restorative or movement-based experience this month." },
+    { title: "Your progress passport", lead: "Milestone Bonus Credits", copy: "As you complete your plan, you’ll earn Milestone Bonus Credits." },
+    { title: "Your future unlock track", lead: pathway.roadmap.later, copy: "Packs, devices, and coverage add-ons appear when your pattern shows you need them." },
+  ];
+  return <section className="space-y-6 px-5 py-7"><SectionTitle title="Your Stretch month is ready" copy="Here’s what unlocked for you the minute you joined." />{cards.map((card, index) => <div key={card.title} className="rounded-3xl bg-card p-5 shadow-card animate-slide-up" style={{ animationDelay: `${index * 90}ms` }}><div className="mb-3 flex items-center gap-3"><div className="rounded-full bg-secondary p-2 text-accent"><Check className="size-4" /></div><p className="text-sm font-semibold text-accent">{card.title}</p></div><h2 className="font-display text-2xl">{card.lead}</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">{card.copy}</p></div>)}<div className="grid gap-3"><Button variant="hero" size="xl" className="w-full" onClick={onBuild}>Build my month</Button><Button variant="soft" size="xl" className="w-full" onClick={onKeep}>Keep this recommendation</Button><Button variant="soft" size="xl" className="w-full" onClick={onSwap}>Swap one thing</Button></div></section>;
 }
 
 function ConfirmScreen({ pathway, resetQuiz, onBuild, onOpenJourney }: { pathway: Pathway; resetQuiz: () => void; onBuild: () => void; onOpenJourney: () => void }) {
@@ -325,8 +351,9 @@ function WeekScreen({ onHome }: { onHome: () => void }) {
   return <section className="space-y-6 px-5 py-7"><div className="rounded-[2rem] bg-olive p-6 text-olive-foreground shadow-float"><CalendarDays className="mb-5 size-8" /><SectionTitle title="Week one starts gently." copy="Your care plan, coach note, kit, pod, and pass are lined up." /></div><div className="grid gap-3">{["Tonight: settle your sleep window", "Tomorrow: coach check-in", "This week: join your pod", "Anytime: book your pass"].map((item) => <div key={item} className="rounded-3xl bg-card p-5 shadow-card"><p className="font-medium">{item}</p></div>)}</div><Button variant="hero" size="xl" className="w-full" onClick={onHome}>Go to Home</Button></section>;
 }
 
-function HomeScreen({ pathway, onCare, onFuture, onJourney }: { pathway: Pathway; onCare: () => void; onFuture: () => void; onJourney: () => void }) {
-  return <section className="space-y-6 px-5 pb-8 pt-6"><div className="flex items-center justify-between"><div><p className="text-sm text-muted-foreground">Good morning</p><h1 className="font-display text-4xl">Your month is live.</h1></div><button onClick={onCare} className="rounded-full bg-secondary p-3 text-accent shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><MessageCircle className="size-5" /></button></div><SoftCard onClick={onJourney} className="bg-primary text-primary-foreground"><p className="text-sm opacity-80">Current pathway</p><h2 className="mt-2 font-display text-3xl">{pathway.title}</h2><p className="mt-4 leading-7 opacity-85">{pathway.monthlyPromise}</p></SoftCard><div className="grid grid-cols-2 gap-3"><Metric label="Progress" value="18%" /><Metric label="Unlocks" value="7" /></div><SoftCard onClick={onFuture}><p className="font-display text-2xl">Future unlocks</p><p className="mt-2 text-sm text-muted-foreground">See what may open after week one.</p></SoftCard></section>;
+function HomeScreen({ pathway, answers, onCare, onFuture, onJourney, onStamp }: { pathway: Pathway; answers: string[]; onCare: () => void; onFuture: () => void; onJourney: () => void; onStamp: (stamp: PassportStamp) => void }) {
+  const chips = (answers.length ? answers : ["poor sleep", "fatigue", "brain fog"]).slice(0, 4);
+  return <section className="space-y-6 px-5 pb-8 pt-6"><div className="flex items-center justify-between"><div><p className="text-sm text-muted-foreground">Stretch Journey Bar</p><h1 className="font-display text-4xl">Today’s care rhythm</h1></div><button onClick={onCare} className="rounded-full bg-secondary p-3 text-accent shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><MessageCircle className="size-5" /></button></div><div className="rounded-[2rem] bg-primary p-6 text-primary-foreground shadow-float"><p className="text-sm opacity-80">Today’s next 3 actions</p>{["Confirm your care route", "Choose pod seats", "Start your kit build"].map((item) => <p key={item} className="mt-4 flex gap-3"><Check className="size-5 shrink-0" />{item}</p>)}</div><SoftCard onClick={onJourney}><p className="font-display text-2xl">Your Month Builder progress</p><div className="mt-4 grid gap-3">{["Care confirmed", "Pods selected", "Kit built", "Experience pass booked", "Labs / clinician loop", "Future unlock viewed"].map((item, i) => <div key={item} className="flex items-center justify-between gap-3"><span className="text-sm text-muted-foreground">{item}</span><span className={cn("rounded-full px-3 py-1 text-xs font-semibold", i < 2 ? "bg-primary text-primary-foreground" : "bg-secondary text-accent")}>{i < 2 ? "Done" : "Next"}</span></div>)}</div></SoftCard><div className="rounded-3xl bg-card p-5 shadow-card"><p className="font-display text-2xl">Recommended now</p><div className="mt-4 grid gap-3"><PreviewRow label="Box / kit add-on" value={pathway.guidedDefaults[2]} /><PreviewRow label="Strongest pack" value={pathway.strongestPack} /><PreviewRow label="Future preview" value={pathway.futureDevice} /></div></div><div className="rounded-3xl bg-secondary p-5 shadow-card"><p className="font-display text-2xl">Why we recommended this</p><div className="mt-4 flex flex-wrap gap-2">{chips.map((chip) => <span key={chip} className="rounded-full bg-card px-3 py-2 text-xs font-semibold text-accent shadow-card">{chip}</span>)}</div><p className="mt-4 text-sm leading-6 text-muted-foreground">{pathway.reason}</p></div><MbcCard onStamp={onStamp} /><PassportSection onStamp={onStamp} compact /></section>;
 }
 
 function JourneyScreen({ pathway, activeTab, setActiveTab, onAdjacent, onCoach }: { pathway: Pathway; activeTab: JourneyTab; setActiveTab: (tab: JourneyTab) => void; onAdjacent: () => void; onCoach: () => void }) {
@@ -362,8 +389,21 @@ function NavItem({ icon, label, active, onClick }: { icon: React.ReactNode; labe
   return <button onClick={onClick} className={cn("flex flex-col items-center gap-1 rounded-2xl px-1 py-2 text-[11px] font-medium transition-smooth focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", active ? "bg-secondary text-primary" : "text-muted-foreground hover:text-foreground")}>{icon}<span>{label}</span></button>;
 }
 
-function WalletScreen({ pathwayTitle, onFuture }: { pathwayTitle: string; onFuture: () => void }) {
-  return <section className="space-y-6 px-5 py-7"><SectionTitle title="Wallet / progress" copy="A simple view of what is active, used, and opening next." /><div className="rounded-[2rem] bg-card p-6 shadow-float"><p className="text-sm text-muted-foreground">Active month</p><h2 className="mt-2 font-display text-3xl">{pathwayTitle}</h2><div className="mt-5 h-3 overflow-hidden rounded-full bg-secondary"><div className="h-full w-[38%] rounded-full bg-accent" /></div><p className="mt-3 text-sm text-muted-foreground">38% prepared for week one</p></div>{[["Care", "Live"], ["Coach", "Matched"], ["Kit", "Selected"], ["Pods", "Joined"], ["Pass", "Ready"]].map(([a, b]) => <div key={a} className="flex items-center justify-between rounded-3xl bg-card p-5 shadow-card"><p className="font-display text-xl">{a}</p><span className="rounded-full bg-secondary px-3 py-1 text-sm text-accent">{b}</span></div>)}<Button variant="soft" size="xl" className="w-full" onClick={onFuture}>View future unlocks</Button></section>;
+function WalletScreen({ pathwayTitle, onFuture, onStamp }: { pathwayTitle: string; onFuture: () => void; onStamp: (stamp: PassportStamp) => void }) {
+  return <section className="space-y-6 px-5 py-7"><SectionTitle title="Wallet / progress" copy="A simple view of what is active, used, and opening next." /><div className="rounded-[2rem] bg-card p-6 shadow-float"><p className="text-sm text-muted-foreground">Active month</p><h2 className="mt-2 font-display text-3xl">{pathwayTitle}</h2><div className="mt-5 h-3 overflow-hidden rounded-full bg-secondary"><div className="h-full w-[38%] rounded-full bg-accent" /></div><p className="mt-3 text-sm text-muted-foreground">38% prepared for week one</p></div><MbcCard onStamp={onStamp} /><PassportSection onStamp={onStamp} /><Button variant="soft" size="xl" className="w-full" onClick={onFuture}>View future unlocks</Button></section>;
+}
+
+function PassportSection({ onStamp, compact = false }: { onStamp: (stamp: PassportStamp) => void; compact?: boolean }) {
+  const shown = compact ? passportStamps.slice(0, 5) : passportStamps;
+  return <div className="rounded-3xl bg-card p-5 shadow-card"><p className="font-display text-2xl">Progress Passport</p><div className="mt-4 grid grid-cols-2 gap-3">{shown.map((stamp, index) => <button key={stamp.title} onClick={() => onStamp(stamp)} className={cn("rounded-2xl border p-3 text-left text-xs font-semibold transition-smooth focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", index < 2 ? "border-primary bg-primary text-primary-foreground" : "border-border bg-secondary text-foreground hover:-translate-y-0.5")}><Star className="mb-2 size-4" />{stamp.title}</button>)}</div></div>;
+}
+
+function MbcCard({ onStamp }: { onStamp: (stamp: PassportStamp) => void }) {
+  return <div className="rounded-3xl bg-card p-5 shadow-card"><div className="flex items-start justify-between gap-4"><div><p className="font-display text-2xl">Milestone Bonus Credits</p><p className="mt-2 text-sm leading-6 text-muted-foreground">Milestone Bonus Credits are Stretch-funded credits you earn when you complete the steps that make your plan work — like building your kit, joining pods, finishing labs, booking your pass, or keeping a streak. You can use them later on selected packs, devices, or upgrades.</p></div><span className="rounded-full bg-secondary px-3 py-2 text-sm font-bold text-accent">120</span></div><div className="mt-4 grid gap-2 text-sm"><PreviewRow label="Current balance" value="120 MBC" /><PreviewRow label="Pending rewards" value="3 steps" /><PreviewRow label="Next unlock" value="Seven-day streak" /></div><div className="mt-4 grid gap-2">{passportStamps.filter((s) => s.mbc).slice(0, 5).map((stamp) => <button key={stamp.title} onClick={() => onStamp(stamp)} className="rounded-2xl bg-secondary px-4 py-3 text-left text-xs font-semibold text-accent">{stamp.mbc}</button>)}</div></div>;
+}
+
+function StampDrawer({ stamp, onClose }: { stamp: PassportStamp; onClose: () => void }) {
+  return <div className="absolute inset-0 z-50 flex items-end bg-primary/35 p-3 backdrop-blur-sm" onClick={onClose}><div className="w-full rounded-[2rem] bg-card p-6 shadow-float" onClick={(event) => event.stopPropagation()}><div className="mb-4 flex items-center justify-between"><p className="font-display text-3xl">{stamp.title}</p><button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent">Close</button></div>{[["What it means", stamp.means], ["How to complete it", stamp.complete], ["What it unlocks", stamp.unlocks]].map(([label, copy]) => <div key={label} className="mb-4 rounded-2xl bg-secondary p-4 last:mb-0"><p className="text-xs font-semibold uppercase tracking-wide text-accent">{label}</p><p className="mt-2 text-sm leading-6 text-muted-foreground">{copy}</p></div>)}</div></div>;
 }
 
 function FutureScreen() {
