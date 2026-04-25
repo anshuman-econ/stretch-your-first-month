@@ -72,7 +72,7 @@ const pathways: Record<PathwayKey, Pathway> = {
     foundation: ["Women’s health routing", "Choose one calming experience", "Two coach touches", "Mood Check + Micro-CBT", "Peri Reset Pod"],
     deepen: ["Adjust your symptom routine", "Review sleep, mood, energy", "Add one targeted support if useful"],
     sustain: ["Unlock next-step prevention", "Consider a future device", "Open adjacent glow or focus support"],
-    roadmap: { now: "Set up your night routine and first coach touch", next: "Tune adherence and choose one monthly micro-pass", later: "Open Smart Ring or a targeted rider if useful" },
+    roadmap: { now: "this month’s Sleep + Energy care stack", next: "Sleep Reset Pack or Mood / Fog Pack", later: "Smart Ring + PeriShield Rx + Skin/Hair crossover" },
     tabs: {
       Experience: ["Cooling / sleep reset workshop", "Mobility or Pilates / Barre", "Acupuncture or recovery coaching", "30-minute LED for face, body, or hair-scalp"],
       Coach: ["Touch 1: symptom routine setup", "Touch 2: adherence + adjustment", "Mood Check + Micro-CBT", "Pod choice: Sleep Reset, Mood/Fog, Metabolic Drift, Skin/Hair, or Bone/Joint"],
@@ -98,7 +98,7 @@ const pathways: Record<PathwayKey, Pathway> = {
     foundation: ["Endo-aware gyne routing", "Choose one pain-aware experience", "Two coach touches", "Pain psychology micro-support", "Endo Toolkit Pod"],
     deepen: ["Refine pacing and GI routine", "Export clean symptom notes", "Add function-day support"],
     sustain: ["Unlock relief burst support", "Preview surgery or IVF bridge only if needed", "Keep documentation ready"],
-    roadmap: { now: "Create your flare map and comfort ritual", next: "Adjust pacing, GI support, and routine", later: "Open confirmation or coverage support only if needed" },
+    roadmap: { now: "Flare & Function stabilization", next: "Endo Relief Burst Pack", later: "EndoShield + Surgery Track preview + IVF Bridge preview" },
     tabs: {
       Experience: ["Pelvic-floor PT", "Acupuncture", "Pain-aware Pilates / mobility", "Recovery movement", "Pelvic relaxation / breathwork or restorative yoga"],
       Coach: ["Touch 1: flare map + pacing plan", "Touch 2: function / GI / routine adjustment", "Pain psychology micro-support + Mood Check", "Pod choice: GI/Function Support, Pain Pacing, or Fatigue Support"],
@@ -124,7 +124,7 @@ const pathways: Record<PathwayKey, Pathway> = {
     foundation: ["Derm Glow / Camera-Ready focus", "Metabolic Drift Lite support", "Two coach touches", "Skin Sunday Pod", "One glow pass"],
     deepen: ["Tune hydration and meal timing", "Add event-week support", "Accrue a procedure token"],
     sustain: ["Unlock actives or Camera-Ready Sprint", "Open LED Mask preview", "Add coverage support when relevant"],
-    roadmap: { now: "Set glow routine, hydration, and meal timing", next: "Adjust for an event week or swap one layer", later: "Open procedure tokens or LED Mask support" },
+    roadmap: { now: "Camera-Ready + Drift Lite monthly stack", next: "Derma Actives Pack or Camera-Ready Sprint", later: "LED Mask + DermaShield+ + MetaboGlow expanded lanes" },
     tabs: {
       Experience: ["LED booth", "Aftercare workshop", "Pilates / Barre intro", "Skin routine demo", "RDN consult if metabolic signals show up"],
       Coach: ["Touch 1: glow routine + hydration + meal timing", "Touch 2: adherence + event-week or swap adjustment", "Body image / stress / adherence support when relevant", "Pods: Skin Sunday and Insight Night / Metabolic Drift Lite"],
@@ -150,7 +150,7 @@ const pathways: Record<PathwayKey, Pathway> = {
     foundation: ["Brain, Focus & Cognitive Resilience", "Executive Performance & Travel support", "Two coach touches", "Brain & Focus Pod", "One recovery pass"],
     deepen: ["Tune caffeine and meal timing", "Review fatigue patterns", "Prepare for travel or high-output weeks"],
     sustain: ["Unlock Brain Sprint", "Open Smart Ring preview", "Add lab or sleep support if useful"],
-    roadmap: { now: "Set workday, caffeine, and meal timing", next: "Review fatigue and recovery patterns", later: "Open Smart Ring, Brain Sprint, or lab support" },
+    roadmap: { now: "Brain + Focus monthly stack", next: "Brain Sprint or Nootropic Builder", later: "Smart Ring + Longevity Lab Rider + NeuroSleep Rider" },
     tabs: {
       Experience: ["Strength + VO2 prep", "RDN consult", "Breathwork reset", "Mobility", "Recovery / red-light where available"],
       Coach: ["Touch 1: focus / workday / caffeine / meal timing setup", "Touch 2: adherence + fatigue pattern review", "Mood Check + Micro-CBT if stress or sleep-linked", "Pods: Brain & Focus and Executive Performance & Travel"],
@@ -184,6 +184,19 @@ const kits = ["Sleep + cooling kit", "Comfort + recovery kit", "Glow + rhythm ki
 const pods = ["Calm nights pod", "Flare-days pod", "High-output pod"];
 const passes = ["Restorative studio pass", "Recovery session pass", "Glow appointment pass"];
 
+type PassportStamp = { title: string; means: string; complete: string; unlocks: string; mbc?: string };
+const passportStamps: PassportStamp[] = [
+  { title: "Plan selected", means: "Your first monthly pathway is confirmed.", complete: "Choose Keep this recommendation or finish the Month Builder.", unlocks: "Your guided first week opens." },
+  { title: "Kit built", means: "Your support items are selected for this month.", complete: "Pick your kit defaults and confirm shipping preferences.", unlocks: "Badge, no cash unless configured.", mbc: "complete kit build = badge, no cash unless configured" },
+  { title: "Pods selected", means: "Your guided group seats are reserved.", complete: "Choose and join your pod sessions.", unlocks: "+MBC indicator.", mbc: "attend pod = +MBC indicator" },
+  { title: "Experience pass booked", means: "Your monthly restorative or movement experience is scheduled.", complete: "Book one available pass this month.", unlocks: "+MBC indicator.", mbc: "book experience pass = +MBC indicator" },
+  { title: "First coaching touch done", means: "Your coach has helped set your first routine.", complete: "Complete your first coach check-in.", unlocks: "Adjustment support for week two." },
+  { title: "Labs scheduled or uploaded", means: "Your baseline information is ready for review.", complete: "Schedule labs or upload recent results.", unlocks: "+MBC indicator.", mbc: "complete baseline labs = +MBC indicator" },
+  { title: "Seven-day streak", means: "You kept a simple tracking rhythm for one week.", complete: "Check in daily for seven days.", unlocks: "+MBC indicator.", mbc: "seven-day tracking streak = +MBC indicator" },
+  { title: "Month 1 complete", means: "You completed the core steps that make your plan work.", complete: "Finish your selected care, kit, pods, pass, and check-ins.", unlocks: "Future unlock eligibility.", mbc: "month 1 complete = future unlock eligibility" },
+  { title: "Future unlock eligible", means: "Stretch can show the next useful option without overwhelming you.", complete: "Complete Month 1 and review your pattern with your coach.", unlocks: "Selected packs, devices, or upgrades." },
+];
+
 const detectPathway = (answers: string[], goal: string): PathwayKey => {
   const text = `${goal} ${answers.join(" ")}`.toLowerCase();
   if (/pelvic|flare|bloating|gi|cycle|painful/.test(text)) return "endo";
@@ -216,6 +229,7 @@ export default function StretchPrototype() {
   const [selectedPass, setSelectedPass] = useState(passes[0]);
   const [selectedJourney, setSelectedJourney] = useState<PathwayKey>("peri");
   const [journeyTab, setJourneyTab] = useState<JourneyTab>("Experience");
+  const [selectedStamp, setSelectedStamp] = useState<PassportStamp | null>(null);
 
   const pathwayKey = useMemo(() => detectPathway(answers, goal), [answers, goal]);
   const pathway = pathways[pathwayKey];
@@ -229,7 +243,7 @@ export default function StretchPrototype() {
     setAnswers(next);
     if (quizIndex === quiz.length - 1) {
       setSelectedJourney(detectPathway(next, goal));
-      setStep("built");
+      setStep("unlocks");
       setQuizIndex(0);
     } else setQuizIndex((current) => current + 1);
   };
@@ -273,12 +287,12 @@ export default function StretchPrototype() {
           {step === "goal" && <GoalScreen setGoal={setGoal} setStep={setStep} />}
           {step === "quiz" && <QuizScreen quizIndex={quizIndex} chooseAnswer={chooseAnswer} />}
           {step === "built" && <BuiltScreen pathway={pathway} resetQuiz={resetQuiz} onUnlocks={() => setStep("unlocks")} onOpenJourney={() => openJourney(pathwayKey)} />}
-          {step === "unlocks" && <UnlocksScreen onNext={() => setStep("confirm")} />}
+          {step === "unlocks" && <UnlocksScreen pathway={pathway} answers={answers} onBuild={() => setStep("builder")} onKeep={() => setStep("confirm")} onSwap={resetQuiz} />}
           {step === "confirm" && <ConfirmScreen pathway={pathway} resetQuiz={resetQuiz} onBuild={() => setStep("builder")} onOpenJourney={() => openJourney(pathwayKey)} />}
           {step === "builder" && <BuilderScreen selectedKit={selectedKit} selectedPod={selectedPod} selectedPass={selectedPass} setSelectedKit={setSelectedKit} setSelectedPod={setSelectedPod} setSelectedPass={setSelectedPass} onStart={() => setStep("week")} />}
           {step === "week" && <WeekScreen onHome={() => setStep("home")} />}
-          {step === "home" && <HomeScreen pathway={pathway} onCare={() => setStep("care")} onFuture={() => setStep("future")} onJourney={() => openJourney(pathwayKey)} />}
-          {step === "wallet" && <WalletScreen pathwayTitle={pathway.title} onFuture={() => setStep("future")} />}
+          {step === "home" && <HomeScreen pathway={pathway} answers={answers} onCare={() => setStep("care")} onFuture={() => setStep("future")} onJourney={() => openJourney(pathwayKey)} onStamp={setSelectedStamp} />}
+          {step === "wallet" && <WalletScreen pathwayTitle={pathway.title} onFuture={() => setStep("future")} onStamp={setSelectedStamp} />}
           {step === "future" && <FutureScreen />}
           {step === "pathways" && <PathwaysScreen onOpen={openJourney} />}
           {step === "journey" && <JourneyScreen pathway={pathways[selectedJourney]} activeTab={journeyTab} setActiveTab={setJourneyTab} onAdjacent={() => openJourney(pathways[selectedJourney].adjacent)} onCoach={() => setStep("care")} />}
@@ -292,6 +306,7 @@ export default function StretchPrototype() {
           <NavItem icon={<MessageCircle className="size-5" />} label="Care" active={step === "care"} onClick={() => setStep("care")} />
           <NavItem icon={<Wallet className="size-5" />} label="Wallet" active={step === "wallet"} onClick={() => setStep("wallet")} />
         </nav>
+        {selectedStamp && <StampDrawer stamp={selectedStamp} onClose={() => setSelectedStamp(null)} />}
       </div>
     </main>
   );
