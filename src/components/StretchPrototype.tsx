@@ -119,7 +119,7 @@ const pathways: Record<PathwayKey, Pathway> = {
     adjacent: "peri",
   },
   metabo: {
-    title: "Glow + Skin Rhythm",
+    title: "MetaboGlow Camera-Ready + Drift Lite",
     bestFor: "Glow, skin, hair, cravings, drift",
     firstUnlock: "Glow and rhythm starter",
     futureUnlock: "Drift Lite support",
@@ -145,7 +145,7 @@ const pathways: Record<PathwayKey, Pathway> = {
     adjacent: "longevity",
   },
   longevity: {
-    title: "Brain + Focus",
+    title: "Longevity Brain + Focus",
     bestFor: "Focus, travel load, high-output weeks",
     firstUnlock: "Focus week setup",
     futureUnlock: "Travel resilience support",
@@ -309,7 +309,7 @@ const planPlain: Record<string, { plain: string; discovery: string }> = {
   Care: { plain: "The right expert route, body support, and only the labs that matter.", discovery: "Clear next steps without shopping for care." },
   Coach: { plain: "A real person helps turn the month into simple weekly moves.", discovery: "Less guessing. More gentle follow-through." },
   Pods: { plain: "Small guided circles for the thing you are working on now.", discovery: "A rhythm, a checklist, and people moving with you." },
-  "Experience Pass": { plain: "One bookable reset: movement, breathwork, recovery, LED, or a workshop.", discovery: "A moment in the real world, not another task." },
+  Pass: { plain: "One bookable reset: movement, breathwork, recovery, LED, or a workshop.", discovery: "A moment in the real world, not another task." },
   Kit: { plain: "A small at-home set matched to sleep, comfort, skin, pantry, recovery, or focus.", discovery: "Something you can actually use between sessions." },
   Unlocks: { plain: "Packs, devices, deeper labs, and add-ons that may open later.", discovery: "Preview the path without being pushed into it today." },
 };
@@ -331,7 +331,7 @@ const buildPlanCards = (pathway: Pathway): MonthBlock[] => {
     card("Care", byName.Specialist.selection, "Included", [byName.Specialist.includes, byName["Functional Care"].includes, byName["Clinical / LED / Review"].includes, byName.Labs.includes].join(" • "), true),
     card("Coach", byName.Coaching.selection, "Included", [byName.Coaching.includes, byName["Mental Support"].includes, "coaching linked to your selected pod"].join(" • "), false),
     card("Pods", byName.Pods.selection, "Included", [byName.Pods.includes, "agenda + outputs included"].join(" • "), true),
-    card("Experience Pass", byName["Experience Pass"].selection, "Recommended", [byName["Experience Pass"].includes, "Tier-Low included • Tier-High may be inventory-gated"].join(" • "), true),
+    card("Pass", byName["Experience Pass"].selection, "Recommended", [byName["Experience Pass"].includes, "Tier-Low included • Tier-High may be inventory-gated"].join(" • "), true),
     card("Kit", byName.Kit.selection, "Recommended", [byName.Kit.includes, "one swap option • pack / top-up preview when relevant"].join(" • "), true),
     card("Unlocks", byName["Future Unlocks"].selection, "Locked preview", [byName.Packs.includes, byName["Future Unlocks"].includes, "MBC progress"].join(" • "), false),
   ];
@@ -351,7 +351,7 @@ const builderSummaries = (pathway: Pathway, planCards: MonthBlock[]): MonthCardS
     { title: "Care", recommendation: copy[key].Care, status: "Ready", cta: "Review care", block: byName.Care },
     { title: "Coach", recommendation: copy[key].Coach, status: "Included", cta: "View coaching plan", block: byName.Coach },
     { title: "Pods", recommendation: copy[key].Pods, status: "Needs input", cta: "View pods", block: byName.Pods },
-    { title: "Pass", recommendation: copy[key]["Experience Pass"], status: "Choose", cta: "Choose pass", block: byName["Experience Pass"] },
+    { title: "Pass", recommendation: copy[key]["Experience Pass"], status: "Choose", cta: "Choose pass", block: byName.Pass },
     { title: "Kit", recommendation: copy[key].Kit, status: "Build", cta: "Build kit", block: byName.Kit },
     { title: "Progress", recommendation: "0 of 5 actions complete", status: "Next", cta: "Continue", block: progressBlock },
     { title: "Unlocks", recommendation: copy[key].Unlocks, status: "Locked preview", cta: "See future unlocks", block: byName.Unlocks },
@@ -359,7 +359,7 @@ const builderSummaries = (pathway: Pathway, planCards: MonthBlock[]): MonthCardS
 };
 
 const demoTiles: DemoTile[] = ["Care", "Coach", "Labs", "Pods", "Experience", "Kit", "Unlocks"].flatMap((column) => [
-    { column, name: `${column} core`, what: `The main ${column.toLowerCase()} piece selected for this month.`, where: "Your Month Stack and pathway dashboards", pathways: "Peri Sleep + Energy, Endo Flare + Function, Glow + Skin Rhythm, Brain + Focus", status: column === "Unlocks" ? "Milestone unlock" : "Included" },
+    { column, name: `${column} core`, what: `The main ${column.toLowerCase()} piece selected for this month.`, where: "Your Month Stack and pathway dashboards", pathways: "Peri Sleep + Energy, Endo Flare + Function, MetaboGlow Camera-Ready + Drift Lite, Longevity Brain + Focus", status: column === "Unlocks" ? "Milestone unlock" : "Included" },
   { column, name: `${column} advanced`, what: `${column} advanced shows the operator logic: safe swaps, gated previews, inventory limits, or clinician review before a bigger step opens.`, where: "Demo mode and detail drawers", pathways: "Pathway-dependent", status: ["Labs", "Unlocks"].includes(column) ? "Clinician-gated" : "Swap available" },
 ]);
 
@@ -484,9 +484,9 @@ const controlledSwapOptions = (pathway: Pathway, reason: string): ControlledSwap
       { name: "Sticky perk", current: "Premium Workshop", includes: "A small perk that supports motivation, learning, or recovery access.", alternatives: ["Friend Pod Pass", "Masterclass", "Partner Demo", "Pop-Up Event", "Step / Stretch Challenge", "Tonic-Bar", "Broth / Nourish Circle", "Recovery Facility Prompt", "Premium Workshop"], change: "Your perk changes. Care, labs, pass, and pathway stay the same.", action: "Swap perk" },
     ],
   };
-  return [
-    ...details[key].map((swap) => ({ ...swap, why: swap.name === "Sticky perk" ? swap.includes : reason })),
-  ];
+  return details[key]
+    .filter((swap) => ["Care route", "Functional session", "Pods", "Experience pass"].includes(swap.name))
+    .map((swap) => ({ ...swap, why: reason }));
 };
 const catalogForBlock = (block: MonthBlock, pathway: Pathway): { rule: string; options: CatalogOption[]; agenda?: string } => {
   const key = pathwayKeyFromTitle(pathway);
@@ -509,7 +509,7 @@ const catalogForBlock = (block: MonthBlock, pathway: Pathway): { rule: string; o
     },
     Pods: pathwaySwapCatalog[key].Pods,
     Kit: pathwaySwapCatalog[key].Kit,
-    "Experience Pass": pathwaySwapCatalog[key]["Experience Pass"],
+    Pass: pathwaySwapCatalog[key]["Experience Pass"],
     Unlocks: {
       rule: "Unlocks are previews only. They open later through progress, coach review, clinical need, inventory, or rider eligibility.",
       options: [
@@ -589,7 +589,7 @@ export default function StretchPrototype() {
     setAnswers(next);
     if (quizIndex === quiz.length - 1) {
       setSelectedJourney(detectPathway(next, goal));
-      setStep("unlocks");
+      setStep("built");
       setQuizIndex(0);
     } else setQuizIndex((current) => current + 1);
   };
@@ -603,7 +603,7 @@ export default function StretchPrototype() {
     }}>
       <div className="pointer-events-none fixed inset-0 bg-spotlight" />
       <div className="relative mx-auto flex min-h-screen w-full max-w-md flex-col overflow-hidden bg-shell shadow-shell sm:my-6 sm:min-h-[860px] sm:rounded-[2rem]">
-        <button onClick={() => setShowBehindScenes(true)} className="absolute right-5 top-5 z-40 rounded-full bg-card/90 p-2 text-accent shadow-card backdrop-blur transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label="How Stretch works behind the scenes"><Info className="size-5" /></button>
+        <button onClick={() => setShowBehindScenes(true)} className="absolute right-5 top-5 z-40 inline-flex items-center gap-2 rounded-full bg-card/90 px-3 py-2 text-xs font-bold text-accent shadow-card backdrop-blur transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label="Open Investor / Demo Mode"><Info className="size-4" /> Demo</button>
         {step !== "landing" && step !== "home" && (
           <header className="sticky top-0 z-20 flex items-center justify-between border-b border-border/70 bg-shell/90 px-5 py-4 backdrop-blur-xl">
             <button className="rounded-full bg-secondary p-2 text-foreground transition-smooth hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" onClick={() => setStep("landing")} aria-label="Back to landing"><ChevronLeft className="size-5" /></button>
@@ -614,29 +614,29 @@ export default function StretchPrototype() {
 
         <div className="flex-1 overflow-y-auto pb-24">
           {step === "landing" && (
-            <section className="space-y-7 px-5 pb-8 pt-6">
+            <section className="space-y-6 px-5 pb-8 pt-6">
               <div className="relative overflow-hidden rounded-[2rem] bg-hero p-6 shadow-float">
                 <img src={heroImage} alt="Rose silk, olive leaves, and warm ceramics" width={1024} height={1024} className="absolute inset-0 h-full w-full object-cover opacity-55" />
                 <div className="absolute inset-0 bg-heroVeil" />
                 <div className="relative flex min-h-[520px] flex-col justify-between">
                   <div className="flex items-center justify-between"><p className="font-display text-3xl text-primary">Stretch</p><span className="rounded-full bg-card/80 px-3 py-1 text-xs font-semibold text-foreground shadow-card backdrop-blur">30 days</span></div>
                   <div className="space-y-5">
-                    <SectionTitle title="Care that follows you home." copy="Answer a few questions. Stretch builds your first month with the right care, coach, kit, pods, and experience pass." />
-                    <div className="grid gap-3"><Button variant="hero" size="xl" onClick={() => setStep("goal")}>Build my first month <ArrowRight className="size-4" /></Button><Button variant="soft" size="xl" onClick={() => setStep("pathways")}>Explore pathways</Button></div>
+                    <SectionTitle title="Care that follows you home." copy="Answer a few questions. Stretch builds your first month with the right care, coach, pods, kit, and experience pass." />
+                    <Button variant="hero" size="xl" className="w-full" onClick={() => setStep("goal")}>Answer a few questions <ArrowRight className="size-4" /></Button>
                   </div>
                 </div>
               </div>
-              <PathwayPreviewList onOpen={openJourney} compact />
-              <div className="grid grid-cols-2 gap-3">{lockedCards.map((item) => <div key={item} className="rounded-3xl border border-border bg-secondary p-4 text-muted-foreground shadow-card"><Lock className="mb-3 size-4" /><p className="font-medium">{item}</p><p className="mt-1 text-xs">Unlocks later</p></div>)}</div>
+              <div className="rounded-[2rem] bg-card p-5 shadow-card"><p className="mb-3 text-sm font-semibold text-accent">Unlocked pathways</p><div className="grid gap-2">{pathwayKeys.map((key) => <button key={key} onClick={() => openJourney(key)} className="flex items-center justify-between rounded-2xl bg-secondary px-4 py-3 text-left text-sm font-semibold transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><span>{pathways[key].title}</span><ArrowRight className="size-4 text-accent" /></button>)}</div></div>
+              <div className="rounded-[2rem] bg-secondary p-5 shadow-card"><p className="mb-3 text-sm font-semibold text-muted-foreground">Locked previews</p><div className="flex flex-wrap gap-2">{lockedCards.map((item) => <span key={item} className="inline-flex items-center gap-2 rounded-full bg-card px-3 py-2 text-xs font-semibold text-muted-foreground shadow-card"><Lock className="size-3" />{item}</span>)}</div></div>
             </section>
           )}
 
           {step === "goal" && <GoalScreen setGoal={setGoal} setStep={setStep} />}
           {step === "explainer" && <ExplainerScreen onContinue={() => setStep("quiz")} />}
           {step === "quiz" && <QuizScreen quizIndex={quizIndex} chooseAnswer={chooseAnswer} />}
-          {step === "built" && <BuiltScreen pathway={pathway} resetQuiz={resetQuiz} onUnlocks={() => setStep("unlocks")} onOpenJourney={() => openJourney(pathwayKey)} />}
+          {step === "built" && <BuiltScreen pathway={pathway} resetQuiz={resetQuiz} onUnlocks={() => setStep("unlocks")} onSwap={() => setStep("swap")} onCoach={() => setShowRebalance(true)} />}
           {step === "swap" && <SwapScreen pathway={pathway} reason={answers.slice(0, 3).join(", ") || goal || pathway.reason} onBack={() => setStep("builder")} onCoach={() => setShowRebalance(true)} />}
-          {step === "unlocks" && <UnlocksScreen pathway={pathway} answers={answers} onBuild={() => setStep("builder")} onKeep={() => setStep("confirm")} onSwap={resetQuiz} />}
+          {step === "unlocks" && <UnlocksScreen pathway={pathway} answers={answers} onBuild={() => setStep("builder")} onKeep={() => setStep("confirm")} onSwap={() => setStep("swap")} />}
           {step === "confirm" && <ConfirmScreen pathway={pathway} resetQuiz={resetQuiz} onBuild={() => setStep("builder")} onOpenJourney={() => openJourney(pathwayKey)} />}
           {step === "builder" && <BuilderScreen pathway={pathway} onStart={() => setStep("week")} onCoach={() => setShowRebalance(true)} onSwap={() => setStep("swap")} />}
           {step === "week" && <WeekScreen onHome={() => setStep("home")} />}
@@ -648,13 +648,13 @@ export default function StretchPrototype() {
           {step === "care" && <CareScreen />}
         </div>
 
-        <nav className="absolute bottom-0 left-0 right-0 z-30 grid grid-cols-5 border-t border-border/80 bg-shell/95 px-2 py-2 backdrop-blur-xl">
+        {(["home", "wallet", "future", "pathways", "journey", "care"] as Step[]).includes(step) && <nav className="absolute bottom-0 left-0 right-0 z-30 grid grid-cols-5 border-t border-border/80 bg-shell/95 px-2 py-2 backdrop-blur-xl">
           <NavItem icon={<Home className="size-5" />} label="Home" active={step === "home"} onClick={() => setStep("home")} />
           <NavItem icon={<Leaf className="size-5" />} label="Pathways" active={step === "pathways" || step === "journey"} onClick={() => setStep("pathways")} />
           <NavItem icon={<CalendarDays className="size-5" />} label="Plan" active={["explainer", "built", "unlocks", "confirm", "builder", "week"].includes(step)} onClick={() => setStep(answers.length ? "built" : "goal")} />
           <NavItem icon={<MessageCircle className="size-5" />} label="Care" active={step === "care"} onClick={() => setStep("care")} />
           <NavItem icon={<Wallet className="size-5" />} label="Wallet" active={step === "wallet"} onClick={() => setStep("wallet")} />
-        </nav>
+        </nav>}
         {selectedStamp && <StampDrawer stamp={selectedStamp} onClose={() => setSelectedStamp(null)} />}
         {showRebalance && <RebalanceModal onClose={() => setShowRebalance(false)} />}
         {showBehindScenes && <BehindScenesPanel onClose={() => setShowBehindScenes(false)} />}
@@ -664,7 +664,7 @@ export default function StretchPrototype() {
 }
 
 function GoalScreen({ setGoal, setStep }: { setGoal: (goal: string) => void; setStep: (step: Step) => void }) {
-  return <section className="space-y-6 px-5 py-7"><SectionTitle title="What do you want to feel better in 30 days?" copy="Choose the answer that feels closest. Your first month can still be adjusted." /><div className="grid gap-3">{goals.map((item) => <SoftCard key={item} onClick={() => { setGoal(item); setStep("explainer"); }} className="p-4"><span className="flex items-center justify-between gap-3 font-medium"><span>{item}</span><ArrowRight className="size-4 text-accent" /></span></SoftCard>)}</div></section>;
+  return <section className="space-y-6 px-5 py-7"><SectionTitle title="What do you want to feel better in 30 days?" copy="Choose the answer that feels closest. Your first month can still be adjusted." /><div className="grid gap-3">{goals.map((item) => <SoftCard key={item} onClick={() => { setGoal(item); setStep("quiz"); }} className="p-4"><span className="flex items-center justify-between gap-3 font-medium"><span>{item}</span><ArrowRight className="size-4 text-accent" /></span></SoftCard>)}</div></section>;
 }
 
 function ExplainerScreen({ onContinue }: { onContinue: () => void }) {
@@ -673,7 +673,7 @@ function ExplainerScreen({ onContinue }: { onContinue: () => void }) {
   const [demoTile, setDemoTile] = useState<DemoTile | null>(null);
   const stack = ["Care", "Coach", "Pods", "Pass", "Kit", "Unlocks"];
   const stamps = ["Plan", "MBC", "Device", "Rider", "Next"];
-  return <section className="space-y-6 px-5 py-7"><div className="rounded-[2rem] bg-hero p-6 shadow-float animate-enter"><div className="mb-4 flex items-start justify-between gap-3"><div><p className="text-sm font-semibold text-accent">Before your quiz</p><h1 className="mt-1 font-display text-4xl leading-tight">Stretch builds your month.</h1></div><button onClick={() => setShowTooltip((value) => !value)} className="rounded-full bg-card p-3 text-accent shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label="Behind the scenes"><Info className="size-5" /></button></div><p className="text-base leading-7 text-muted-foreground">You never start from a blank plan. Stretch turns your answers into a guided monthly care stack you can keep, swap, or review with your coach.</p>{showTooltip && <div className="mt-4 rounded-3xl bg-card p-4 text-sm leading-6 text-muted-foreground shadow-card animate-scale-in">Behind the scenes, Stretch works like a care operating system — it connects the right expert, coach, labs, kit, pod, experience, and future unlocks into one monthly journey.</div>}<button onClick={() => setShowBlocks(true)} className="mt-4 inline-flex items-center gap-2 rounded-full bg-card px-4 py-3 text-sm font-bold text-accent shadow-card"><Sparkles className="size-4" /> View all building blocks</button></div><div className="grid gap-4"><VisualStep number="1" title="Tell us what should feel better" copy="Pick the 30-day outcome that matters most right now."><div className="flex items-center gap-2 overflow-hidden"><div className="grid flex-1 gap-2">{["Sleep", "Energy", "Mood"].map((item) => <span key={item} className="rounded-2xl bg-card px-3 py-2 text-xs font-bold text-accent shadow-card">{item}</span>)}</div><ArrowRight className="size-5 shrink-0 text-accent" /><div className="grid size-20 place-items-center rounded-[1.5rem] bg-primary text-primary-foreground shadow-card"><Sparkles className="size-7" /><span className="text-[10px] font-bold">Stretch</span></div></div></VisualStep><VisualStep number="2" title="Your care stack assembles" copy="Care, coach, pods, pass, kit, and unlocks come together as one roadmap."><div className="relative h-36">{stack.map((item, index) => <div key={item} className="absolute left-1/2 w-[76%] -translate-x-1/2 rounded-2xl border border-border bg-card px-4 py-2 text-sm font-bold shadow-card animate-fade-in" style={{ top: `${index * 18}px`, zIndex: stack.length - index }}>{item}</div>)}</div></VisualStep><VisualStep number="3" title="Use it, earn credits, unlock next steps" copy="Progress stamps show what is active now and what may open later."><div className="grid grid-cols-5 gap-2">{stamps.map((item, index) => <div key={item} className={cn("rounded-2xl p-2 text-center shadow-card", index < 2 ? "bg-primary text-primary-foreground" : "bg-secondary text-accent")}><Star className="mx-auto mb-1 size-4" /><span className="text-[10px] font-bold">{item}</span></div>)}</div></VisualStep></div><div className="grid grid-cols-3 gap-3"><CompareCard title="Static monthly program" copy="One fixed bundle. Little flexibility." muted /><CompareCard title="Open marketplace" copy="Too many disconnected options." muted /><CompareCard title="Stretch" copy="A guided monthly care stack. Built for you. Safe swaps. Future unlocks." highlight /></div><Button variant="hero" size="xl" className="w-full" onClick={onContinue}>Start my quiz <ArrowRight className="size-4" /></Button>{showBlocks && <BlocksDemoDrawer onClose={() => setShowBlocks(false)} onTile={setDemoTile} />}{demoTile && <DemoTileDrawer tile={demoTile} onClose={() => setDemoTile(null)} />}</section>;
+  return <section className="space-y-6 px-5 py-7"><div className="rounded-[2rem] bg-hero p-6 shadow-float animate-enter"><div className="mb-4 flex items-start justify-between gap-3"><div><p className="text-sm font-semibold text-accent">Investor / Demo Mode</p><h1 className="mt-1 font-display text-4xl leading-tight">Stretch builds your month.</h1></div><button onClick={() => setShowTooltip((value) => !value)} className="rounded-full bg-card p-3 text-accent shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label="Behind the scenes"><Info className="size-5" /></button></div><p className="text-base leading-7 text-muted-foreground">This optional section shows the platform logic that is hidden from the normal member flow.</p>{showTooltip && <div className="mt-4 rounded-3xl bg-card p-4 text-sm leading-6 text-muted-foreground shadow-card animate-scale-in">Behind the scenes, Stretch works like a care operating system.</div>}<button onClick={() => setShowBlocks(true)} className="mt-4 inline-flex items-center gap-2 rounded-full bg-card px-4 py-3 text-sm font-bold text-accent shadow-card"><Sparkles className="size-4" /> View all building blocks</button></div><div className="grid gap-4"><VisualStep number="1" title="Member answers a few questions" copy="The normal flow starts with a 30-day goal and six guided questions."><div className="flex items-center gap-2 overflow-hidden"><div className="grid flex-1 gap-2">{["Sleep", "Energy", "Mood"].map((item) => <span key={item} className="rounded-2xl bg-card px-3 py-2 text-xs font-bold text-accent shadow-card">{item}</span>)}</div><ArrowRight className="size-5 shrink-0 text-accent" /><div className="grid size-20 place-items-center rounded-[1.5rem] bg-primary text-primary-foreground shadow-card"><Sparkles className="size-7" /><span className="text-[10px] font-bold">Stretch</span></div></div></VisualStep><VisualStep number="2" title="Stretch builds the month" copy="Care, Coach, Pods, Pass, Kit, Progress, and Unlocks appear as a guided plan."><div className="relative h-36">{stack.map((item, index) => <div key={item} className="absolute left-1/2 w-[76%] -translate-x-1/2 rounded-2xl border border-border bg-card px-4 py-2 text-sm font-bold shadow-card animate-fade-in" style={{ top: `${index * 18}px`, zIndex: stack.length - index }}>{item}</div>)}</div></VisualStep><VisualStep number="3" title="Member keeps, swaps, or asks coach" copy="The member can keep the recommendation, swap one thing, or ask their coach to rebalance."><div className="grid grid-cols-5 gap-2">{stamps.map((item, index) => <div key={item} className={cn("rounded-2xl p-2 text-center shadow-card", index < 2 ? "bg-primary text-primary-foreground" : "bg-secondary text-accent")}><Star className="mx-auto mb-1 size-4" /><span className="text-[10px] font-bold">{item}</span></div>)}</div></VisualStep></div><div className="grid grid-cols-3 gap-3"><CompareCard title="Static Bundle" copy="One fixed program. Little flexibility." muted /><CompareCard title="Open Marketplace" copy="Too many choices. User navigates alone." muted /><CompareCard title="Stretch" copy="Guided monthly stack. Safe swaps. Future unlocks." highlight /></div><Button variant="hero" size="xl" className="w-full" onClick={onContinue}>Start member quiz <ArrowRight className="size-4" /></Button>{showBlocks && <BlocksDemoDrawer onClose={() => setShowBlocks(false)} onTile={setDemoTile} />}{demoTile && <DemoTileDrawer tile={demoTile} onClose={() => setDemoTile(null)} />}</section>;
 }
 
 function VisualStep({ number, title, copy, children }: { number: string; title: string; copy: string; children: React.ReactNode }) {
@@ -688,8 +688,8 @@ function QuizScreen({ quizIndex, chooseAnswer }: { quizIndex: number; chooseAnsw
   return <section className="space-y-6 px-5 py-7"><div className="space-y-3"><p className="text-sm font-semibold text-accent">Question {quizIndex + 1} of 6</p><div className="h-2 overflow-hidden rounded-full bg-secondary"><div className="h-full rounded-full bg-primary transition-smooth" style={{ width: `${((quizIndex + 1) / 6) * 100}%` }} /></div></div><SectionTitle title={quiz[quizIndex].question} /><div className="grid gap-3">{quiz[quizIndex].options.map((option) => <SoftCard key={option} onClick={() => chooseAnswer(option)} className="p-4 capitalize"><span className="flex items-center justify-between gap-3"><span>{option}</span><ArrowRight className="size-4 text-accent" /></span></SoftCard>)}</div></section>;
 }
 
-function BuiltScreen({ pathway, resetQuiz, onUnlocks, onOpenJourney }: { pathway: Pathway; resetQuiz: () => void; onUnlocks: () => void; onOpenJourney: () => void }) {
-  return <section className="space-y-6 px-5 py-7"><div className="rounded-[2rem] bg-primary p-6 text-primary-foreground shadow-float"><Sparkles className="mb-5 size-8" /><SectionTitle title="Stretch built your first month." copy="We built your month. Keep it, swap one thing, or ask your coach." /></div><SoftCard onClick={onOpenJourney} className="space-y-4"><p className="text-sm font-semibold text-accent">Recommended pathway</p><h2 className="font-display text-3xl">{pathway.title}</h2><p className="leading-7 text-muted-foreground">{pathway.reason}</p></SoftCard><div className="rounded-3xl bg-secondary p-5 shadow-card"><p className="mb-3 font-semibold">Your first month includes</p><div className="grid gap-3">{pathway.foundation.slice(0, 5).map((item) => <span key={item} className="flex items-center gap-3 text-sm"><Check className="size-4 text-accent" />{item}</span>)}</div></div><div className="grid gap-3"><Button variant="hero" size="xl" onClick={onUnlocks}>Show my unlocks</Button><Button variant="soft" size="xl" onClick={resetQuiz}>Change answers</Button></div></section>;
+function BuiltScreen({ pathway, resetQuiz, onUnlocks, onSwap, onCoach }: { pathway: Pathway; resetQuiz: () => void; onUnlocks: () => void; onSwap: () => void; onCoach: () => void }) {
+  return <section className="space-y-6 px-5 py-7"><div className="rounded-[2rem] bg-primary p-6 text-primary-foreground shadow-float"><Sparkles className="mb-5 size-8" /><SectionTitle title="Stretch built your month." copy="Keep it, swap one thing, or ask your coach." /></div><div className="rounded-[2rem] bg-card p-5 shadow-card"><p className="text-sm font-semibold text-accent">Recommended pathway</p><h2 className="mt-1 font-display text-3xl leading-tight">{pathway.title}</h2><p className="mt-3 leading-7 text-muted-foreground">{pathway.reason}</p></div><div className="grid grid-cols-2 gap-3">{["Care", "Coach", "Pods", "Pass", "Kit", "Unlocks"].map((item) => <div key={item} className="rounded-3xl bg-secondary p-4 shadow-card"><Check className="mb-2 size-4 text-accent" /><p className="font-semibold">{item}</p></div>)}</div><div className="grid gap-3"><Button variant="hero" size="xl" onClick={onUnlocks}>Show my unlocks</Button><div className="grid grid-cols-2 gap-2"><Button variant="soft" size="lg" onClick={onSwap}>Swap one thing</Button><Button variant="soft" size="lg" onClick={onCoach}>Ask coach</Button></div><Button variant="soft" size="lg" onClick={resetQuiz}>Change answers</Button></div></section>;
 }
 
 function UnlocksScreen({ pathway, answers, onBuild, onKeep, onSwap }: { pathway: Pathway; answers: string[]; onBuild: () => void; onKeep: () => void; onSwap: () => void }) {
@@ -719,13 +719,13 @@ function BuilderScreen({ pathway, onStart, onCoach, onSwap }: { pathway: Pathway
   const planCards = buildPlanCards(pathway);
   const summaries = builderSummaries(pathway, planCards);
   const journey = [
-    { label: "Pathway", state: "completed", block: planCards[0] },
-    { label: "Stack", state: "selected", block: planCards[0] },
+    { label: "Care", state: "selected", block: planCards[0] },
+    { label: "Coach", state: "included", block: planCards[1] },
     { label: "Pods", state: "needs input", block: planCards[2] },
     { label: "Pass", state: "needs input", block: planCards[3] },
     { label: "Kit", state: "future", block: planCards[4] },
     { label: "Progress", state: "future", block: planCards[5] },
-    { label: "Unlocks", state: "locked", block: planCards[5] },
+    { label: "Unlocks", state: "locked", block: planCards[6] },
   ];
   return <section className="space-y-5 px-5 pb-32 pt-6"><div className="rounded-[2rem] bg-hero p-5 shadow-float"><div className="flex items-start justify-between gap-4"><div className="min-w-0"><p className="text-sm font-semibold text-accent">Your Stretch Month</p><h1 className="mt-1 font-display text-4xl leading-tight">{pathway.title}</h1><p className="mt-1 text-sm font-semibold text-foreground/80">Month 1: Foundation</p><p className="mt-3 text-base leading-6 text-muted-foreground">{pathway.monthlyPromise}</p></div><ProgressRing value={20} /></div><div className="mt-5 grid gap-2"><Button variant="hero" size="lg" onClick={onStart}>Keep recommended</Button><div className="grid grid-cols-2 gap-2"><Button variant="soft" size="lg" onClick={onSwap}><RefreshCw className="size-4" /> Swap one block</Button><Button variant="soft" size="lg" onClick={onCoach}><MessageCircle className="size-4" /> Ask coach</Button></div></div></div><div className="grid gap-3">{summaries.slice(0, 5).map((card) => <BuilderSummaryCard key={card.title} card={card} onOpen={() => setDrawerBlock(card.block)} />)}</div><div className="grid grid-cols-2 gap-3">{summaries.slice(5).map((card) => <BuilderSummaryCard key={card.title} card={card} compact onOpen={() => setDrawerBlock(card.block)} />)}</div>{drawerBlock && <BlockDrawer block={drawerBlock} pathway={pathway} onClose={() => setDrawerBlock(null)} onCoach={onCoach} />}{demoTile && <DemoTileDrawer tile={demoTile} onClose={() => setDemoTile(null)} />}<JourneyBar items={journey} onOpen={setDrawerBlock} /></section>;
 }
@@ -804,7 +804,7 @@ function BlocksDemoDrawer({ onClose, onTile }: { onClose: () => void; onTile: (t
     { column: "Kit", items: ["supplements", "nutrition", "powders", "visible vitality", "sticky perks", "boxes"] },
     { column: "Unlocks", items: ["packs", "devices", "riders", "MBC"] },
   ];
-  const tileFor = (column: string, name: string): DemoTile => ({ column, name, what: `${name} is one modular building block Stretch can include, gate, swap, or unlock depending on the member’s month.`, where: "Demo-only building-block board, operator view, and detail drawers.", pathways: column === "Unlocks" || column === "Labs" ? "Pathway-dependent and often gated by progress or clinical review." : "Peri Sleep + Energy, Endo Flare + Function, Glow + Skin Rhythm, and Brain + Focus when relevant.", status: column === "Labs" ? "Clinician-gated" : column === "Unlocks" ? "Pack-only / rider-only / locked" : ["Specialist", "Clinical / LED / Review"].includes(name) ? "Included / clinician-gated" : name.includes("Tier-High") ? "Inventory-gated" : "Included / swappable", connects: `Connects to the monthly plan through the ${column} card, so members see a simple recommendation while operators can see the underlying rules.` });
+  const tileFor = (column: string, name: string): DemoTile => ({ column, name, what: `${name} is one modular building block Stretch can include, gate, swap, or unlock depending on the member’s month.`, where: "Demo-only building-block board, operator view, and detail drawers.", pathways: column === "Unlocks" || column === "Labs" ? "Pathway-dependent and often gated by progress or clinical review." : "Peri Sleep + Energy, Endo Flare + Function, MetaboGlow Camera-Ready + Drift Lite, and Longevity Brain + Focus when relevant.", status: column === "Labs" ? "Clinician-gated" : column === "Unlocks" ? "Pack-only / rider-only / locked" : ["Specialist", "Clinical / LED / Review"].includes(name) ? "Included / clinician-gated" : name.includes("Tier-High") ? "Inventory-gated" : "Included / swappable", connects: `Connects to the monthly plan through the ${column} card, so members see a simple recommendation while operators can see the underlying rules.` });
   return <div className="absolute inset-0 z-50 flex items-center bg-primary/20 p-4 pb-24 backdrop-blur-sm"><div className="max-h-[84vh] w-full overflow-y-auto rounded-[2rem] bg-shell p-4 shadow-float"><div className="mb-4 flex items-center justify-between gap-3"><div><p className="text-sm font-semibold text-accent">Demo-only</p><h2 className="font-display text-3xl">View all building blocks</h2><p className="mt-1 text-sm text-muted-foreground">The platform map behind the member’s simple monthly stack.</p></div><button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent">Close</button></div><div className="mb-4 grid grid-cols-3 gap-2"><CompareCard title="Static Bundle" copy="one fixed program, little flexibility." muted /><CompareCard title="Open Marketplace" copy="too many choices, user has to navigate alone." muted /><CompareCard title="Stretch" copy="guided monthly stack, safe swaps, future unlocks." highlight /></div><div className="flex gap-3 overflow-x-auto pb-2">{board.map((col) => <div key={col.column} className="min-w-[210px] rounded-[2rem] bg-card p-4 shadow-card"><div className="mb-3 flex items-center justify-between"><p className="font-display text-2xl">{col.column}</p><span className="rounded-full bg-secondary px-3 py-1 text-xs font-bold text-accent">{col.items.length}</span></div><div className="grid gap-2">{col.items.map((item) => <button key={item} onClick={() => onTile(tileFor(col.column, item))} className="rounded-2xl bg-secondary px-3 py-3 text-left shadow-card transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><p className="text-sm font-bold">{item}</p><p className="mt-1 text-[11px] text-muted-foreground">Open rules</p></button>)}</div></div>)}</div></div></div>;
 }
 
