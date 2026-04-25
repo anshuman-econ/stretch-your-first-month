@@ -24,7 +24,6 @@ import { cn } from "@/lib/utils";
 type Step =
   | "landing"
   | "goal"
-  | "explainer"
   | "quiz"
   | "built"
   | "swap"
