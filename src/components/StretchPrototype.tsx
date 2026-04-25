@@ -302,8 +302,8 @@ const buildMonthStack = (pathway: Pathway): MonthBlock[] => {
 };
 
 const demoTiles: DemoTile[] = ["Care", "Coach", "Labs", "Pods", "Experience", "Kit", "Unlocks"].flatMap((column) => [
-  { column, name: `${column} core`, what: `Exact catalog lives in the guided drawer for ${column.toLowerCase()}.`, where: "Month Stack and pathway dashboards", pathways: "Peri, Endo, MetaboGlow, Longevity", status: column === "Unlocks" ? "milestone unlock" : "Included" },
-  { column, name: `${column} advanced`, what: `Includes bounded swaps, gated previews, or pack/rider states for ${column.toLowerCase()}.`, where: "Demo mode and selected drawers", pathways: "Pathway-dependent", status: ["Labs", "Unlocks"].includes(column) ? "Clinician-gated" : "Swap available" },
+  { column, name: `${column} core`, what: `${column} core is the simple member-facing version: the recommended ${column.toLowerCase()} piece is already chosen and explained in plain language.`, where: "Your Month Stack and pathway dashboards", pathways: "Peri Sleep + Energy, Endo Flare + Function, MetaboGlow, Longevity Brain + Focus", status: column === "Unlocks" ? "Milestone unlock" : "Included" },
+  { column, name: `${column} advanced`, what: `${column} advanced shows the operator logic: safe swaps, gated previews, inventory limits, or clinician review before a bigger step opens.`, where: "Demo mode and detail drawers", pathways: "Pathway-dependent", status: ["Labs", "Unlocks"].includes(column) ? "Clinician-gated" : "Swap available" },
 ]);
 
 
