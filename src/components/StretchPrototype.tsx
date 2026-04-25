@@ -12,6 +12,7 @@ import {
   MessageCircle,
   Moon,
   Package,
+  RefreshCw,
   Sparkles,
   Star,
   Ticket,
@@ -186,8 +187,8 @@ const pods = ["Calm nights pod", "Flare-days pod", "High-output pod"];
 const passes = ["Restorative studio pass", "Recovery session pass", "Glow appointment pass"];
 
 type PassportStamp = { title: string; means: string; complete: string; unlocks: string; mbc?: string };
-type StackStatus = "Included" | "pick 1" | "pick 2" | "Locked preview" | "Pack-only" | "Rider-only";
-type MonthBlock = { name: string; selection: string; why: string; status: StackStatus; includes: string; alternatives?: string[]; change?: string; swappable?: boolean };
+type StackStatus = "Included" | "Recommended" | "Swap available" | "Locked preview" | "Pack-only" | "Rider-only";
+type MonthBlock = { name: string; selection: string; why: string; status: StackStatus; includes: string; plain: string; discovery: string; alternatives?: string[]; change?: string; swappable?: boolean };
 type DemoTile = { column: string; name: string; what: string; where: string; pathways: string; status: string };
 type CatalogOption = { name: string; state?: string };
 const rebalanceOptions = ["more sleep support", "more energy support", "more glow / visible vitality", "more mood support", "more movement support", "less intensity this month"];
@@ -258,6 +259,19 @@ const blockWhy: Record<string, string> = {
   Kit: "The kit supports the plan at home, with one safe item swap by default.",
   Packs: "Packs are previews or pack-only options, not day-one marketplace choices.",
   "Future Unlocks": "Devices and riders appear later as Locked, Preview, Eligible, or Active.",
+};
+const blockPlain: Record<string, { plain: string; discovery: string }> = {
+  Specialist: { plain: "Specialist access means the right human expert reviews your pattern and decides what is safe to do next.", discovery: "This is your clinical guardrail, not another appointment to figure out alone." },
+  "Functional Care": { plain: "Functional care is the hands-on session, workshop, or recovery visit that helps your body feel better this month.", discovery: "It turns the plan into something you can feel in week one." },
+  Coaching: { plain: "Coaching turns your plan into a simple weekly routine, with help adjusting sleep, food, stress, movement, or symptoms.", discovery: "Your coach keeps the month light, realistic, and personal." },
+  "Mental Support": { plain: "Mental support gives you small tools for mood, pain, stress, or follow-through without making this feel like therapy homework.", discovery: "It protects your energy so the plan is easier to complete." },
+  "Clinical / LED / Review": { plain: "This is a focused review or in-clinic support moment when your plan needs an expert check or visible recovery boost.", discovery: "It helps Stretch decide whether to stay simple or open a deeper route." },
+  Labs: { plain: "Labs are guided checks that help explain fatigue, inflammation, hormones, metabolism, or recovery when they matter.", discovery: "They appear when useful, not as a random shopping list." },
+  Pods: { plain: "Pods are small guided sessions with people working on the same kind of month, led around a specific goal.", discovery: "Each pod gives you a checklist, a rhythm, and a reason to keep going." },
+  "Experience Pass": { plain: "Your pass is one bookable experience, such as recovery, movement, breathwork, LED, or a workshop.", discovery: "It makes the month feel like care, not admin." },
+  Kit: { plain: "Your kit is the at-home support that matches your plan, such as sleep, comfort, skin, pantry, or focus items.", discovery: "It gives you something tangible to use between coach and pod moments." },
+  Packs: { plain: "Packs are optional next-step bundles that may unlock after progress, coach review, or a specific need.", discovery: "They stay out of the way until they are the strongest next move." },
+  "Future Unlocks": { plain: "Future unlocks are locked previews like devices, riders, advanced labs, or bigger care routes.", discovery: "You can see what may open later without being pushed into it today." },
 };
 const buildMonthStack = (pathway: Pathway): MonthBlock[] => {
   const key = pathwayKeyFromTitle(pathway);
