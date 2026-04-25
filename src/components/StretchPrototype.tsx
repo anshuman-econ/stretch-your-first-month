@@ -641,7 +641,7 @@ export default function StretchPrototype() {
           )}
 
           {step === "goal" && <GoalScreen setGoal={setGoal} setStep={setStep} />}
-          {step === "explainer" && <ExplainerScreen onContinue={() => setStep("quiz")} onExample={() => { setSelectedJourney("peri"); setStep("builder"); }} />}
+          {step === "explainer" && <ExplainerScreen onContinue={() => setStep("quiz")} onExample={() => { setGoal("Sleep through the night"); setAnswers([]); setSelectedJourney("peri"); setStep("builder"); }} />}
           {step === "quiz" && <QuizScreen quizIndex={quizIndex} chooseAnswer={chooseAnswer} onExplain={() => setStep("explainer")} />}
           {step === "built" && <BuiltScreen pathway={pathway} resetQuiz={resetQuiz} onUnlocks={() => setStep("unlocks")} onSwap={() => setStep("swap")} onCoach={() => setShowRebalance(true)} />}
           {step === "swap" && <SwapScreen pathway={pathway} reason={answers.slice(0, 3).join(", ") || goal || pathway.reason} onBack={() => setStep("builder")} onCoach={() => setShowRebalance(true)} />}
