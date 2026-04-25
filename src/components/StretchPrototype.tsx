@@ -424,6 +424,31 @@ const pathwaySwapCatalog: Record<PathwayKey, Record<string, { rule: string; opti
     Kit: { rule: "Pick one focus or vitality lane. Advanced testing and devices stay locked until they make sense.", options: opt(["Daily foundation", "Pantry support", "Powder support", "Focus support", "Pulse stack", "Visible vitality", "Sticky perk", "Advanced tests + devices"], ["Swap available", "Swap available", "Swap available", "Swap available", "Swap available", "Recommended", "Swap available", "Locked preview"]) },
   },
 };
+
+const controlledSwapOptions = (pathway: Pathway, reason: string): ControlledSwap[] => {
+  const key = pathwayKeyFromTitle(pathway);
+  const d = pathwayDefaults[key];
+  const podChoices: Record<PathwayKey, string[]> = {
+    peri: ["Mood / Fog Pod", "Metabolic Drift Pod", "Skin / Hair Pod"],
+    endo: ["GI / Function Support Pod", "Pain Pacing Pod", "Fatigue Support Pod"],
+    metabo: ["Insight Night Pod", "Hair Lab Pod", "Cravings & Calm Pod"],
+    longevity: ["Executive Performance Pod", "Healthspan Lab Pod", "Sleep & Recovery Pod"],
+  };
+  const passChoices: Record<PathwayKey, string[]> = {
+    peri: ["Breathwork Reset", "Restorative Mobility", "Clinic Red-Light if available"],
+    endo: ["Restorative Yoga", "Pain-Aware Movement", "Gentle Pilates Flow"],
+    metabo: ["Skin Routine Demo", "Pilates / Barre Intro", "LED Booth if available"],
+    longevity: ["Mobility Micro-Class", "Movement-Compliance Session", "Red-Light if available"],
+  };
+  return [
+    { name: "Care route", current: d.Specialist, why: reason, includes: "Specialist routing, safe review, and clear next steps.", alternatives: ["Internal medicine review", "Derm review if relevant", "Coach asks clinician first"], change: "Your expert route changes. Labs, riders, prescriptions, and pathway identity stay protected.", action: "Swap care route" },
+    { name: "Functional session", current: d["Functional Care"], why: reason, includes: "One hands-on or guided body-support session for this month.", alternatives: ["Breathwork reset", "Restorative mobility", "Acupuncture or recovery support"], change: "Your session changes, but your core care plan and coach rhythm stay the same.", action: "Swap session" },
+    { name: "Pods", current: d.Pods, why: reason, includes: "Selected pods, agenda, weekly prompts, and outputs.", alternatives: podChoices[key], change: "Your coaching plan and kit recommendations will adjust.", action: "Swap pod" },
+    { name: "Experience pass", current: d["Experience Pass"], why: reason, includes: "One bookable pass. Tier-Low is included; Tier-High may depend on availability.", alternatives: passChoices[key], change: "Your pass booking changes, but your care plan remains the same.", action: "Swap pass" },
+    { name: "Kit item", current: d.Kit, why: reason, includes: "At-home support matched to your month, with one safe item swap.", alternatives: ["Electrolytes", "Collagen mini", "HA-ceramide support"], change: "Your kit changes, but your coach plan remains the same.", action: "Swap kit item" },
+    { name: "Sticky perk", current: "Friend Pod Pass or Masterclass Access", why: "A small motivational perk can make the month easier to complete.", includes: "One light-touch perk that supports follow-through.", alternatives: stickyPerks.slice(0, 3), change: "Your perk changes. Care, labs, pass, and pathway stay the same.", action: "Swap perk" },
+  ];
+};
 const catalogForBlock = (block: MonthBlock, pathway: Pathway): { rule: string; options: CatalogOption[]; agenda?: string } => {
   const key = pathwayKeyFromTitle(pathway);
   const planCatalog: Record<string, { rule: string; options: CatalogOption[]; agenda?: string }> = {
