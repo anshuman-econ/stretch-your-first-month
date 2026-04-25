@@ -67,17 +67,17 @@ const pathways: Record<PathwayKey, Pathway> = {
     title: "Peri Sleep + Energy",
     bestFor: "Rest, temperature shifts, steady days",
     firstUnlock: "Sleep reset with your coach",
-    futureUnlock: "Focus and strength Included",
+    futureUnlock: "Focus and strength support",
     reason: "Your answers point to rest, temperature, energy, or focus getting in the way of daily life.",
     monthlyPromise: "Better sleep, steadier energy, calmer mood, clearer next steps.",
     foundation: ["Women’s health routing", "Choose one calming experience", "Two coach touches", "Mood Check + Micro-CBT", "Peri Reset Pod"],
-    deepen: ["Adjust your symptom routine", "Review sleep, mood, energy", "Add one targeted Included if useful"],
-    sustain: ["Unlock next-step prevention", "Consider a future device", "Open adjacent glow or focus Included"],
+    deepen: ["Adjust your symptom routine", "Review sleep, mood, energy", "Add one targeted support if useful"],
+    sustain: ["Unlock next-step prevention", "Consider a future device", "Open adjacent glow or focus support"],
     roadmap: { now: "this month’s Sleep + Energy care stack", next: "Sleep Reset Pack or Mood / Fog Pack", later: "Smart Ring + PeriShield Rx + Skin/Hair crossover" },
     tabs: {
       Experience: ["Cooling / sleep reset workshop", "Mobility or Pilates / Barre", "Acupuncture or recovery coaching", "30-minute LED for face, body, or hair-scalp"],
       Coach: ["Touch 1: symptom routine setup", "Touch 2: adherence + adjustment", "Mood Check + Micro-CBT", "Pod choice: Sleep Reset, Mood/Fog, Metabolic Drift, Skin/Hair, or Bone/Joint"],
-      Kit: ["Magnesium", "Omega-3", "D3+K2", "Sleep kit", "Collagen", "Electrolyte", "HA-ceramide", "Pantry Included"],
+      Kit: ["Magnesium", "Omega-3", "D3+K2", "Sleep kit", "Collagen", "Electrolyte", "HA-ceramide", "Pantry support"],
       "Clinician Loop": ["Women’s health / OB-GYN / IM / Endo routing", "Recovery, body-composition, or visible-aging review", "CBC, ferritin, TSH / FT4, HbA1c, Vitamin D, lipids"],
     },
     vitality: "HA-ceramide, collagen, and skin-hair support preview.",
@@ -93,22 +93,22 @@ const pathways: Record<PathwayKey, Pathway> = {
     title: "Endo Flare + Function",
     bestFor: "Pelvic pain, flare days, bloating",
     firstUnlock: "Flare-day comfort plan",
-    futureUnlock: "Workday function Included",
+    futureUnlock: "Workday function support",
     reason: "Your answers suggest flare days or discomfort are limiting what you can do.",
     monthlyPromise: "Map the flare. Stabilize the body. Build documentation. Escalate only when needed.",
     foundation: ["Endo-aware gyne routing", "Choose one pain-aware experience", "Two coach touches", "Pain psychology micro-support", "Endo Toolkit Pod"],
-    deepen: ["Refine pacing and GI routine", "Export clean symptom notes", "Add function-day Included"],
-    sustain: ["Unlock relief burst Included", "Preview surgery or IVF bridge only if needed", "Keep documentation ready"],
+    deepen: ["Refine pacing and GI routine", "Export clean symptom notes", "Add function-day support"],
+    sustain: ["Unlock relief burst support", "Preview surgery or IVF bridge only if needed", "Keep documentation ready"],
     roadmap: { now: "Flare & Function stabilization", next: "Endo Relief Burst Pack", later: "EndoShield + Surgery Track preview + IVF Bridge preview" },
     tabs: {
       Experience: ["Pelvic-floor PT", "Acupuncture", "Pain-aware Pilates / mobility", "Recovery movement", "Pelvic relaxation / breathwork or restorative yoga"],
       Coach: ["Touch 1: flare map + pacing plan", "Touch 2: function / GI / routine adjustment", "Pain psychology micro-support + Mood Check", "Pod choice: GI/Function Support, Pain Pacing, or Fatigue Support"],
-      Kit: ["Omega-3", "Magnesium", "Broths", "Heat patch Included", "Ginger / peppermint Included", "GI-safe swap layer", "Optional anti-inflammatory box"],
-      "Clinician Loop": ["OB-GYN / endo-aware gyne routing", "Recovery review, clinic LED relax, or symptom documentation review", "CBC, ferritin, Vitamin D, B12 conditional, TVUS booking Included"],
+      Kit: ["Omega-3", "Magnesium", "Broths", "Heat patch support", "Ginger / peppermint support", "GI-safe swap layer", "Optional anti-inflammatory box"],
+      "Clinician Loop": ["OB-GYN / endo-aware gyne routing", "Recovery review, clinic LED relax, or symptom documentation review", "CBC, ferritin, Vitamin D, B12 conditional, TVUS booking support"],
     },
     vitality: "Confidence and comfort support preview.",
     wow: "Flare Relief Ritual or Recovery & Comfort Mini",
-    why: "We’re not just tracking pain. We’re reducing flare chaos and helping you function better with clearer documentation and Included.",
+    why: "We’re not just tracking pain. We’re reducing flare chaos and helping you function better with clearer documentation and support.",
     guidedDefaults: ["Flare map", "Endo Toolkit Pod", "Comfort kit", "Restorative yoga pass"],
     strongestPack: "Endo Relief Burst Pack",
     futureDevice: "TVUS confirmation flow",
@@ -119,16 +119,16 @@ const pathways: Record<PathwayKey, Pathway> = {
     title: "MetaboGlow Camera-Ready + Drift Lite",
     bestFor: "Glow, skin, hair, cravings, drift",
     firstUnlock: "Glow and rhythm starter",
-    futureUnlock: "Drift Lite Included",
+    futureUnlock: "Drift Lite support",
     reason: "Your answers point to visible results, cravings, skin, hair, or body changes you want to steady.",
     monthlyPromise: "Look better, feel more regulated, and know what to do next.",
-    foundation: ["Derm Glow / Camera-Ready focus", "Metabolic Drift Lite Included", "Two coach touches", "Skin Sunday Pod", "One glow pass"],
-    deepen: ["Tune hydration and meal timing", "Add event-week Included", "Accrue a procedure token"],
+    foundation: ["Derm Glow / Camera-Ready focus", "Metabolic Drift Lite support", "Two coach touches", "Skin Sunday Pod", "One glow pass"],
+    deepen: ["Tune hydration and meal timing", "Add event-week support", "Accrue a procedure token"],
     sustain: ["Unlock actives or Camera-Ready Sprint", "Open LED Mask preview", "Add coverage support when relevant"],
     roadmap: { now: "Camera-Ready + Drift Lite monthly stack", next: "Derma Actives Pack or Camera-Ready Sprint", later: "LED Mask + DermaShield+ + MetaboGlow expanded lanes" },
     tabs: {
       Experience: ["LED booth", "Aftercare workshop", "Pilates / Barre intro", "Skin routine demo", "RDN consult if metabolic signals show up"],
-      Coach: ["Touch 1: glow routine + hydration + meal timing", "Touch 2: adherence + event-week or swap adjustment", "Body image / stress / adherence Included when relevant", "Pods: Skin Sunday and Insight Night / Metabolic Drift Lite"],
+      Coach: ["Touch 1: glow routine + hydration + meal timing", "Touch 2: adherence + event-week or swap adjustment", "Body image / stress / adherence support when relevant", "Pods: Skin Sunday and Insight Night / Metabolic Drift Lite"],
       Kit: ["SPF", "HA", "Vitamin C", "Niacinamide / azelaic / ceramide", "Underarm AHA", "Fiber or protein mini"],
       "Clinician Loop": ["Derm-led specialist touch", "Selective IM / metabolic review if signals show up", "Quick derm review or quarterly token accrual", "Selective mini-check only if needed"],
     },
@@ -145,10 +145,10 @@ const pathways: Record<PathwayKey, Pathway> = {
     title: "Longevity Brain + Focus",
     bestFor: "Focus, travel load, high-output weeks",
     firstUnlock: "Focus week setup",
-    futureUnlock: "Travel resilience Included",
+    futureUnlock: "Travel resilience support",
     reason: "Your answers suggest focus, energy, or performance is the thing you want back first.",
     monthlyPromise: "Sharper focus, steadier energy, better workday recovery.",
-    foundation: ["Brain, Focus & Cognitive Resilience", "Executive Performance & Travel Included", "Two coach touches", "Brain & Focus Pod", "One recovery pass"],
+    foundation: ["Brain, Focus & Cognitive Resilience", "Executive Performance & Travel support", "Two coach touches", "Brain & Focus Pod", "One recovery pass"],
     deepen: ["Tune caffeine and meal timing", "Review fatigue patterns", "Prepare for travel or high-output weeks"],
     sustain: ["Unlock Brain Sprint", "Open Smart Ring preview", "Add lab or sleep support if useful"],
     roadmap: { now: "Brain + Focus monthly stack", next: "Brain Sprint or Nootropic Builder", later: "Smart Ring + Longevity Lab Rider + NeuroSleep Rider" },
@@ -158,7 +158,7 @@ const pathways: Record<PathwayKey, Pathway> = {
       Kit: ["Foundational supplement pick", "Pantry / snack tool", "Powder pick", "Nootropic pick", "Longevity pulse stack", "Visible-vitality pick", "Sticky perk"],
       "Clinician Loop": ["Longevity-oriented physician / IM review", "Recovery or body-composition review", "Clinic LED / red-light route", "Rotating bio-panel based on the month"],
     },
-    vitality: "Visible vitality Included through recovery and optional LED.",
+    vitality: "Visible vitality support through recovery and optional LED.",
     wow: "Focus Sprint / Executive Recovery / Biopeak Moment",
     why: "We’re not just giving you supplements. We’re building focus, recovery, biomarker awareness, and healthspan habits into one monthly rhythm.",
     guidedDefaults: ["Breathwork reset", "Brain & Focus Pod", "Focus kit", "Movement-compliance session"],
@@ -190,7 +190,7 @@ type StackStatus = "Included" | "pick 1" | "pick 2" | "Locked preview" | "Pack-o
 type MonthBlock = { name: string; selection: string; why: string; status: StackStatus; includes: string; alternatives?: string[]; change?: string; swappable?: boolean };
 type DemoTile = { column: string; name: string; what: string; where: string; pathways: string; status: string };
 type CatalogOption = { name: string; state?: string };
-const rebalanceOptions = ["more sleep support", "more energy Included", "more glow / visible vitality", "more mood Included", "more movement Included", "less intensity this month"];
+const rebalanceOptions = ["more sleep support", "more energy support", "more glow / visible vitality", "more mood support", "more movement support", "less intensity this month"];
 const pathwayKeyFromTitle = (pathway: Pathway): PathwayKey => pathwayKeys.find((key) => pathways[key].title === pathway.title) || "peri";
 const pathwayDefaults: Record<PathwayKey, Record<string, string>> = {
   peri: {
@@ -202,7 +202,7 @@ const pathwayDefaults: Record<PathwayKey, Record<string, string>> = {
     Labs: "CBC, ferritin, TSH / FT4, HbA1c, Vitamin D, lipids",
     Pods: "Peri Reset Pod + Sleep Reset Pod",
     "Experience Pass": "cooling / sleep reset workshop or breathwork reset or red-light recovery",
-    Kit: "magnesium, omega-3, D3+K2 if indicated, sleep kit, collagen, electrolytes, HA-ceramide, pantry Included",
+    Kit: "magnesium, omega-3, D3+K2 if indicated, sleep kit, collagen, electrolytes, HA-ceramide, pantry support",
     Packs: "Sleep Reset Pack",
     "Future Unlocks": "Smart Ring, LED Mask, PeriShield Rx, Nutrition Rider, Skin/Hair Rider, Prevention/Cardio Rider",
   },
@@ -215,7 +215,7 @@ const pathwayDefaults: Record<PathwayKey, Record<string, string>> = {
     Labs: "CBC, ferritin, Vitamin D, B12 conditional, TVUS support",
     Pods: "Endo Toolkit Pod + GI / Function Support Pod",
     "Experience Pass": "pelvic relaxation / breathwork or restorative yoga or pain-aware movement",
-    Kit: "omega-3, magnesium, broths, heat patches, ginger / peppermint Included, GI-safe Included",
+    Kit: "omega-3, magnesium, broths, heat patches, ginger / peppermint Included, GI-safe support",
     Packs: "Endo Relief Burst Pack",
     "Future Unlocks": "Endo Relief Burst Pack, EndoShield, TVUS confirmation, Surgery Track, IVF Bridge",
   },
@@ -241,22 +241,22 @@ const pathwayDefaults: Record<PathwayKey, Record<string, string>> = {
     Labs: "First rotation: HbA1c, lipids, ApoB; second rotation: hs-CRP, Vitamin D, ferritin; third rotation: TSH / FT4, Lp(a) if family history",
     Pods: "Brain & Focus Pod + Executive Performance & Travel Pod",
     "Experience Pass": "breathwork reset, Biopeak intro group talk, movement-compliance session, red-light",
-    Kit: "foundational Included, pantry / snack tool, powder, nootropic, pulse stack, visible vitality, Swap available",
+    Kit: "foundational support, pantry / snack tool, powder, nootropic, pulse stack, visible vitality, Swap available",
     Packs: "Brain Sprint or Nootropic Builder",
     "Future Unlocks": "Brain Sprint, Nootropic Builder, Executive Jet Lag, Smart Ring, Longevity Lab Rider, NeuroSleep Rider",
   },
 };
 const blockWhy: Record<string, string> = {
   Specialist: "This route is bounded so care stays safe for your pattern.",
-  "Functional Care": "This is the strongest monthly Included to start with based on your quiz.",
+  "Functional Care": "This is the strongest monthly support to start with based on your quiz.",
   Coaching: "Your coaching emphasis follows the chosen pods and rebalancing preference.",
   "Mental Support": "This keeps the month doable without making you rebuild care yourself.",
   "Clinical / LED / Review": "One review route creates a safe next-step loop before bigger unlocks.",
   Labs: "Diagnostics stay guided and are not casual swaps.",
-  Pods: "Two seats give you a Recommended pathway pod plus one Included pod.",
+  Pods: "Two seats give you a primary pathway pod plus one support pod.",
   "Experience Pass": "One monthly pass gives the plan a tangible recovery or movement moment.",
-  Kit: "The kit Includeds the plan at home, with one safe item swap by default.",
-  Packs: "Packs are previews or Pack-only options, not day-one marketplace choices.",
+  Kit: "The kit supports the plan at home, with one safe item swap by default.",
+  Packs: "Packs are previews or pack-only options, not day-one marketplace choices.",
   "Future Unlocks": "Devices and riders appear later as Locked, Preview, Eligible, or Active.",
 };
 const buildMonthStack = (pathway: Pathway): MonthBlock[] => {
@@ -283,14 +283,14 @@ const demoTiles: DemoTile[] = ["Care", "Coach", "Labs", "Pods", "Experience", "K
 ]);
 
 
-const specialistCatalog = ["Peri-aware OB-GYN / women’s health review", "OB-GYN / Endo-aware gyne", "Dermatologist", "Trichologist / derm-tricho review", "Endocrinologist / internal medicine", "Longevity-oriented internal medicine review", "GI specialist, only if GI overlap is flagged", "Fertility / REI specialist, Locked preview unless fertility pathway is active"];
+const specialistCatalog = ["Peri-aware OB-GYN / women’s health review", "OB-GYN / Endo-aware gyne", "Dermatologist", "Trichologist / derm-tricho review", "Endocrinologist / internal medicine", "Longevity-oriented internal medicine review", "GI specialist, only if GI overlap is flagged", "Fertility / REI specialist, locked preview unless fertility pathway is active"];
 const functionalCatalog = ["RDN consult", "mobility / physio session", "Pilates / Barre seat", "acupuncture for stress / sleep / recovery", "clinic LED / red-light session", "recovery coaching", "pelvic-floor PT", "pain-aware Pilates / movement", "breathwork reset", "strength + VO2 prep", "movement-compliance micro-session", "cooling / sleep reset workshop"];
-const coachingCatalog = ["sleep routine coaching", "symptom routine coaching", "food cadence coaching", "strength routine coaching", "pain pacing coaching", "flare map coaching", "metabolic habits coaching", "glow routine coaching", "focus / workday design coaching", "adherence coaching", "partner task / family Included coaching", "procedure / clinic prep coaching"];
-const mentalCatalog = ["Mood Check", "Micro-CBT", "pain psychology micro-support", "CBT-i / anxiety Included", "body image / stress Included", "binge trigger / stress-eating Included", "performance / identity stress Included", "full mental-health session, quarterly or pack-based"];
-const reviewCatalog = ["recovery review", "body-composition review", "visible-aging / derm-aging review", "30-minute in-clinic LED for face", "30-minute in-clinic LED for body", "30-minute in-clinic LED for hair / scalp", "quick derm review", "tricho review", "clinic LED relax", "symptom documentation review / doctor export", "Glow Token accrual", "Scalp Token accrual", "Back Facial / Body Acne Token, Locked preview unless body-acne path active", "procedure token redemption, Milestone unlock-gated"];
+const coachingCatalog = ["sleep routine coaching", "symptom routine coaching", "food cadence coaching", "strength routine coaching", "pain pacing coaching", "flare map coaching", "metabolic habits coaching", "glow routine coaching", "focus / workday design coaching", "adherence coaching", "partner task / family support coaching", "procedure / clinic prep coaching"];
+const mentalCatalog = ["Mood Check", "Micro-CBT", "pain psychology micro-support", "CBT-i / anxiety support", "body image / stress support", "binge trigger / stress-eating support", "performance / identity stress support", "full mental-health session, quarterly or pack-based"];
+const reviewCatalog = ["recovery review", "body-composition review", "visible-aging / derm-aging review", "30-minute in-clinic LED for face", "30-minute in-clinic LED for body", "30-minute in-clinic LED for hair / scalp", "quick derm review", "tricho review", "clinic LED relax", "symptom documentation review / doctor export", "Glow Token accrual", "Scalp Token accrual", "Back Facial / Body Acne Token, Locked unless body-acne path active", "procedure token redemption, milestone / pack-gated"];
 const diagnosticsCatalog: Record<PathwayKey, string[]> = {
   peri: ["Included: CBC, ferritin, TSH / FT4, HbA1c, Vitamin D, lipids", "Selective: B12 / folate, magnesium, metabolic repeats"],
-  endo: ["Included: CBC, ferritin, Vitamin D, B12 conditional, TVUS support", "GI selective: stool calprotectin, celiac tTG-IgA, H. pylori selective", "MRI: Locked preview / pre-auth / rider-supported if indicated"],
+  endo: ["Included: CBC, ferritin, Vitamin D, B12 conditional, TVUS support", "GI selective: stool calprotectin, celiac tTG-IgA, H. pylori selective", "MRI: Locked / pre-auth / rider-supported if indicated"],
   metabo: ["Selective metabolic mini-check only if metabolic-lite flags it", "Optional: HbA1c, fasting glucose, lipids, ALT / AST, CBC baseline"],
   longevity: ["First rotation: HbA1c, lipids, ApoB", "Second rotation: hs-CRP, Vitamin D, ferritin", "Third rotation: TSH / FT4, Lp(a) if family history", "Advanced add-ons: DNA methylation, CAC, DEXA, fasting insulin / HOMA-IR, homocysteine, microbiome"],
 };
@@ -300,12 +300,12 @@ const podAgendas: Record<string, string> = {
   "Sleep Reset Pod": "Waking at night, wind-down routine, light and temperature, caffeine timing, sleep regularity. Outputs: 14-day sleep reset checklist, night waking action plan.",
   "Mood / Fog Pod": "Irritability, anxiety, cognitive load, brain fog, meeting-day coping. Outputs: mood/fog routine, recovery pacing plan.",
   "Metabolic Drift Pod": "Weight drift, cravings, HbA1c / lipids, meal structure, strength routine. Outputs: appetite rhythm plan, protein / pantry checklist.",
-  "Skin / Hair Pod": "Skin dryness, hair shedding, collagen, HA-ceramide, LED / routine Included. Outputs: 3-step visible vitality routine.",
-  "Bone / Joint Pod": "Joint pain, stiffness, posture, strength, bone Included. Outputs: mobility ladder, strength-first checklist.",
+  "Skin / Hair Pod": "Skin dryness, hair shedding, collagen, HA-ceramide, LED / routine support. Outputs: 3-step visible vitality routine.",
+  "Bone / Joint Pod": "Joint pain, stiffness, posture, strength, bone support. Outputs: mobility ladder, strength-first checklist.",
   "Endo Toolkit Pod": "Flare diary, pain pacing, pelvic relaxation, GI symptoms, doctor note export. Outputs: flare plan checklist, weekly missions, MBC target.",
-  "GI / Function Support Pod": "Bloating, constipation, function days, food tolerability, flare pattern. Outputs: GI Included plan, function restoration checklist.",
-  "Pain Pacing Pod": "Pain windows, movement pacing, flare day Included, rest scheduling. Outputs: flare pacing plan.",
-  "Fatigue Support Pod": "Sleep, ferritin / B12 questions, energy conservation, work functioning. Outputs: fatigue map, Included checklist.",
+  "GI / Function Support Pod": "Bloating, constipation, function days, food tolerability, flare pattern. Outputs: GI support plan, function restoration checklist.",
+  "Pain Pacing Pod": "Pain windows, movement pacing, flare day support, rest scheduling. Outputs: flare pacing plan.",
+  "Fatigue Support Pod": "Sleep, ferritin / B12 questions, energy conservation, work functioning. Outputs: fatigue map, support checklist.",
   "Skin Sunday Pod": "Regimen audit, acne / pigment logic, aftercare, LED / actives. Outputs: 3-step skin routine.",
   "Insight Night / Metabolic Drift Lite Pod": "Energy, glucose, meal timing, cravings, strength adherence. Outputs: 14-day metabolic-lite plan.",
   "Brain & Focus Pod": "Focus duration, cognitive fatigue, caffeine timing, nootropic basics, workday design. Outputs: focus plan, caffeine / meal timing plan.",
@@ -321,7 +321,7 @@ const passCatalog: Record<PathwayKey, string[]> = {
 const highTierPasses = ["Longefit cold plunge", "sauna / contrast", "Biopeak red-light", "facility breathwork", "clinic red-light recovery", "small-group strength", "in-clinic LED recovery", "pelvic PT group", "pain-aware reformer", "in-clinic LED booth add-on", "post-facial recovery", "camera-ready skin prep", "glow / derm partner demo"];
 const stickyPerks = ["Friend Pod Pass", "Masterclass Access", "Partner Demo", "Pop-Up Event Access", "Step / Stretch Challenge", "Tonic-Bar Visit", "Broth / Nourish Circle Moment", "Recovery Facility Prompt", "Premium Workshop Invite"];
 const kitCatalog: Record<PathwayKey, string[]> = {
-  peri: ["magnesium", "omega-3", "D3+K2", "sleep kit", "collagen", "electrolyte", "HA-ceramide", "pantry Included"],
+  peri: ["magnesium", "omega-3", "D3+K2", "sleep kit", "collagen", "electrolyte", "HA-ceramide", "pantry support"],
   endo: ["omega-3", "magnesium", "broths", "heat patches", "ginger / peppermint Included", "GI-safe swap", "anti-inflammatory box"],
   metabo: ["SPF", "HA", "vitamin C", "niacinamide", "azelaic", "ceramide", "underarm AHA", "fiber mini", "protein mini"],
   longevity: ["foundational supplement pick", "pantry / snack tool", "powder pick", "nootropic pick", "longevity pulse stack", "visible-vitality pick", "Swap available"],
@@ -329,7 +329,7 @@ const kitCatalog: Record<PathwayKey, string[]> = {
 const packsCatalog: Record<PathwayKey, string[]> = {
   peri: ["Sleep Reset Pack", "Mood / Fog Pack", "Metabolic Drift Pack", "Skin & Hair Pack"],
   endo: ["Endo Relief Burst Pack", "Surgery Track preview", "Endo→IVF Bridge preview"],
-  metabo: ["Derma Actives Pack", "Camera-Ready Sprint", "Protein & Pantry Pack", "Procedure Token Booster", "Hair Actives Pack", "Hair Shedding Guard", "GLP packs Locked preview unless GLP route active"],
+  metabo: ["Derma Actives Pack", "Camera-Ready Sprint", "Protein & Pantry Pack", "Procedure Token Booster", "Hair Actives Pack", "Hair Shedding Guard", "GLP packs locked unless GLP route active"],
   longevity: ["Brain Sprint Pack", "Nootropic Builder Pack", "Executive Jet Lag Pack", "Recovery Contrast Pack", "BioAge Test Pack", "CAC / Cardio Screen Pack", "DEXA / Bone Screen Pack"],
 };
 const futureCatalog = ["Smart Ring", "LED Mask", "CGM", "Oura-style ring", "home LED / red-light where relevant", "PeriShield Rx", "Nutrition Rider", "Skin / Hair Longevity Rider", "Prevention / Cardio Rider", "EndoShield Rider", "Endo OPD + Diagnostics Rider", "DermaShield+", "MetaboRx", "Longevity Lab Rider", "NeuroSleep Rider", "Bone & Screening Rider"];
@@ -337,16 +337,16 @@ const statusFor = (index: number, state = "Swap available") => index === 0 ? "Re
 const opt = (names: string[], states?: string[]) => names.map((name, i) => ({ name, state: states?.[i] || (i === 0 ? "Recommended" : "Swap available") }));
 const pathwaySwapCatalog: Record<PathwayKey, Record<string, { rule: string; options: CatalogOption[]; agenda?: string }>> = {
   peri: {
-    Specialist: { rule: "Can swap to IM / metabolic review if metabolic drift is selected. Skin-hair derm review only if Skin / Hair Included is selected.", options: opt(["peri-aware OB-GYN / women’s health / IM / Endo routing", "IM / metabolic review", "skin-hair derm review"], ["Recommended", "Clinician-gated", "Clinician-gated"]) },
+    Specialist: { rule: "Can swap to IM / metabolic review if metabolic drift is selected. Skin-hair derm review only if Skin / Hair support is selected.", options: opt(["peri-aware OB-GYN / women’s health / IM / Endo routing", "IM / metabolic review", "skin-hair derm review"], ["Recommended", "Clinician-gated", "Clinician-gated"]) },
     "Functional Care": { rule: "Can swap between the bounded monthly functional options.", options: opt(["cooling / sleep reset workshop", "mobility / physio", "Pilates / Barre", "acupuncture", "clinic LED / red-light", "RDN"], ["Recommended", "Swap available", "Swap available", "Swap available", "Inventory-gated", "Swap available"]) },
-    Pods: { rule: "Peri Reset Pod stays Recommended. Sleep Reset Pod can swap to one Included pod.", options: opt(["Peri Reset Pod", "Sleep Reset Pod", "Mood / Fog Pod", "Metabolic Drift Pod", "Skin / Hair Pod", "Bone / Joint Pod"], ["Recommended", "Included", "Swap available", "Swap available", "Swap available", "Swap available"]), agenda: podAgendas["Peri Reset Pod"] },
+    Pods: { rule: "Peri Reset Pod stays primary. Sleep Reset Pod can swap to one support pod.", options: opt(["Peri Reset Pod", "Sleep Reset Pod", "Mood / Fog Pod", "Metabolic Drift Pod", "Skin / Hair Pod", "Bone / Joint Pod"], ["Recommended", "Included", "Swap available", "Swap available", "Swap available", "Swap available"]), agenda: podAgendas["Peri Reset Pod"] },
     "Experience Pass": { rule: "Breathwork can swap to a bounded Peri pass.", options: opt(["breathwork reset", "cooling workshop", "restorative mobility", "clinic red-light", "small-group strength"], ["Recommended", "Swap available", "Swap available", "Inventory-gated", "Off-peak only"]) },
     Kit: { rule: "One monthly swap only. D3+K2 appears only if appropriate.", options: opt(["magnesium ↔ electrolytes", "collagen ↔ HA-ceramide", "sleep tea ↔ calming tea", "D3+K2 only if appropriate", "Friend Pod Pass", "Masterclass", "Partner Demo", "Step / Stretch Challenge"], ["Swap available", "Swap available", "Swap available", "Clinician-gated", "Swap available", "Swap available", "Swap available", "Swap available"]) },
   },
   endo: {
     Specialist: { rule: "GI specialist only if GI red flags. Fertility / REI stays Locked preview.", options: opt(["OB-GYN / Endo-aware gyne", "GI specialist", "Fertility / REI specialist"], ["Recommended", "Clinician-gated", "Locked preview"]) },
     "Functional Care": { rule: "Pelvic-floor PT can swap only to bounded pain-aware Includeds.", options: opt(["pelvic-floor PT", "acupuncture", "pain-aware Pilates / mobility", "recovery movement"], ["Recommended", "Swap available", "Swap available", "Swap available"]) },
-    Pods: { rule: "Endo Toolkit Pod stays Recommended. GI / Function Support can swap to one Included pod.", options: opt(["Endo Toolkit Pod", "GI / Function Support Pod", "Pain Pacing Pod", "Fatigue Support Pod"], ["Recommended", "Included", "Swap available", "Swap available"]), agenda: podAgendas["Endo Toolkit Pod"] },
+    Pods: { rule: "Endo Toolkit Pod stays primary. GI / Function Support can swap to one support pod.", options: opt(["Endo Toolkit Pod", "GI / Function Support Pod", "Pain Pacing Pod", "Fatigue Support Pod"], ["Recommended", "Included", "Swap available", "Swap available"]), agenda: podAgendas["Endo Toolkit Pod"] },
     "Experience Pass": { rule: "Pelvic relaxation can swap within Endo-safe passes.", options: opt(["pelvic relaxation / breathwork", "gentle Pilates flow", "flare day plan", "restorative yoga", "breathwork"], ["Recommended", "Swap available", "Swap available", "Swap available", "Swap available"]) },
     Kit: { rule: "One monthly swap only. Psyllium and iron/ferritin Included are Clinician-gated.", options: opt(["omega-3 ↔ magnesium", "ginger tea ↔ peppermint tea", "broths ↔ heat patches", "psyllium only if Clinician-gated", "iron / ferritin Included only if Clinician-gated"], ["Swap available", "Swap available", "Swap available", "Clinician-gated", "Clinician-gated"]) },
   },
@@ -360,7 +360,7 @@ const pathwaySwapCatalog: Record<PathwayKey, Record<string, { rule: string; opti
   longevity: {
     Specialist: { rule: "IM can swap to metabolic review, sleep / recovery review, or derm-adjacent review if visible vitality is active.", options: opt(["longevity-oriented IM review", "metabolic review", "sleep / recovery review", "derm-adjacent review"], ["Recommended", "Swap available", "Swap available", "Clinician-gated"]) },
     "Functional Care": { rule: "Breathwork / recovery can swap to bounded longevity Includeds.", options: opt(["breathwork / recovery", "strength + VO2 prep", "RDN", "mobility", "Biopeak-style recovery / red-light"], ["Recommended", "Swap available", "Swap available", "Swap available", "Inventory-gated"]) },
-    Pods: { rule: "Brain & Focus stays Recommended. Executive Performance can swap if fatigue or sleep dominates.", options: opt(["Brain & Focus Pod", "Executive Performance & Travel Pod", "Healthspan Lab Pod", "Sleep & Recovery"], ["Recommended", "Included", "Swap available", "Clinician-gated"]), agenda: podAgendas["Brain & Focus Pod"] },
+    Pods: { rule: "Brain & Focus stays primary. Executive Performance can swap if fatigue or sleep dominates.", options: opt(["Brain & Focus Pod", "Executive Performance & Travel Pod", "Healthspan Lab Pod", "Sleep & Recovery"], ["Recommended", "Included", "Swap available", "Clinician-gated"]), agenda: podAgendas["Brain & Focus Pod"] },
     "Experience Pass": { rule: "Breathwork reset can swap to bounded recovery and movement options.", options: opt(["breathwork reset", "movement-compliance", "Biopeak intro", "red-light", "mobility micro-class"], ["Recommended", "Swap available", "Swap available", "Inventory-gated", "Swap available"]) },
     Kit: { rule: "Category swaps are bounded. DNA methylation, CAC, DEXA, Smart Ring, Longevity Lab Rider, and NeuroSleep Rider remain Locked preview.", options: opt(["Foundational support: magnesium, omega-3, D3+K2, electrolytes, creatine mini, collagen mini, protein mini", "Pantry support: Smart Snack Pack, Broth Support, Low-Sugar Pantry, Protein-Forward Pantry, Meal-Prep Voucher, AI Recipe Remix, Nutrient Swap Tool, Tonic-Bar Route", "Powder support: creatine monohydrate, collagen peptides, protein sampler, fiber support", "Focus support: Citicoline, L-Theanine, Rhodiola, Bacopa", "Pulse stack: Longevity Pulse Stack, Gut-Sensitive Pulse Variant, Defer / Ask Coach", "Visible vitality: SPF, HA, Vitamin C, Niacinamide, Ceramide, Retinaldehyde if appropriate", "Sticky perk: Friend Pod Pass, Masterclass, Partner Demo, Pop-Up Event, Step / Stretch Challenge, Tonic-Bar, Broth / Nourish Circle, Recovery Facility Prompt, Premium Workshop", "DNA methylation, CAC, DEXA, Smart Ring, Longevity Lab Rider, NeuroSleep Rider"], ["Swap available", "Swap available", "Swap available", "Swap available", "Swap available", "Recommended", "Swap available", "Locked preview"]) },
   },
