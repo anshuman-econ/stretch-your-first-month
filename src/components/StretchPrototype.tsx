@@ -276,18 +276,28 @@ const blockPlain: Record<string, { plain: string; discovery: string }> = {
 const buildMonthStack = (pathway: Pathway): MonthBlock[] => {
   const key = pathwayKeyFromTitle(pathway);
   const d = pathwayDefaults[key];
+  const block = (name: string, selection: string, status: StackStatus, swappable: boolean): MonthBlock => ({
+    name,
+    selection,
+    why: blockWhy[name],
+    status,
+    includes: selection,
+    plain: blockPlain[name].plain,
+    discovery: blockPlain[name].discovery,
+    swappable,
+  });
   return [
-    { name: "Specialist", selection: d.Specialist, why: blockWhy.Specialist, status: "Included", includes: d.Specialist, swappable: true },
-    { name: "Functional Care", selection: d["Functional Care"], why: blockWhy["Functional Care"], status: "pick 1", includes: d["Functional Care"], swappable: true },
-    { name: "Coaching", selection: d.Coaching, why: blockWhy.Coaching, status: "Included", includes: d.Coaching, swappable: false },
-    { name: "Mental Support", selection: d["Mental Support"], why: blockWhy["Mental Support"], status: "Included", includes: d["Mental Support"], swappable: false },
-    { name: "Clinical / LED / Review", selection: d["Clinical / LED / Review"], why: blockWhy["Clinical / LED / Review"], status: "pick 1", includes: d["Clinical / LED / Review"], swappable: true },
-    { name: "Labs", selection: d.Labs, why: blockWhy.Labs, status: "Locked preview", includes: d.Labs, swappable: false },
-    { name: "Pods", selection: d.Pods, why: blockWhy.Pods, status: "pick 2", includes: d.Pods, swappable: true },
-    { name: "Experience Pass", selection: d["Experience Pass"], why: blockWhy["Experience Pass"], status: "pick 1", includes: d["Experience Pass"], swappable: true },
-    { name: "Kit", selection: d.Kit, why: blockWhy.Kit, status: "pick 1", includes: d.Kit, swappable: true },
-    { name: "Packs", selection: d.Packs, why: blockWhy.Packs, status: "Pack-only", includes: d.Packs, swappable: false },
-    { name: "Future Unlocks", selection: d["Future Unlocks"], why: blockWhy["Future Unlocks"], status: "Rider-only", includes: d["Future Unlocks"], swappable: false },
+    block("Specialist", d.Specialist, "Included", true),
+    block("Functional Care", d["Functional Care"], "Recommended", true),
+    block("Coaching", d.Coaching, "Included", false),
+    block("Mental Support", d["Mental Support"], "Included", false),
+    block("Clinical / LED / Review", d["Clinical / LED / Review"], "Recommended", true),
+    block("Labs", d.Labs, "Locked preview", false),
+    block("Pods", d.Pods, "Included", true),
+    block("Experience Pass", d["Experience Pass"], "Recommended", true),
+    block("Kit", d.Kit, "Recommended", true),
+    block("Packs", d.Packs, "Pack-only", false),
+    block("Future Unlocks", d["Future Unlocks"], "Rider-only", false),
   ];
 };
 
