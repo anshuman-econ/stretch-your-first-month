@@ -117,7 +117,7 @@ const pathways: Record<PathwayKey, Pathway> = {
     adjacent: "peri",
   },
   metabo: {
-    title: "MetaboGlow Camera-Ready + Drift Lite",
+    title: "Glow + Skin Rhythm",
     bestFor: "Glow, skin, hair, cravings, drift",
     firstUnlock: "Glow and rhythm starter",
     futureUnlock: "Drift Lite support",
@@ -143,7 +143,7 @@ const pathways: Record<PathwayKey, Pathway> = {
     adjacent: "longevity",
   },
   longevity: {
-    title: "Longevity Brain + Focus",
+    title: "Brain + Focus",
     bestFor: "Focus, travel load, high-output weeks",
     firstUnlock: "Focus week setup",
     futureUnlock: "Travel resilience support",
@@ -302,12 +302,12 @@ const buildMonthStack = (pathway: Pathway): MonthBlock[] => {
 };
 
 const planPlain: Record<string, { plain: string; discovery: string }> = {
-  Care: { plain: "Care is your specialist route, any useful labs, and the safe review loop that decides what should happen now versus later.", discovery: "You get clarity without having to shop for care or guess which expert to start with." },
-  Coach: { plain: "Coaching turns your plan into a simple weekly routine and helps adjust sleep, food, symptoms, stress, or follow-through.", discovery: "Your coach keeps the month realistic, checks what is working, and helps you ask for changes safely." },
-  Pods: { plain: "Pods are small guided sessions with people working on a similar goal, such as sleep, flare support, skin, focus, or energy.", discovery: "Each pod gives you a plan, a checklist, and a reason to keep going between appointments." },
-  Kit: { plain: "Your kit is the at-home support matched to your plan, such as comfort, sleep, skin, pantry, recovery, or focus items.", discovery: "It gives you tangible tools to use during the month instead of leaving care inside the app." },
-  Pass: { plain: "Your pass is one bookable experience, such as recovery, movement, breathwork, LED, or a workshop.", discovery: "It makes the plan feel alive and gives you a restorative moment to look forward to." },
-  Unlocks: { plain: "Unlocks are future previews like packs, devices, advanced labs, or riders that only open when your progress or care route supports them.", discovery: "You can see what may come next without being pushed into add-ons on day one." },
+  Care: { plain: "The right expert route, body support, and only the labs that matter.", discovery: "Clear next steps without shopping for care." },
+  Coach: { plain: "A real person helps turn the month into simple weekly moves.", discovery: "Less guessing. More gentle follow-through." },
+  Pods: { plain: "Small guided circles for the thing you are working on now.", discovery: "A rhythm, a checklist, and people moving with you." },
+  Kit: { plain: "A small at-home set matched to sleep, comfort, skin, pantry, recovery, or focus.", discovery: "Something you can actually use between sessions." },
+  Pass: { plain: "One bookable reset: movement, breathwork, recovery, LED, or a workshop.", discovery: "A moment in the real world, not another task." },
+  Unlocks: { plain: "Packs, devices, deeper labs, and add-ons that may open later.", discovery: "Preview the path without being pushed into it today." },
 };
 
 const buildPlanCards = (pathway: Pathway): MonthBlock[] => {
@@ -334,7 +334,7 @@ const buildPlanCards = (pathway: Pathway): MonthBlock[] => {
 };
 
 const demoTiles: DemoTile[] = ["Care", "Coach", "Labs", "Pods", "Experience", "Kit", "Unlocks"].flatMap((column) => [
-  { column, name: `${column} core`, what: `${column} core is the simple member-facing version: the recommended ${column.toLowerCase()} piece is already chosen and explained in plain language.`, where: "Your Month Stack and pathway dashboards", pathways: "Peri Sleep + Energy, Endo Flare + Function, MetaboGlow, Longevity Brain + Focus", status: column === "Unlocks" ? "Milestone unlock" : "Included" },
+    { column, name: `${column} core`, what: `The main ${column.toLowerCase()} piece selected for this month.`, where: "Your Month Stack and pathway dashboards", pathways: "Peri Sleep + Energy, Endo Flare + Function, Glow + Skin Rhythm, Brain + Focus", status: column === "Unlocks" ? "Milestone unlock" : "Included" },
   { column, name: `${column} advanced`, what: `${column} advanced shows the operator logic: safe swaps, gated previews, inventory limits, or clinician review before a bigger step opens.`, where: "Demo mode and detail drawers", pathways: "Pathway-dependent", status: ["Labs", "Unlocks"].includes(column) ? "Clinician-gated" : "Swap available" },
 ]);
 
