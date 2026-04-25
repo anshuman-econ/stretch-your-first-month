@@ -648,13 +648,13 @@ export default function StretchPrototype() {
           {step === "care" && <CareScreen />}
         </div>
 
-        <nav className="absolute bottom-0 left-0 right-0 z-30 grid grid-cols-5 border-t border-border/80 bg-shell/95 px-2 py-2 backdrop-blur-xl">
+        {(["home", "wallet", "future", "pathways", "journey", "care"] as Step[]).includes(step) && <nav className="absolute bottom-0 left-0 right-0 z-30 grid grid-cols-5 border-t border-border/80 bg-shell/95 px-2 py-2 backdrop-blur-xl">
           <NavItem icon={<Home className="size-5" />} label="Home" active={step === "home"} onClick={() => setStep("home")} />
           <NavItem icon={<Leaf className="size-5" />} label="Pathways" active={step === "pathways" || step === "journey"} onClick={() => setStep("pathways")} />
           <NavItem icon={<CalendarDays className="size-5" />} label="Plan" active={["explainer", "built", "unlocks", "confirm", "builder", "week"].includes(step)} onClick={() => setStep(answers.length ? "built" : "goal")} />
           <NavItem icon={<MessageCircle className="size-5" />} label="Care" active={step === "care"} onClick={() => setStep("care")} />
           <NavItem icon={<Wallet className="size-5" />} label="Wallet" active={step === "wallet"} onClick={() => setStep("wallet")} />
-        </nav>
+        </nav>}
         {selectedStamp && <StampDrawer stamp={selectedStamp} onClose={() => setSelectedStamp(null)} />}
         {showRebalance && <RebalanceModal onClose={() => setShowRebalance(false)} />}
         {showBehindScenes && <BehindScenesPanel onClose={() => setShowBehindScenes(false)} />}
@@ -719,13 +719,13 @@ function BuilderScreen({ pathway, onStart, onCoach, onSwap }: { pathway: Pathway
   const planCards = buildPlanCards(pathway);
   const summaries = builderSummaries(pathway, planCards);
   const journey = [
-    { label: "Pathway", state: "completed", block: planCards[0] },
-    { label: "Stack", state: "selected", block: planCards[0] },
+    { label: "Care", state: "selected", block: planCards[0] },
+    { label: "Coach", state: "included", block: planCards[1] },
     { label: "Pods", state: "needs input", block: planCards[2] },
     { label: "Pass", state: "needs input", block: planCards[3] },
     { label: "Kit", state: "future", block: planCards[4] },
     { label: "Progress", state: "future", block: planCards[5] },
-    { label: "Unlocks", state: "locked", block: planCards[5] },
+    { label: "Unlocks", state: "locked", block: planCards[6] },
   ];
   return <section className="space-y-5 px-5 pb-32 pt-6"><div className="rounded-[2rem] bg-hero p-5 shadow-float"><div className="flex items-start justify-between gap-4"><div className="min-w-0"><p className="text-sm font-semibold text-accent">Your Stretch Month</p><h1 className="mt-1 font-display text-4xl leading-tight">{pathway.title}</h1><p className="mt-1 text-sm font-semibold text-foreground/80">Month 1: Foundation</p><p className="mt-3 text-base leading-6 text-muted-foreground">{pathway.monthlyPromise}</p></div><ProgressRing value={20} /></div><div className="mt-5 grid gap-2"><Button variant="hero" size="lg" onClick={onStart}>Keep recommended</Button><div className="grid grid-cols-2 gap-2"><Button variant="soft" size="lg" onClick={onSwap}><RefreshCw className="size-4" /> Swap one block</Button><Button variant="soft" size="lg" onClick={onCoach}><MessageCircle className="size-4" /> Ask coach</Button></div></div></div><div className="grid gap-3">{summaries.slice(0, 5).map((card) => <BuilderSummaryCard key={card.title} card={card} onOpen={() => setDrawerBlock(card.block)} />)}</div><div className="grid grid-cols-2 gap-3">{summaries.slice(5).map((card) => <BuilderSummaryCard key={card.title} card={card} compact onOpen={() => setDrawerBlock(card.block)} />)}</div>{drawerBlock && <BlockDrawer block={drawerBlock} pathway={pathway} onClose={() => setDrawerBlock(null)} onCoach={onCoach} />}{demoTile && <DemoTileDrawer tile={demoTile} onClose={() => setDemoTile(null)} />}<JourneyBar items={journey} onOpen={setDrawerBlock} /></section>;
 }
