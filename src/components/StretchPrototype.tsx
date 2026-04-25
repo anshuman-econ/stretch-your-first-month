@@ -646,7 +646,7 @@ export default function StretchPrototype() {
           {step === "confirm" && <ConfirmScreen pathway={pathway} resetQuiz={resetQuiz} onBuild={() => setStep("builder")} onOpenJourney={() => openJourney(pathwayKey)} />}
           {step === "builder" && <BuilderScreen pathway={pathway} onStart={() => setStep("week")} onCoach={() => setShowRebalance(true)} onSwap={() => setStep("swap")} />}
           {step === "week" && <WeekScreen onHome={() => setStep("home")} />}
-          {step === "home" && <HomeScreen pathway={pathway} answers={answers} onCare={() => setStep("care")} onFuture={() => setStep("future")} onJourney={() => openJourney(pathwayKey)} onStamp={setSelectedStamp} />}
+          {step === "home" && <HomeScreen pathway={pathway} answers={answers} onCare={() => setStep("care")} onFuture={() => setStep("future")} onJourney={() => setStep("builder")} onStamp={setSelectedStamp} />}
           {step === "wallet" && <WalletScreen pathwayTitle={pathway.title} onFuture={() => setStep("future")} onStamp={setSelectedStamp} />}
           {step === "future" && <FutureScreen />}
           {step === "pathways" && <PathwaysScreen onOpen={openJourney} />}
