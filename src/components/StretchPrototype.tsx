@@ -190,19 +190,92 @@ type MonthBlock = { name: string; selection: string; why: string; status: StackS
 type DemoTile = { column: string; name: string; what: string; where: string; pathways: string; status: string };
 type CatalogOption = { name: string; state?: string };
 const rebalanceOptions = ["more sleep support", "more energy support", "more glow / visible vitality", "more mood support", "more movement support", "less intensity this month"];
-const buildMonthStack = (pathway: Pathway): MonthBlock[] => [
-  { name: "Specialist", selection: pathway.tabs["Clinician Loop"][0], why: "This keeps the plan safe and matched to your main concern.", status: "included", includes: pathway.tabs["Clinician Loop"].slice(0, 2).join(" • "), alternatives: ["Women’s health review", "Internal medicine review"], change: "Your clinician route changes only within safe bounds.", swappable: true },
-  { name: "Functional Care", selection: pathway.tabs.Experience[0], why: "It is the lowest-friction way to start feeling better this month.", status: "pick 1", includes: pathway.tabs.Experience.slice(0, 3).join(" • "), alternatives: pathway.tabs.Experience.slice(1, 4), change: "Your monthly experience emphasis shifts, while the plan stays intact.", swappable: true },
-  { name: "Coaching", selection: pathway.tabs.Coach[0], why: "Your first touch sets the routine before more options appear.", status: "included", includes: pathway.tabs.Coach.slice(0, 2).join(" • "), alternatives: ["Sleep emphasis", "Energy emphasis", "Mood emphasis"], change: "Your coach emphasizes a different routine, not a different pathway.", swappable: true },
-  { name: "Mental Support", selection: pathway.tabs.Coach.find((x) => x.includes("Mood") || x.includes("psychology")) || "Mood Check", why: "Small support helps keep the month doable.", status: "included", includes: "Mood Check + guided micro-support", alternatives: ["Mood emphasis", "Stress emphasis"], change: "Your support tone changes without changing clinical decisions.", swappable: true },
-  { name: "Clinical / LED / Review", selection: pathway.tabs["Clinician Loop"][1], why: "This creates a safe review point before bigger steps.", status: "pick 1", includes: "One review-style touch this month", alternatives: ["Recovery review", "Body-composition review", "Visible-aging review"], change: "The review focus changes; gated decisions remain gated.", swappable: true },
-  { name: "Labs", selection: pathway.tabs["Clinician Loop"].at(-1) || "Baseline labs", why: "Labs stay guided so the month does not become a marketplace.", status: "locked", includes: "Scheduled or uploaded when appropriate", swappable: false },
-  { name: "Pods", selection: pathway.tabs.Coach.at(-1)?.replace("Pod choice: ", "") || "Guided pod", why: "Pods give structure and momentum without extra decisions.", status: "pick 2", includes: "Two guided group sessions this month", alternatives: ["Sleep Reset Pod", "Mood/Fog Pod", "Function Support Pod"], change: "Your group support changes to match the new emphasis.", swappable: true },
-  { name: "Experience Pass", selection: pathway.guidedDefaults[3], why: "One pass creates a tangible monthly moment.", status: "pick 1", includes: "One restorative or movement-based pass", alternatives: ["Restorative studio pass", "Recovery session pass", "Movement intro pass"], change: "Your monthly wow moment changes.", swappable: true },
-  { name: "Kit", selection: pathway.guidedDefaults[2], why: "The kit supports the plan at home between care touches.", status: "pick 1", includes: pathway.tabs.Kit.slice(0, 4).join(" • "), alternatives: pathway.tabs.Kit.slice(0, 3), change: "One kit item changes; the rest stays guided.", swappable: true },
-  { name: "Packs", selection: pathway.strongestPack, why: "This is the strongest next pack, not something to choose today.", status: "pack-only", includes: "Appears after enough progress", swappable: false },
-  { name: "Future Unlocks", selection: `${pathway.futureDevice} + ${pathway.futureRider}`, why: "Devices, riders, and coverage add-ons appear only when useful.", status: "rider-only", includes: pathway.roadmap.later, swappable: false },
-];
+const pathwayKeyFromTitle = (pathway: Pathway): PathwayKey => pathwayKeys.find((key) => pathways[key].title === pathway.title) || "peri";
+const pathwayDefaults: Record<PathwayKey, Record<string, string>> = {
+  peri: {
+    Specialist: "peri-aware OB-GYN / women’s health / IM / Endo routing",
+    "Functional Care": "cooling / sleep reset workshop or acupuncture or mobility / physio, based on quiz",
+    Coaching: "sleep routine + symptom routine",
+    "Mental Support": "Mood Check + Micro-CBT",
+    "Clinical / LED / Review": "recovery review or 30-minute clinic LED",
+    Labs: "CBC, ferritin, TSH / FT4, HbA1c, Vitamin D, lipids",
+    Pods: "Peri Reset Pod + Sleep Reset Pod",
+    "Experience Pass": "cooling / sleep reset workshop or breathwork reset or red-light recovery",
+    Kit: "magnesium, omega-3, D3+K2 if indicated, sleep kit, collagen, electrolytes, HA-ceramide, pantry support",
+    Packs: "Sleep Reset Pack",
+    "Future Unlocks": "Smart Ring, LED Mask, PeriShield Rx, Nutrition Rider, Skin/Hair Rider, Prevention/Cardio Rider",
+  },
+  endo: {
+    Specialist: "OB-GYN / Endo-aware gyne",
+    "Functional Care": "pelvic-floor PT or pelvic relaxation / breathwork",
+    Coaching: "flare map + pacing plan",
+    "Mental Support": "pain psychology micro-support + Mood Check",
+    "Clinical / LED / Review": "recovery review, LED relax, or documentation review",
+    Labs: "CBC, ferritin, Vitamin D, B12 conditional, TVUS support",
+    Pods: "Endo Toolkit Pod + GI / Function Support Pod",
+    "Experience Pass": "pelvic relaxation / breathwork or restorative yoga or pain-aware movement",
+    Kit: "omega-3, magnesium, broths, heat patches, ginger / peppermint support, GI-safe support",
+    Packs: "Endo Relief Burst Pack",
+    "Future Unlocks": "Endo Relief Burst Pack, EndoShield, TVUS confirmation, Surgery Track, IVF Bridge",
+  },
+  metabo: {
+    Specialist: "dermatology review",
+    "Functional Care": "LED booth if glow-led; RDN if metabolic-lite-led",
+    Coaching: "glow routine + hydration + meal timing",
+    "Mental Support": "body image / stress if relevant",
+    "Clinical / LED / Review": "quick derm review or Glow Token accrual",
+    Labs: "selective mini-check only if metabolic-lite flags",
+    Pods: "Skin Sunday Pod + Insight Night / Metabolic Drift Lite Pod",
+    "Experience Pass": "LED booth or aftercare workshop or Pilates / Barre intro",
+    Kit: "SPF, HA, vitamin C, niacinamide / azelaic / ceramide, underarm AHA, one fiber or protein mini",
+    Packs: "Derma Actives Pack or Camera-Ready Sprint",
+    "Future Unlocks": "Derma Actives Pack, Camera-Ready Sprint, Procedure Token Booster, LED Mask, DermaShield+",
+  },
+  longevity: {
+    Specialist: "longevity-oriented IM review",
+    "Functional Care": "breathwork / recovery or strength + VO2 prep",
+    Coaching: "focus / workday / caffeine / meal timing setup",
+    "Mental Support": "Mood Check + Micro-CBT if stress or sleep-linked brain fog",
+    "Clinical / LED / Review": "recovery review, body-composition review, or clinic LED / red-light",
+    Labs: "Month A HbA1c, lipids, ApoB; Month B hs-CRP, Vitamin D, ferritin; Month C TSH / FT4, Lp(a) if family history",
+    Pods: "Brain & Focus Pod + Executive Performance & Travel Pod",
+    "Experience Pass": "breathwork reset, Biopeak intro group talk, movement-compliance session, red-light",
+    Kit: "foundational support, pantry / snack tool, powder, nootropic, pulse stack, visible vitality, sticky perk",
+    Packs: "Brain Sprint or Nootropic Builder",
+    "Future Unlocks": "Brain Sprint, Nootropic Builder, Executive Jet Lag, Smart Ring, Longevity Lab Rider, NeuroSleep Rider",
+  },
+};
+const blockWhy: Record<string, string> = {
+  Specialist: "This route is bounded so care stays safe for your pattern.",
+  "Functional Care": "This is the strongest monthly support to start with based on your quiz.",
+  Coaching: "Your coaching emphasis follows the chosen pods and rebalancing preference.",
+  "Mental Support": "This keeps the month doable without making you rebuild care yourself.",
+  "Clinical / LED / Review": "One review route creates a safe next-step loop before bigger unlocks.",
+  Labs: "Diagnostics stay guided and are not casual swaps.",
+  Pods: "Two seats give you a primary pathway pod plus one support pod.",
+  "Experience Pass": "One monthly pass gives the plan a tangible recovery or movement moment.",
+  Kit: "The kit supports the plan at home, with one safe item swap by default.",
+  Packs: "Packs are previews or pack-only options, not day-one marketplace choices.",
+  "Future Unlocks": "Devices and riders appear later as Locked, Preview, Eligible, or Active.",
+};
+const buildMonthStack = (pathway: Pathway): MonthBlock[] => {
+  const key = pathwayKeyFromTitle(pathway);
+  const d = pathwayDefaults[key];
+  return [
+    { name: "Specialist", selection: d.Specialist, why: blockWhy.Specialist, status: "included", includes: d.Specialist, swappable: true },
+    { name: "Functional Care", selection: d["Functional Care"], why: blockWhy["Functional Care"], status: "pick 1", includes: d["Functional Care"], swappable: true },
+    { name: "Coaching", selection: d.Coaching, why: blockWhy.Coaching, status: "included", includes: d.Coaching, swappable: false },
+    { name: "Mental Support", selection: d["Mental Support"], why: blockWhy["Mental Support"], status: "included", includes: d["Mental Support"], swappable: false },
+    { name: "Clinical / LED / Review", selection: d["Clinical / LED / Review"], why: blockWhy["Clinical / LED / Review"], status: "pick 1", includes: d["Clinical / LED / Review"], swappable: true },
+    { name: "Labs", selection: d.Labs, why: blockWhy.Labs, status: "locked", includes: d.Labs, swappable: false },
+    { name: "Pods", selection: d.Pods, why: blockWhy.Pods, status: "pick 2", includes: d.Pods, swappable: true },
+    { name: "Experience Pass", selection: d["Experience Pass"], why: blockWhy["Experience Pass"], status: "pick 1", includes: d["Experience Pass"], swappable: true },
+    { name: "Kit", selection: d.Kit, why: blockWhy.Kit, status: "pick 1", includes: d.Kit, swappable: true },
+    { name: "Packs", selection: d.Packs, why: blockWhy.Packs, status: "pack-only", includes: d.Packs, swappable: false },
+    { name: "Future Unlocks", selection: d["Future Unlocks"], why: blockWhy["Future Unlocks"], status: "rider-only", includes: d["Future Unlocks"], swappable: false },
+  ];
+};
+
 const demoTiles: DemoTile[] = ["Care", "Coach", "Labs", "Pods", "Experience", "Kit", "Unlocks"].flatMap((column) => [
   { column, name: `${column} core`, what: `Exact catalog lives in the guided drawer for ${column.toLowerCase()}.`, where: "Month Stack and pathway dashboards", pathways: "Peri, Endo, MetaboGlow, Longevity", status: column === "Unlocks" ? "milestone unlock" : "included" },
   { column, name: `${column} advanced`, what: `Includes bounded swaps, gated previews, or pack/rider states for ${column.toLowerCase()}.`, where: "Demo mode and selected drawers", pathways: "Pathway-dependent", status: ["Labs", "Unlocks"].includes(column) ? "clinician-gated" : "swap available" },
