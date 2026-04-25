@@ -185,6 +185,28 @@ const pods = ["Calm nights pod", "Flare-days pod", "High-output pod"];
 const passes = ["Restorative studio pass", "Recovery session pass", "Glow appointment pass"];
 
 type PassportStamp = { title: string; means: string; complete: string; unlocks: string; mbc?: string };
+type StackStatus = "included" | "pick 1" | "pick 2" | "locked" | "pack-only" | "rider-only";
+type MonthBlock = { name: string; selection: string; why: string; status: StackStatus; includes: string; alternatives?: string[]; change?: string; swappable?: boolean };
+type DemoTile = { column: string; name: string; what: string; where: string; pathways: string; status: string };
+const rebalanceOptions = ["more sleep support", "more energy support", "more glow / visible vitality", "more mood support", "more movement support", "less intensity this month"];
+const buildMonthStack = (pathway: Pathway): MonthBlock[] => [
+  { name: "Specialist", selection: pathway.tabs["Clinician Loop"][0], why: "This keeps the plan safe and matched to your main concern.", status: "included", includes: pathway.tabs["Clinician Loop"].slice(0, 2).join(" • "), alternatives: ["Women’s health review", "Internal medicine review"], change: "Your clinician route changes only within safe bounds.", swappable: true },
+  { name: "Functional Care", selection: pathway.tabs.Experience[0], why: "It is the lowest-friction way to start feeling better this month.", status: "pick 1", includes: pathway.tabs.Experience.slice(0, 3).join(" • "), alternatives: pathway.tabs.Experience.slice(1, 4), change: "Your monthly experience emphasis shifts, while the plan stays intact.", swappable: true },
+  { name: "Coaching", selection: pathway.tabs.Coach[0], why: "Your first touch sets the routine before more options appear.", status: "included", includes: pathway.tabs.Coach.slice(0, 2).join(" • "), alternatives: ["Sleep emphasis", "Energy emphasis", "Mood emphasis"], change: "Your coach emphasizes a different routine, not a different pathway.", swappable: true },
+  { name: "Mental Support", selection: pathway.tabs.Coach.find((x) => x.includes("Mood") || x.includes("psychology")) || "Mood Check", why: "Small support helps keep the month doable.", status: "included", includes: "Mood Check + guided micro-support", alternatives: ["Mood emphasis", "Stress emphasis"], change: "Your support tone changes without changing clinical decisions.", swappable: true },
+  { name: "Clinical / LED / Review", selection: pathway.tabs["Clinician Loop"][1], why: "This creates a safe review point before bigger steps.", status: "pick 1", includes: "One review-style touch this month", alternatives: ["Recovery review", "Body-composition review", "Visible-aging review"], change: "The review focus changes; gated decisions remain gated.", swappable: true },
+  { name: "Labs", selection: pathway.tabs["Clinician Loop"].at(-1) || "Baseline labs", why: "Labs stay guided so the month does not become a marketplace.", status: "locked", includes: "Scheduled or uploaded when appropriate", swappable: false },
+  { name: "Pods", selection: pathway.tabs.Coach.at(-1)?.replace("Pod choice: ", "") || "Guided pod", why: "Pods give structure and momentum without extra decisions.", status: "pick 2", includes: "Two guided group sessions this month", alternatives: ["Sleep Reset Pod", "Mood/Fog Pod", "Function Support Pod"], change: "Your group support changes to match the new emphasis.", swappable: true },
+  { name: "Experience Pass", selection: pathway.guidedDefaults[3], why: "One pass creates a tangible monthly moment.", status: "pick 1", includes: "One restorative or movement-based pass", alternatives: ["Restorative studio pass", "Recovery session pass", "Movement intro pass"], change: "Your monthly wow moment changes.", swappable: true },
+  { name: "Kit", selection: pathway.guidedDefaults[2], why: "The kit supports the plan at home between care touches.", status: "pick 1", includes: pathway.tabs.Kit.slice(0, 4).join(" • "), alternatives: pathway.tabs.Kit.slice(0, 3), change: "One kit item changes; the rest stays guided.", swappable: true },
+  { name: "Packs", selection: pathway.strongestPack, why: "This is the strongest next pack, not something to choose today.", status: "pack-only", includes: "Appears after enough progress", swappable: false },
+  { name: "Future Unlocks", selection: `${pathway.futureDevice} + ${pathway.futureRider}`, why: "Devices, riders, and coverage add-ons appear only when useful.", status: "rider-only", includes: pathway.roadmap.later, swappable: false },
+];
+const demoTiles: DemoTile[] = ["Care", "Coach", "Labs", "Pods", "Experience", "Kit", "Unlocks"].flatMap((column) => [
+  { column, name: `${column} core`, what: `A guided ${column.toLowerCase()} building block.`, where: "Month Stack and pathway dashboards", pathways: "Peri, Endo, MetaboGlow, Longevity", status: column === "Unlocks" ? "milestone unlock" : "included" },
+  { column, name: `${column} advanced`, what: `A gated or swappable ${column.toLowerCase()} option.`, where: "Demo mode and selected drawers", pathways: "Pathway-dependent", status: ["Labs", "Unlocks"].includes(column) ? "clinician-gated" : "swap available" },
+]);
+
 const passportStamps: PassportStamp[] = [
   { title: "Plan selected", means: "Your first monthly pathway is confirmed.", complete: "Choose Keep this recommendation or finish the Month Builder.", unlocks: "Your guided first week opens." },
   { title: "Kit built", means: "Your support items are selected for this month.", complete: "Pick your kit defaults and confirm shipping preferences.", unlocks: "Badge, no cash unless configured.", mbc: "complete kit build = badge, no cash unless configured" },
@@ -289,7 +311,7 @@ export default function StretchPrototype() {
           {step === "built" && <BuiltScreen pathway={pathway} resetQuiz={resetQuiz} onUnlocks={() => setStep("unlocks")} onOpenJourney={() => openJourney(pathwayKey)} />}
           {step === "unlocks" && <UnlocksScreen pathway={pathway} answers={answers} onBuild={() => setStep("builder")} onKeep={() => setStep("confirm")} onSwap={resetQuiz} />}
           {step === "confirm" && <ConfirmScreen pathway={pathway} resetQuiz={resetQuiz} onBuild={() => setStep("builder")} onOpenJourney={() => openJourney(pathwayKey)} />}
-          {step === "builder" && <BuilderScreen selectedKit={selectedKit} selectedPod={selectedPod} selectedPass={selectedPass} setSelectedKit={setSelectedKit} setSelectedPod={setSelectedPod} setSelectedPass={setSelectedPass} onStart={() => setStep("week")} />}
+          {step === "builder" && <BuilderScreen pathway={pathway} onStart={() => setStep("week")} onCoach={() => setStep("care")} />}
           {step === "week" && <WeekScreen onHome={() => setStep("home")} />}
           {step === "home" && <HomeScreen pathway={pathway} answers={answers} onCare={() => setStep("care")} onFuture={() => setStep("future")} onJourney={() => openJourney(pathwayKey)} onStamp={setSelectedStamp} />}
           {step === "wallet" && <WalletScreen pathwayTitle={pathway.title} onFuture={() => setStep("future")} onStamp={setSelectedStamp} />}
