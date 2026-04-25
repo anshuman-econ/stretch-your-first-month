@@ -484,9 +484,9 @@ const controlledSwapOptions = (pathway: Pathway, reason: string): ControlledSwap
       { name: "Sticky perk", current: "Premium Workshop", includes: "A small perk that supports motivation, learning, or recovery access.", alternatives: ["Friend Pod Pass", "Masterclass", "Partner Demo", "Pop-Up Event", "Step / Stretch Challenge", "Tonic-Bar", "Broth / Nourish Circle", "Recovery Facility Prompt", "Premium Workshop"], change: "Your perk changes. Care, labs, pass, and pathway stay the same.", action: "Swap perk" },
     ],
   };
-  return [
-    ...details[key].map((swap) => ({ ...swap, why: swap.name === "Sticky perk" ? swap.includes : reason })),
-  ];
+  return details[key]
+    .filter((swap) => ["Care route", "Functional session", "Pods", "Experience pass"].includes(swap.name))
+    .map((swap) => ({ ...swap, why: reason }));
 };
 const catalogForBlock = (block: MonthBlock, pathway: Pathway): { rule: string; options: CatalogOption[]; agenda?: string } => {
   const key = pathwayKeyFromTitle(pathway);
@@ -509,7 +509,7 @@ const catalogForBlock = (block: MonthBlock, pathway: Pathway): { rule: string; o
     },
     Pods: pathwaySwapCatalog[key].Pods,
     Kit: pathwaySwapCatalog[key].Kit,
-    "Experience Pass": pathwaySwapCatalog[key]["Experience Pass"],
+    Pass: pathwaySwapCatalog[key]["Experience Pass"],
     Unlocks: {
       rule: "Unlocks are previews only. They open later through progress, coach review, clinical need, inventory, or rider eligibility.",
       options: [
@@ -614,7 +614,7 @@ export default function StretchPrototype() {
 
         <div className="flex-1 overflow-y-auto pb-24">
           {step === "landing" && (
-            <section className="space-y-7 px-5 pb-8 pt-6">
+            <section className="space-y-6 px-5 pb-8 pt-6">
               <div className="relative overflow-hidden rounded-[2rem] bg-hero p-6 shadow-float">
                 <img src={heroImage} alt="Rose silk, olive leaves, and warm ceramics" width={1024} height={1024} className="absolute inset-0 h-full w-full object-cover opacity-55" />
                 <div className="absolute inset-0 bg-heroVeil" />
@@ -622,12 +622,12 @@ export default function StretchPrototype() {
                   <div className="flex items-center justify-between"><p className="font-display text-3xl text-primary">Stretch</p><span className="rounded-full bg-card/80 px-3 py-1 text-xs font-semibold text-foreground shadow-card backdrop-blur">30 days</span></div>
                   <div className="space-y-5">
                     <SectionTitle title="Care that follows you home." copy="Answer a few questions. Stretch builds your first month with the right care, coach, pods, kit, and experience pass." />
-                    <div className="grid gap-3"><Button variant="hero" size="xl" onClick={() => setStep("goal")}>Build my first month <ArrowRight className="size-4" /></Button><Button variant="soft" size="xl" onClick={() => setStep("pathways")}>Explore pathways</Button></div>
+                    <Button variant="hero" size="xl" className="w-full" onClick={() => setStep("goal")}>Answer a few questions <ArrowRight className="size-4" /></Button>
                   </div>
                 </div>
               </div>
-              <PathwayPreviewList onOpen={openJourney} compact />
-              <div className="grid grid-cols-2 gap-3">{lockedCards.map((item) => <div key={item} className="rounded-3xl border border-border bg-secondary p-4 text-muted-foreground shadow-card"><Lock className="mb-3 size-4" /><p className="font-medium">{item}</p><p className="mt-1 text-xs">Unlocks later</p></div>)}</div>
+              <div className="rounded-[2rem] bg-card p-5 shadow-card"><p className="mb-3 text-sm font-semibold text-accent">Unlocked pathways</p><div className="grid gap-2">{pathwayKeys.map((key) => <button key={key} onClick={() => openJourney(key)} className="flex items-center justify-between rounded-2xl bg-secondary px-4 py-3 text-left text-sm font-semibold transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><span>{pathways[key].title}</span><ArrowRight className="size-4 text-accent" /></button>)}</div></div>
+              <div className="rounded-[2rem] bg-secondary p-5 shadow-card"><p className="mb-3 text-sm font-semibold text-muted-foreground">Locked previews</p><div className="flex flex-wrap gap-2">{lockedCards.map((item) => <span key={item} className="inline-flex items-center gap-2 rounded-full bg-card px-3 py-2 text-xs font-semibold text-muted-foreground shadow-card"><Lock className="size-3" />{item}</span>)}</div></div>
             </section>
           )}
 
