@@ -25,6 +25,7 @@ import { cn } from "@/lib/utils";
 type Step =
   | "landing"
   | "goal"
+  | "explainer"
   | "quiz"
   | "built"
   | "unlocks"
@@ -564,6 +565,7 @@ export default function StretchPrototype() {
           )}
 
           {step === "goal" && <GoalScreen setGoal={setGoal} setStep={setStep} />}
+          {step === "explainer" && <ExplainerScreen onContinue={() => setStep("quiz")} />}
           {step === "quiz" && <QuizScreen quizIndex={quizIndex} chooseAnswer={chooseAnswer} />}
           {step === "built" && <BuiltScreen pathway={pathway} resetQuiz={resetQuiz} onUnlocks={() => setStep("unlocks")} onOpenJourney={() => openJourney(pathwayKey)} />}
           {step === "unlocks" && <UnlocksScreen pathway={pathway} answers={answers} onBuild={() => setStep("builder")} onKeep={() => setStep("confirm")} onSwap={resetQuiz} />}
@@ -581,7 +583,7 @@ export default function StretchPrototype() {
         <nav className="absolute bottom-0 left-0 right-0 z-30 grid grid-cols-5 border-t border-border/80 bg-shell/95 px-2 py-2 backdrop-blur-xl">
           <NavItem icon={<Home className="size-5" />} label="Home" active={step === "home"} onClick={() => setStep("home")} />
           <NavItem icon={<Leaf className="size-5" />} label="Pathways" active={step === "pathways" || step === "journey"} onClick={() => setStep("pathways")} />
-          <NavItem icon={<CalendarDays className="size-5" />} label="Plan" active={["built", "unlocks", "confirm", "builder", "week"].includes(step)} onClick={() => setStep(answers.length ? "built" : "goal")} />
+          <NavItem icon={<CalendarDays className="size-5" />} label="Plan" active={["explainer", "built", "unlocks", "confirm", "builder", "week"].includes(step)} onClick={() => setStep(answers.length ? "built" : "goal")} />
           <NavItem icon={<MessageCircle className="size-5" />} label="Care" active={step === "care"} onClick={() => setStep("care")} />
           <NavItem icon={<Wallet className="size-5" />} label="Wallet" active={step === "wallet"} onClick={() => setStep("wallet")} />
         </nav>
@@ -593,7 +595,22 @@ export default function StretchPrototype() {
 }
 
 function GoalScreen({ setGoal, setStep }: { setGoal: (goal: string) => void; setStep: (step: Step) => void }) {
-  return <section className="space-y-6 px-5 py-7"><SectionTitle title="What do you want to feel better in 30 days?" copy="Choose the answer that feels closest. Your first month can still be adjusted." /><div className="grid gap-3">{goals.map((item) => <SoftCard key={item} onClick={() => { setGoal(item); setStep("quiz"); }} className="p-4"><span className="flex items-center justify-between gap-3 font-medium"><span>{item}</span><ArrowRight className="size-4 text-accent" /></span></SoftCard>)}</div></section>;
+  return <section className="space-y-6 px-5 py-7"><SectionTitle title="What do you want to feel better in 30 days?" copy="Choose the answer that feels closest. Your first month can still be adjusted." /><div className="grid gap-3">{goals.map((item) => <SoftCard key={item} onClick={() => { setGoal(item); setStep("explainer"); }} className="p-4"><span className="flex items-center justify-between gap-3 font-medium"><span>{item}</span><ArrowRight className="size-4 text-accent" /></span></SoftCard>)}</div></section>;
+}
+
+function ExplainerScreen({ onContinue }: { onContinue: () => void }) {
+  const [showTooltip, setShowTooltip] = useState(false);
+  const stack = ["Care", "Coach", "Pods", "Pass", "Kit", "Unlocks"];
+  const stamps = ["Plan", "MBC", "Device", "Rider", "Next"];
+  return <section className="space-y-6 px-5 py-7"><div className="rounded-[2rem] bg-hero p-6 shadow-float animate-enter"><div className="mb-4 flex items-start justify-between gap-3"><div><p className="text-sm font-semibold text-accent">Before your quiz</p><h1 className="mt-1 font-display text-4xl leading-tight">Stretch builds your month.</h1></div><button onClick={() => setShowTooltip((value) => !value)} className="rounded-full bg-card p-3 text-accent shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label="Behind the scenes"><Info className="size-5" /></button></div><p className="text-base leading-7 text-muted-foreground">You never start from a blank plan. Stretch turns your answers into a guided monthly care stack you can keep, swap, or review with your coach.</p>{showTooltip && <div className="mt-4 rounded-3xl bg-card p-4 text-sm leading-6 text-muted-foreground shadow-card animate-scale-in">Behind the scenes, Stretch works like a care operating system — it connects the right expert, coach, labs, kit, pod, experience, and future unlocks into one monthly journey.</div>}</div><div className="grid gap-4"><VisualStep number="1" title="Tell us what should feel better" copy="Pick the 30-day outcome that matters most right now."><div className="flex items-center gap-2 overflow-hidden"><div className="grid flex-1 gap-2">{["Sleep", "Energy", "Mood"].map((item) => <span key={item} className="rounded-2xl bg-card px-3 py-2 text-xs font-bold text-accent shadow-card">{item}</span>)}</div><ArrowRight className="size-5 shrink-0 text-accent" /><div className="grid size-20 place-items-center rounded-[1.5rem] bg-primary text-primary-foreground shadow-card"><Sparkles className="size-7" /><span className="text-[10px] font-bold">Stretch</span></div></div></VisualStep><VisualStep number="2" title="Your care stack assembles" copy="Care, coach, pods, pass, kit, and unlocks come together as one roadmap."><div className="relative h-36">{stack.map((item, index) => <div key={item} className="absolute left-1/2 w-[76%] -translate-x-1/2 rounded-2xl border border-border bg-card px-4 py-2 text-sm font-bold shadow-card animate-fade-in" style={{ top: `${index * 18}px`, zIndex: stack.length - index }}>{item}</div>)}</div></VisualStep><VisualStep number="3" title="Use it, earn credits, unlock next steps" copy="Progress stamps show what is active now and what may open later."><div className="grid grid-cols-5 gap-2">{stamps.map((item, index) => <div key={item} className={cn("rounded-2xl p-2 text-center shadow-card", index < 2 ? "bg-primary text-primary-foreground" : "bg-secondary text-accent")}><Star className="mx-auto mb-1 size-4" /><span className="text-[10px] font-bold">{item}</span></div>)}</div></VisualStep></div><div className="grid grid-cols-3 gap-3"><CompareCard title="Static monthly program" copy="One fixed bundle. Little flexibility." muted /><CompareCard title="Open marketplace" copy="Too many disconnected options." muted /><CompareCard title="Stretch" copy="A guided monthly care stack. Built for you. Safe swaps. Future unlocks." highlight /></div><Button variant="hero" size="xl" className="w-full" onClick={onContinue}>Start my quiz <ArrowRight className="size-4" /></Button></section>;
+}
+
+function VisualStep({ number, title, copy, children }: { number: string; title: string; copy: string; children: React.ReactNode }) {
+  return <div className="rounded-[2rem] bg-card p-5 shadow-card animate-fade-in"><div className="mb-4 flex items-start gap-3"><span className="grid size-9 shrink-0 place-items-center rounded-full bg-secondary text-sm font-bold text-accent">{number}</span><div><h2 className="font-display text-2xl leading-tight">{title}</h2><p className="mt-1 text-sm leading-6 text-muted-foreground">{copy}</p></div></div>{children}</div>;
+}
+
+function CompareCard({ title, copy, highlight, muted }: { title: string; copy: string; highlight?: boolean; muted?: boolean }) {
+  return <div className={cn("rounded-3xl p-4 shadow-card", highlight ? "bg-primary text-primary-foreground" : muted ? "bg-secondary text-secondary-foreground" : "bg-card")}><p className="font-display text-xl leading-tight">{title}</p><p className={cn("mt-2 text-xs leading-5", highlight ? "text-primary-foreground/85" : "text-muted-foreground")}>{copy}</p></div>;
 }
 
 function QuizScreen({ quizIndex, chooseAnswer }: { quizIndex: number; chooseAnswer: (answer: string) => void }) {
