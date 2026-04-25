@@ -976,8 +976,8 @@ function PathwayPreviewList({ onOpen, compact = false }: { onOpen: (key: Pathway
   return <div className="space-y-3"><p className="text-sm font-semibold text-muted-foreground">Unlocked pathways</p>{pathwayKeys.map((key) => { const card = pathways[key]; return <SoftCard key={card.title} onClick={() => onOpen(key)}><div className="flex items-start justify-between gap-4"><div className="space-y-3"><h2 className="font-display text-2xl text-foreground">{card.title}</h2><p className="text-sm text-muted-foreground">Best for {card.bestFor}</p>{!compact && <p className="text-sm leading-6 text-muted-foreground">{card.monthlyPromise}</p>}<div className="grid gap-2 text-sm"><span className="flex items-center gap-2 text-foreground"><Sparkles className="size-4 text-accent" /> {card.firstUnlock}</span><span className="flex items-center gap-2 text-muted-foreground"><Lock className="size-4" /> Later: {card.futureUnlock}</span></div></div><ArrowRight className="mt-1 size-5 text-accent" /></div></SoftCard>; })}</div>;
 }
 
-function PathwaysScreen({ onOpen }: { onOpen: (key: PathwayKey) => void }) {
-  return <section className="space-y-6 px-5 py-7"><SectionTitle title="Explore pathways" copy="Four guided monthly journeys are unlocked. Each keeps choices simple." /><PathwayPreviewList onOpen={onOpen} /></section>;
+function PathwaysScreen({ onOpen, onScale }: { onOpen: (key: PathwayKey) => void; onScale: () => void }) {
+  return <section className="space-y-6 px-5 py-7"><div className="space-y-4"><SectionTitle title="Explore pathways" copy="Four guided monthly journeys are unlocked. Each keeps choices simple." /><button onClick={onScale} className="inline-flex items-center gap-2 rounded-full bg-card px-4 py-3 text-sm font-bold text-accent shadow-card transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><Sparkles className="size-4" /> How Stretch scales</button></div><PathwayPreviewList onOpen={onOpen} /></section>;
 }
 
 function CareScreen() {
