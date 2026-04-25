@@ -28,6 +28,7 @@ type Step =
   | "explainer"
   | "quiz"
   | "built"
+  | "swap"
   | "unlocks"
   | "confirm"
   | "builder"
@@ -192,6 +193,7 @@ type StackStatus = "Included" | "Recommended" | "Swap available" | "Locked previ
 type MonthBlock = { name: string; selection: string; why: string; status: StackStatus; includes: string; plain: string; discovery: string; alternatives?: string[]; change?: string; swappable?: boolean };
 type DemoTile = { column: string; name: string; what: string; where: string; pathways: string; status: string };
 type CatalogOption = { name: string; state?: string };
+type ControlledSwap = { name: string; current: string; why: string; includes: string; alternatives: string[]; change: string; action: string };
 const rebalanceOptions = ["more sleep support", "more energy support", "more glow / visible vitality", "more mood support", "more movement support", "less intensity this month"];
 const pathwayKeyFromTitle = (pathway: Pathway): PathwayKey => pathwayKeys.find((key) => pathways[key].title === pathway.title) || "peri";
 const pathwayDefaults: Record<PathwayKey, Record<string, string>> = {
@@ -422,6 +424,31 @@ const pathwaySwapCatalog: Record<PathwayKey, Record<string, { rule: string; opti
     Kit: { rule: "Pick one focus or vitality lane. Advanced testing and devices stay locked until they make sense.", options: opt(["Daily foundation", "Pantry support", "Powder support", "Focus support", "Pulse stack", "Visible vitality", "Sticky perk", "Advanced tests + devices"], ["Swap available", "Swap available", "Swap available", "Swap available", "Swap available", "Recommended", "Swap available", "Locked preview"]) },
   },
 };
+
+const controlledSwapOptions = (pathway: Pathway, reason: string): ControlledSwap[] => {
+  const key = pathwayKeyFromTitle(pathway);
+  const d = pathwayDefaults[key];
+  const podChoices: Record<PathwayKey, string[]> = {
+    peri: ["Mood / Fog Pod", "Metabolic Drift Pod", "Skin / Hair Pod"],
+    endo: ["GI / Function Support Pod", "Pain Pacing Pod", "Fatigue Support Pod"],
+    metabo: ["Insight Night Pod", "Hair Lab Pod", "Cravings & Calm Pod"],
+    longevity: ["Executive Performance Pod", "Healthspan Lab Pod", "Sleep & Recovery Pod"],
+  };
+  const passChoices: Record<PathwayKey, string[]> = {
+    peri: ["Breathwork Reset", "Restorative Mobility", "Clinic Red-Light if available"],
+    endo: ["Restorative Yoga", "Pain-Aware Movement", "Gentle Pilates Flow"],
+    metabo: ["Skin Routine Demo", "Pilates / Barre Intro", "LED Booth if available"],
+    longevity: ["Mobility Micro-Class", "Movement-Compliance Session", "Red-Light if available"],
+  };
+  return [
+    { name: "Care route", current: d.Specialist, why: reason, includes: "Specialist routing, safe review, and clear next steps.", alternatives: ["Internal medicine review", "Derm review if relevant", "Coach asks clinician first"], change: "Your expert route changes. Labs, riders, prescriptions, and pathway identity stay protected.", action: "Swap care route" },
+    { name: "Functional session", current: d["Functional Care"], why: reason, includes: "One hands-on or guided body-support session for this month.", alternatives: ["Breathwork reset", "Restorative mobility", "Acupuncture or recovery support"], change: "Your session changes, but your core care plan and coach rhythm stay the same.", action: "Swap session" },
+    { name: "Pods", current: d.Pods, why: reason, includes: "Selected pods, agenda, weekly prompts, and outputs.", alternatives: podChoices[key], change: "Your coaching plan and kit recommendations will adjust.", action: "Swap pod" },
+    { name: "Experience pass", current: d["Experience Pass"], why: reason, includes: "One bookable pass. Tier-Low is included; Tier-High may depend on availability.", alternatives: passChoices[key], change: "Your pass booking changes, but your care plan remains the same.", action: "Swap pass" },
+    { name: "Kit item", current: d.Kit, why: reason, includes: "At-home support matched to your month, with one safe item swap.", alternatives: ["Electrolytes", "Collagen mini", "HA-ceramide support"], change: "Your kit changes, but your coach plan remains the same.", action: "Swap kit item" },
+    { name: "Sticky perk", current: "Friend Pod Pass or Masterclass Access", why: "A small motivational perk can make the month easier to complete.", includes: "One light-touch perk that supports follow-through.", alternatives: stickyPerks.slice(0, 3), change: "Your perk changes. Care, labs, pass, and pathway stay the same.", action: "Swap perk" },
+  ];
+};
 const catalogForBlock = (block: MonthBlock, pathway: Pathway): { rule: string; options: CatalogOption[]; agenda?: string } => {
   const key = pathwayKeyFromTitle(pathway);
   const planCatalog: Record<string, { rule: string; options: CatalogOption[]; agenda?: string }> = {
@@ -509,6 +536,7 @@ export default function StretchPrototype() {
   const [journeyTab, setJourneyTab] = useState<JourneyTab>("Experience");
   const [selectedStamp, setSelectedStamp] = useState<PassportStamp | null>(null);
   const [showBehindScenes, setShowBehindScenes] = useState(false);
+  const [showRebalance, setShowRebalance] = useState(false);
 
   const pathwayKey = useMemo(() => detectPathway(answers, goal), [answers, goal]);
   const pathway = pathways[pathwayKey];
@@ -568,9 +596,10 @@ export default function StretchPrototype() {
           {step === "explainer" && <ExplainerScreen onContinue={() => setStep("quiz")} />}
           {step === "quiz" && <QuizScreen quizIndex={quizIndex} chooseAnswer={chooseAnswer} />}
           {step === "built" && <BuiltScreen pathway={pathway} resetQuiz={resetQuiz} onUnlocks={() => setStep("unlocks")} onOpenJourney={() => openJourney(pathwayKey)} />}
+          {step === "swap" && <SwapScreen pathway={pathway} reason={answers.slice(0, 3).join(", ") || goal || pathway.reason} onBack={() => setStep("builder")} onCoach={() => setShowRebalance(true)} />}
           {step === "unlocks" && <UnlocksScreen pathway={pathway} answers={answers} onBuild={() => setStep("builder")} onKeep={() => setStep("confirm")} onSwap={resetQuiz} />}
           {step === "confirm" && <ConfirmScreen pathway={pathway} resetQuiz={resetQuiz} onBuild={() => setStep("builder")} onOpenJourney={() => openJourney(pathwayKey)} />}
-          {step === "builder" && <BuilderScreen pathway={pathway} onStart={() => setStep("week")} onCoach={() => setStep("care")} />}
+          {step === "builder" && <BuilderScreen pathway={pathway} onStart={() => setStep("week")} onCoach={() => setShowRebalance(true)} onSwap={() => setStep("swap")} />}
           {step === "week" && <WeekScreen onHome={() => setStep("home")} />}
           {step === "home" && <HomeScreen pathway={pathway} answers={answers} onCare={() => setStep("care")} onFuture={() => setStep("future")} onJourney={() => openJourney(pathwayKey)} onStamp={setSelectedStamp} />}
           {step === "wallet" && <WalletScreen pathwayTitle={pathway.title} onFuture={() => setStep("future")} onStamp={setSelectedStamp} />}
@@ -588,6 +617,7 @@ export default function StretchPrototype() {
           <NavItem icon={<Wallet className="size-5" />} label="Wallet" active={step === "wallet"} onClick={() => setStep("wallet")} />
         </nav>
         {selectedStamp && <StampDrawer stamp={selectedStamp} onClose={() => setSelectedStamp(null)} />}
+        {showRebalance && <RebalanceModal onClose={() => setShowRebalance(false)} />}
         {showBehindScenes && <BehindScenesPanel onClose={() => setShowBehindScenes(false)} />}
       </div>
     </main>
@@ -640,7 +670,7 @@ function ConfirmScreen({ pathway, resetQuiz, onBuild, onOpenJourney }: { pathway
   return <section className="space-y-6 px-5 py-7"><SectionTitle title="Keep your first month or swap one thing." copy="Your coach can help refine it after you begin." /><SoftCard onClick={onOpenJourney} className="space-y-4 border-Recommended/40"><div className="flex items-center justify-between"><p className="font-display text-2xl">First Month</p><Star className="size-5 text-accent" /></div><p className="text-muted-foreground">{pathway.title}</p><div className="grid grid-cols-3 gap-2 text-center text-xs">{pathway.guidedDefaults.slice(0, 3).map((item) => <span key={item} className="rounded-2xl bg-secondary px-2 py-3">{item}</span>)}</div></SoftCard><Button variant="hero" size="xl" className="w-full" onClick={onBuild}>Build my month</Button><Button variant="soft" size="xl" className="w-full" onClick={resetQuiz}>Swap answers</Button></section>;
 }
 
-function BuilderScreen({ pathway, onStart, onCoach }: { pathway: Pathway; onStart: () => void; onCoach: () => void }) {
+function BuilderScreen({ pathway, onStart, onCoach, onSwap }: { pathway: Pathway; onStart: () => void; onCoach: () => void; onSwap: () => void }) {
   const [drawerBlock, setDrawerBlock] = useState<MonthBlock | null>(null);
   const [demoTile, setDemoTile] = useState<DemoTile | null>(null);
   const [swapBlock, setSwapBlock] = useState<MonthBlock | null>(null);
@@ -654,11 +684,27 @@ function BuilderScreen({ pathway, onStart, onCoach }: { pathway: Pathway; onStar
     { label: "Progress", state: "future", block: planCards[5] },
     { label: "Unlocks", state: "locked", block: planCards[5] },
   ];
-  return <section className="space-y-5 px-5 pb-32 pt-6"><div className="rounded-[2rem] bg-hero p-5 shadow-float"><div className="flex items-start justify-between gap-4"><div className="min-w-0"><p className="text-sm font-semibold text-accent">Your Stretch Month</p><h1 className="mt-1 font-display text-4xl leading-tight">{pathway.title}</h1><p className="mt-1 text-sm font-semibold text-foreground/80">Month 1: Foundation</p><p className="mt-3 text-base leading-6 text-muted-foreground">{pathway.monthlyPromise}</p></div><ProgressRing value={38} /></div><div className="mt-5 grid gap-2"><Button variant="hero" size="lg" onClick={onStart}>Keep recommended month</Button><div className="grid grid-cols-2 gap-2"><Button variant="soft" size="lg" onClick={() => setDrawerBlock(swapBlock || planCards[0])}><RefreshCw className="size-4" /> Swap one block</Button><Button variant="soft" size="lg" onClick={onCoach}><MessageCircle className="size-4" /> Ask coach</Button></div></div></div><div className="grid gap-4">{planCards.map((block, index) => <StackCard key={block.name} block={block} index={index} onOpen={() => setDrawerBlock(block)} />)}</div><SwapImpactSummary block={swapBlock || planCards[0]} onPick={setSwapBlock} onOpen={setDrawerBlock} options={planCards.filter((block) => block.swappable)} />{drawerBlock && <BlockDrawer block={drawerBlock} pathway={pathway} onClose={() => setDrawerBlock(null)} onCoach={onCoach} />}{demoTile && <DemoTileDrawer tile={demoTile} onClose={() => setDemoTile(null)} />}<JourneyBar items={journey} onOpen={setDrawerBlock} /></section>;
+  return <section className="space-y-5 px-5 pb-32 pt-6"><div className="rounded-[2rem] bg-hero p-5 shadow-float"><div className="flex items-start justify-between gap-4"><div className="min-w-0"><p className="text-sm font-semibold text-accent">Your Stretch Month</p><h1 className="mt-1 font-display text-4xl leading-tight">{pathway.title}</h1><p className="mt-1 text-sm font-semibold text-foreground/80">Month 1: Foundation</p><p className="mt-3 text-base leading-6 text-muted-foreground">{pathway.monthlyPromise}</p></div><ProgressRing value={38} /></div><div className="mt-5 grid gap-2"><Button variant="hero" size="lg" onClick={onStart}>Keep recommended month</Button><div className="grid grid-cols-2 gap-2"><Button variant="soft" size="lg" onClick={onSwap}><RefreshCw className="size-4" /> Swap one block</Button><Button variant="soft" size="lg" onClick={onCoach}><MessageCircle className="size-4" /> Ask coach</Button></div></div><p className="mt-4 rounded-2xl bg-card/80 p-3 text-xs font-semibold leading-5 text-muted-foreground shadow-card">You can swap one block this month. If you want a bigger change, ask your coach to rebalance.</p></div><div className="grid gap-4">{planCards.map((block, index) => <StackCard key={block.name} block={block} index={index} onOpen={() => setDrawerBlock(block)} />)}</div><SwapImpactSummary block={swapBlock || planCards[0]} onPick={setSwapBlock} onOpen={() => onSwap()} options={planCards.filter((block) => block.swappable)} />{drawerBlock && <BlockDrawer block={drawerBlock} pathway={pathway} onClose={() => setDrawerBlock(null)} onCoach={onCoach} />}{demoTile && <DemoTileDrawer tile={demoTile} onClose={() => setDemoTile(null)} />}<JourneyBar items={journey} onOpen={setDrawerBlock} /></section>;
 }
 
 function ProgressRing({ value }: { value: number }) {
   return <div className="grid size-20 shrink-0 place-items-center rounded-full bg-card shadow-card" style={{ background: `conic-gradient(hsl(var(--primary)) ${value}%, hsl(var(--secondary)) 0)` }}><div className="grid size-14 place-items-center rounded-full bg-card"><span className="text-sm font-bold text-accent">{value}%</span></div></div>;
+}
+
+function SwapScreen({ pathway, reason, onBack, onCoach }: { pathway: Pathway; reason: string; onBack: () => void; onCoach: () => void }) {
+  const swaps = controlledSwapOptions(pathway, reason);
+  const [selected, setSelected] = useState<ControlledSwap | null>(null);
+  return <section className="space-y-5 px-5 py-7"><div className="rounded-[2rem] bg-hero p-6 shadow-float"><p className="text-sm font-semibold text-accent">Controlled swap</p><h1 className="mt-1 font-display text-4xl leading-tight">Choose one block to adjust</h1><p className="mt-3 rounded-2xl bg-card/80 p-3 text-sm font-semibold leading-6 text-muted-foreground shadow-card">You can swap one block this month. Diagnostics, riders, devices, prescriptions, and major pathway identity are not free swaps.</p></div><div className="grid gap-3">{swaps.map((swap) => <button key={swap.name} onClick={() => setSelected(swap)} className="rounded-[2rem] bg-card p-5 text-left shadow-card transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><div className="flex items-start justify-between gap-3"><div><p className="text-sm font-bold text-accent">{swap.name}</p><h2 className="mt-1 font-display text-2xl leading-tight">{swap.current}</h2></div><ArrowRight className="size-5 shrink-0 text-accent" /></div><p className="mt-2 line-clamp-2 text-sm leading-6 text-muted-foreground">{swap.change}</p></button>)}</div><Button variant="soft" size="xl" className="w-full" onClick={onBack}>Back to month</Button>{selected && <SwapDrawer swap={selected} onClose={() => setSelected(null)} onCoach={onCoach} />}</section>;
+}
+
+function SwapDrawer({ swap, onClose, onCoach }: { swap: ControlledSwap; onClose: () => void; onCoach: () => void }) {
+  const [chosen, setChosen] = useState(swap.alternatives[0]);
+  return <div className="absolute inset-0 z-50 flex items-end bg-primary/25 p-3 backdrop-blur-sm" onClick={onClose}><div className="max-h-[84vh] w-full overflow-y-auto rounded-[2rem] bg-card p-6 shadow-float animate-slide-up" onClick={(event) => event.stopPropagation()}><div className="mb-5 flex items-start justify-between gap-3"><div><p className="text-sm font-bold text-accent">{swap.name} swap</p><h2 className="font-display text-3xl leading-tight">{swap.current}</h2></div><button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent">Close</button></div><div className="grid gap-3"><InfoBlock label="Current recommendation" copy={swap.current} /><InfoBlock label="Why we chose it" copy={swap.why} /><InfoBlock label="What it includes" copy={swap.includes} /><div className="rounded-2xl bg-secondary p-4"><p className="text-xs font-semibold uppercase tracking-wide text-accent">Available alternatives</p><div className="mt-3 grid gap-2">{swap.alternatives.slice(0, 3).map((item) => <button key={item} onClick={() => setChosen(item)} className={cn("rounded-2xl px-4 py-3 text-left text-sm font-semibold shadow-card transition-smooth focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", chosen === item ? "bg-primary text-primary-foreground" : "bg-card text-foreground")}>{item}</button>)}</div></div><InfoBlock label="What changes if you swap" copy={swap.change} /></div><div className="mt-5 grid gap-3"><Button variant="soft" size="xl" onClick={onClose}>Keep current</Button><Button variant="hero" size="xl" onClick={onClose}>{swap.action}</Button><Button variant="soft" size="xl" onClick={onCoach}>Ask coach</Button></div></div></div>;
+}
+
+function RebalanceModal({ onClose }: { onClose: () => void }) {
+  const [choice, setChoice] = useState<string | null>(null);
+  return <div className="absolute inset-0 z-[70] flex items-center bg-primary/30 p-4 backdrop-blur-sm" onClick={onClose}><div className="w-full rounded-[2rem] bg-card p-6 shadow-float animate-enter" onClick={(event) => event.stopPropagation()}><div className="mb-5 flex items-start justify-between gap-3"><div><p className="text-sm font-bold text-accent">Ask coach to rebalance</p><h2 className="font-display text-3xl leading-tight">What should this month lean toward?</h2></div><button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent">Close</button></div>{!choice ? <div className="grid gap-2">{rebalanceOptions.map((option) => <button key={option} onClick={() => setChoice(option)} className="rounded-2xl bg-secondary px-4 py-3 text-left text-sm font-semibold transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{option}</button>)}</div> : <div className="space-y-4"><div className="rounded-3xl bg-olive p-5 text-olive-foreground shadow-card"><Check className="mb-3 size-6" /><p className="font-display text-2xl">Coach will rebalance your month.</p><p className="mt-2 text-sm leading-6">Lean: {choice}</p></div><div className="grid gap-3">{[["Changed pod", "Sleep Reset Pod → Mood / Fog Pod"], ["Changed kit item", "Magnesium focus → electrolytes + collagen mini"], ["Changed pass", "Cooling workshop → restorative mobility"], ["Changed coaching emphasis", "Sleep routine → energy pacing + lighter week"]].map(([label, value]) => <InfoBlock key={label} label={label} copy={value} />)}</div><Button variant="hero" size="xl" className="w-full" onClick={onClose}>Use rebalanced preview</Button></div>}</div></div>;
 }
 
 function StackCard({ block, index, onOpen }: { block: MonthBlock; index: number; onOpen: () => void }) {
