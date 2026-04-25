@@ -494,6 +494,19 @@ const controlledSwapOptions = (pathway: Pathway, reason: string): ControlledSwap
       stays: swap.stays || "Your diagnostics, prescriptions, devices, riders, high-cost procedures, and major pathway identity stay unchanged.",
     }));
 };
+const swapTargetName = (blockName?: string | null) => {
+  const map: Record<string, string> = {
+    Care: "Care route",
+    Specialist: "Care route",
+    "Functional Care": "Functional session",
+    Pods: "Pods",
+    Pass: "Experience pass",
+    "Experience Pass": "Experience pass",
+    Kit: "Kit item",
+  };
+  return blockName ? map[blockName] : undefined;
+};
+
 const catalogForBlock = (block: MonthBlock, pathway: Pathway): { rule: string; options: CatalogOption[]; agenda?: string } => {
   const key = pathwayKeyFromTitle(pathway);
   const planCatalog: Record<string, { rule: string; options: CatalogOption[]; agenda?: string }> = {
@@ -584,6 +597,7 @@ export default function StretchPrototype() {
   const [showBlocksDemo, setShowBlocksDemo] = useState(false);
   const [demoTile, setDemoTile] = useState<DemoTile | null>(null);
   const [showRebalance, setShowRebalance] = useState(false);
+  const [swapTarget, setSwapTarget] = useState<string | null>(null);
 
   const pathwayKey = useMemo(() => detectPathway(answers, goal), [answers, goal]);
   const pathway = pathways[pathwayKey];
@@ -602,7 +616,10 @@ export default function StretchPrototype() {
     } else setQuizIndex((current) => current + 1);
   };
   const resetQuiz = () => { setAnswers([]); setQuizIndex(0); setStep("goal"); };
-  const openControlledSwap = () => setStep("swap");
+  const openControlledSwap = (target?: string) => {
+    setSwapTarget(target || null);
+    setStep("swap");
+  };
 
   return (
     <main className="min-h-screen bg-background font-sans text-foreground" onPointerMove={(event) => {
@@ -645,8 +662,8 @@ export default function StretchPrototype() {
           {step === "explainer" && <ExplainerScreen onContinue={() => setStep("quiz")} onExample={() => { setGoal("Sleep through the night"); setAnswers([]); setSelectedJourney("peri"); setStep("builder"); }} />}
           {step === "quiz" && <QuizScreen quizIndex={quizIndex} chooseAnswer={chooseAnswer} onExplain={() => setStep("explainer")} />}
           {step === "built" && <BuiltScreen pathway={pathway} resetQuiz={resetQuiz} onUnlocks={() => setStep("unlocks")} />}
-          {step === "swap" && <SwapScreen pathway={pathway} reason={answers.slice(0, 3).join(", ") || goal || pathway.reason} onBack={() => setStep("builder")} onCoach={() => setShowRebalance(true)} />}
-          {step === "unlocks" && <UnlocksScreen pathway={pathway} answers={answers} onBuild={() => setStep("builder")} onKeep={() => setStep("confirm")} onSwap={openControlledSwap} />}
+          {step === "swap" && <SwapScreen pathway={pathway} reason={answers.slice(0, 3).join(", ") || goal || pathway.reason} initialTarget={swapTarget} onBack={() => setStep("builder")} onCoach={() => setShowRebalance(true)} />}
+          {step === "unlocks" && <UnlocksScreen pathway={pathway} answers={answers} onBuild={() => setStep("builder")} onKeep={() => setStep("confirm")} onSwap={() => openControlledSwap()} />}
           {step === "confirm" && <ConfirmScreen pathway={pathway} resetQuiz={resetQuiz} onBuild={() => setStep("builder")} onOpenJourney={() => openJourney(pathwayKey)} />}
           {step === "builder" && <BuilderScreen pathway={pathway} onStart={() => setStep("week")} onCoach={() => setShowRebalance(true)} onSwap={() => setStep("swap")} />}
           {step === "week" && <WeekScreen onHome={() => setStep("home")} />}
@@ -747,7 +764,7 @@ function ConfirmScreen({ pathway, resetQuiz, onBuild, onOpenJourney }: { pathway
   return <section className="space-y-6 px-5 py-7"><SectionTitle title="Keep your first month or swap one thing." copy="Your coach can help refine it after you begin." /><SoftCard onClick={onOpenJourney} className="space-y-4 border-Recommended/40"><div className="flex items-center justify-between"><p className="font-display text-2xl">First Month</p><Star className="size-5 text-accent" /></div><p className="text-muted-foreground">{pathway.title}</p><div className="grid grid-cols-3 gap-2 text-center text-xs">{pathway.guidedDefaults.slice(0, 3).map((item) => <span key={item} className="rounded-2xl bg-secondary px-2 py-3">{item}</span>)}</div></SoftCard><Button variant="hero" size="xl" className="w-full" onClick={onBuild}>Build my month</Button><Button variant="soft" size="xl" className="w-full" onClick={resetQuiz}>Swap answers</Button></section>;
 }
 
-function BuilderScreen({ pathway, onStart, onCoach, onSwap }: { pathway: Pathway; onStart: () => void; onCoach: () => void; onSwap: () => void }) {
+function BuilderScreen({ pathway, onStart, onCoach, onSwap }: { pathway: Pathway; onStart: () => void; onCoach: () => void; onSwap: (target?: string) => void }) {
   const [drawerBlock, setDrawerBlock] = useState<MonthBlock | null>(null);
   const [demoTile, setDemoTile] = useState<DemoTile | null>(null);
   const planCards = buildPlanCards(pathway);
@@ -762,16 +779,17 @@ function BuilderScreen({ pathway, onStart, onCoach, onSwap }: { pathway: Pathway
     { label: "Progress", state: "future", block: planCards[5] },
     { label: "Unlocks", state: "locked", block: planCards[6] },
   ];
-  return <section className="space-y-5 px-5 pb-32 pt-6"><div className="space-y-3"><SectionTitle title="Your Stretch Month" copy="We built your month. Keep it, swap one thing, or ask your coach." /><div className="grid gap-2"><Button variant="hero" size="lg" onClick={onStart}>Keep recommended month</Button><div className="grid grid-cols-2 gap-2"><Button variant="soft" size="lg" onClick={onSwap}><RefreshCw className="size-4" /> Swap one block</Button><Button variant="soft" size="lg" onClick={onCoach}><MessageCircle className="size-4" /> Ask coach</Button></div></div></div><div className="grid gap-3">{defaultTiles.map((card) => <BuilderSummaryCard key={card.title} card={card} onOpen={() => setDrawerBlock(card.block)} />)}</div>{drawerBlock && <BlockDrawer block={drawerBlock} pathway={pathway} onClose={() => setDrawerBlock(null)} onCoach={onCoach} />}{demoTile && <DemoTileDrawer tile={demoTile} onClose={() => setDemoTile(null)} />}<JourneyBar items={journey} onOpen={setDrawerBlock} /></section>;
+  return <section className="space-y-5 px-5 pb-32 pt-6"><div className="space-y-3"><SectionTitle title="Your Stretch Month" copy="We built your month. Keep it, swap one thing, or ask your coach." /><div className="grid gap-2"><Button variant="hero" size="lg" onClick={onStart}>Keep recommended month</Button><div className="grid grid-cols-2 gap-2"><Button variant="soft" size="lg" onClick={onSwap}><RefreshCw className="size-4" /> Swap one block</Button><Button variant="soft" size="lg" onClick={onCoach}><MessageCircle className="size-4" /> Ask coach</Button></div></div></div><div className="grid gap-3">{defaultTiles.map((card) => <BuilderSummaryCard key={card.title} card={card} onOpen={() => setDrawerBlock(card.block)} />)}</div>{drawerBlock && <BlockDrawer block={drawerBlock} pathway={pathway} onClose={() => setDrawerBlock(null)} onSwap={() => { setDrawerBlock(null); onSwap(drawerBlock.name); }} onCoach={onCoach} />}{demoTile && <DemoTileDrawer tile={demoTile} onClose={() => setDemoTile(null)} />}<JourneyBar items={journey} onOpen={setDrawerBlock} /></section>;
 }
 
 function ProgressRing({ value }: { value: number }) {
   return <div className="grid size-20 shrink-0 place-items-center rounded-full bg-card shadow-card" style={{ background: `conic-gradient(hsl(var(--primary)) ${value}%, hsl(var(--secondary)) 0)` }}><div className="grid size-14 place-items-center rounded-full bg-card"><span className="text-sm font-bold text-accent">{value}%</span></div></div>;
 }
 
-function SwapScreen({ pathway, reason, onBack, onCoach }: { pathway: Pathway; reason: string; onBack: () => void; onCoach: () => void }) {
+function SwapScreen({ pathway, reason, initialTarget, onBack, onCoach }: { pathway: Pathway; reason: string; initialTarget?: string | null; onBack: () => void; onCoach: () => void }) {
   const swaps = controlledSwapOptions(pathway, reason);
-  const [selected, setSelected] = useState<ControlledSwap | null>(null);
+  const targetName = swapTargetName(initialTarget);
+  const [selected, setSelected] = useState<ControlledSwap | null>(() => swaps.find((swap) => swap.name === targetName) || null);
   return <section className="space-y-5 px-5 py-7"><div className="rounded-[2rem] bg-hero p-6 shadow-float"><p className="text-sm font-semibold text-accent">Controlled swap</p><h1 className="mt-1 font-display text-4xl leading-tight">Choose one block to adjust</h1><p className="mt-3 rounded-2xl bg-card/80 p-3 text-sm font-semibold leading-6 text-muted-foreground shadow-card">You can swap one block this month. For bigger changes, ask your coach to rebalance.</p><p className="mt-3 text-xs font-semibold leading-5 text-muted-foreground">Not freely swappable: diagnostics, prescriptions, devices, riders, high-cost procedures, major pathway identity.</p></div><div className="grid gap-3">{swaps.map((swap) => <button key={swap.name} onClick={() => setSelected(swap)} className="rounded-[2rem] bg-card p-5 text-left shadow-card transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><div className="flex items-start justify-between gap-3"><div><p className="text-sm font-bold text-accent">{swap.name}</p><h2 className="mt-1 font-display text-2xl leading-tight">{swap.current}</h2></div><ArrowRight className="size-5 shrink-0 text-accent" /></div><p className="mt-2 line-clamp-2 text-sm leading-6 text-muted-foreground">{swap.change}</p></button>)}</div><Button variant="soft" size="xl" className="w-full" onClick={onBack}>Back to month</Button>{selected && <SwapDrawer swap={selected} onClose={() => setSelected(null)} onCoach={onCoach} />}</section>;
 }
 
@@ -820,9 +838,9 @@ function iconForBlock(name: string) {
   return <Star className="size-5" />;
 }
 
-function BlockDrawer({ block, pathway, onClose, onCoach }: { block: MonthBlock; pathway: Pathway; onClose: () => void; onCoach: () => void }) {
+function BlockDrawer({ block, pathway, onClose, onSwap, onCoach }: { block: MonthBlock; pathway: Pathway; onClose: () => void; onSwap: () => void; onCoach: () => void }) {
   const catalog = catalogForBlock(block, pathway);
-  return <div className="absolute inset-0 z-50 flex items-center bg-primary/25 p-3 backdrop-blur-sm" onClick={onClose}><div className="max-h-[82vh] w-full overflow-y-auto rounded-[2rem] bg-card p-6 shadow-float" onClick={(event) => event.stopPropagation()}><div className="mb-5 flex items-start justify-between gap-3"><div className="flex items-start gap-3"><div className="rounded-full bg-secondary p-3 text-accent">{iconForBlock(block.name)}</div><div><p className="text-sm font-semibold text-accent">{block.name}</p><h2 className="font-display text-3xl leading-tight">{block.selection}</h2></div></div><button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent">Close</button></div><WatercolorWash name={block.name} /><div className="grid gap-4"><div className="grid grid-cols-2 gap-3"><InfoBlock label="Does" copy={block.plain} /><InfoBlock label="Why here" copy={block.why} /></div><InfoBlock label="Inside" copy={block.includes} /><div className="rounded-2xl bg-secondary p-4"><p className="text-xs font-semibold uppercase tracking-wide text-accent">Explore</p><div className="mt-3 grid gap-2">{catalog.options.map((option) => <button key={option.name} className="rounded-2xl bg-card px-4 py-3 text-left shadow-card transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><p className="text-sm font-semibold">{option.name}</p><p className="mt-1 text-xs text-accent">{option.state}</p></button>)}</div>{catalog.agenda && <p className="mt-3 text-xs leading-5 text-muted-foreground">{catalog.agenda}</p>}</div></div><div className="mt-5 grid gap-3"><Button variant="hero" size="xl" onClick={onClose}>Keep this piece</Button><Button variant="soft" size="xl" disabled={!block.swappable} onClick={onClose}><RefreshCw className="size-4" /> Preview one swap</Button><Button variant="soft" size="xl" onClick={onCoach}>Ask coach</Button></div></div></div>;
+  return <div className="absolute inset-0 z-50 flex items-center bg-primary/25 p-3 backdrop-blur-sm" onClick={onClose}><div className="max-h-[82vh] w-full overflow-y-auto rounded-[2rem] bg-card p-6 shadow-float" onClick={(event) => event.stopPropagation()}><div className="mb-5 flex items-start justify-between gap-3"><div className="flex items-start gap-3"><div className="rounded-full bg-secondary p-3 text-accent">{iconForBlock(block.name)}</div><div><p className="text-sm font-semibold text-accent">{block.name}</p><h2 className="font-display text-3xl leading-tight">{block.selection}</h2></div></div><button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent">Close</button></div><WatercolorWash name={block.name} /><div className="grid gap-4"><div className="grid grid-cols-2 gap-3"><InfoBlock label="Does" copy={block.plain} /><InfoBlock label="Why here" copy={block.why} /></div><InfoBlock label="Inside" copy={block.includes} /><div className="rounded-2xl bg-secondary p-4"><p className="text-xs font-semibold uppercase tracking-wide text-accent">Explore</p><div className="mt-3 grid gap-2">{catalog.options.map((option) => <button key={option.name} className="rounded-2xl bg-card px-4 py-3 text-left shadow-card transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><p className="text-sm font-semibold">{option.name}</p><p className="mt-1 text-xs text-accent">{option.state}</p></button>)}</div>{catalog.agenda && <p className="mt-3 text-xs leading-5 text-muted-foreground">{catalog.agenda}</p>}</div></div><div className="mt-5 grid gap-3"><Button variant="hero" size="xl" onClick={onClose}>Keep this piece</Button><Button variant="soft" size="xl" disabled={!block.swappable} onClick={onSwap}><RefreshCw className="size-4" /> Preview one swap</Button><Button variant="soft" size="xl" onClick={onCoach}>Ask coach</Button></div></div></div>;
 }
 
 function InfoBlock({ label, copy }: { label: string; copy: string }) {
