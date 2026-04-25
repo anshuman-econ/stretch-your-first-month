@@ -423,6 +423,35 @@ const pathwaySwapCatalog: Record<PathwayKey, Record<string, { rule: string; opti
 };
 const catalogForBlock = (block: MonthBlock, pathway: Pathway): { rule: string; options: CatalogOption[]; agenda?: string } => {
   const key = pathwayKeyFromTitle(pathway);
+  const planCatalog: Record<string, { rule: string; options: CatalogOption[]; agenda?: string }> = {
+    Care: {
+      rule: "Care combines specialist access, one body-support route, and guided labs when they are useful. You can preview one care swap, but labs and advanced riders stay protected.",
+      options: [
+        { name: pathwayDefaults[key].Specialist, state: "Specialist access" },
+        { name: pathwayDefaults[key]["Functional Care"], state: "Body support" },
+        { name: pathwayDefaults[key].Labs, state: "Guided labs" },
+      ],
+    },
+    Coach: {
+      rule: "Coaching helps turn the plan into a week-by-week routine and prepares questions for the right human expert when something needs review.",
+      options: [
+        { name: pathwayDefaults[key].Coaching, state: "This month" },
+        { name: pathwayDefaults[key]["Mental Support"], state: "Support layer" },
+        { name: "Ask coach before changing care, labs, prescriptions, or advanced unlocks", state: "Safety rule" },
+      ],
+    },
+    Pods: pathwaySwapCatalog[key].Pods,
+    Kit: pathwaySwapCatalog[key].Kit,
+    Pass: pathwaySwapCatalog[key]["Experience Pass"],
+    Unlocks: {
+      rule: "Unlocks are previews only. They open later through progress, coach review, clinical need, inventory, or rider eligibility.",
+      options: [
+        ...packsCatalog[key].slice(0, 3).map((name, i) => ({ name, state: i === 0 ? "Preview" : "Pack-only" })),
+        ...futureCatalog.slice(0, 5).map((name) => ({ name, state: "Locked preview" })),
+      ],
+    },
+  };
+  if (planCatalog[block.name]) return planCatalog[block.name];
   const pathwayCatalog = pathwaySwapCatalog[key][block.name];
   if (pathwayCatalog) return pathwayCatalog;
   if (block.name === "Coaching") return { rule: "User does not directly rebuild coaching. Coaching updates based on selected pod and rebalancing preference.", options: coachingCatalog.slice(0, 8).map((name, i) => ({ name, state: i < 2 ? "current emphasis" : "coach-guided" })) };
@@ -598,6 +627,7 @@ function BuilderScreen({ pathway, onStart, onCoach }: { pathway: Pathway; onStar
   const [drawerBlock, setDrawerBlock] = useState<MonthBlock | null>(null);
   const [demoTile, setDemoTile] = useState<DemoTile | null>(null);
   const [showBlocks, setShowBlocks] = useState(false);
+  const [swapBlock, setSwapBlock] = useState<MonthBlock | null>(null);
   const planCards = buildPlanCards(pathway);
   const stepCards = [
     { title: "1. Confirm Care", copy: "Review your specialist route, functional support, and any guided labs.", block: planCards[0], action: "Review care" },
@@ -606,11 +636,15 @@ function BuilderScreen({ pathway, onStart, onCoach }: { pathway: Pathway; onStar
     { title: "4. Pick Experience Pass", copy: "Confirm one bookable recovery, movement, LED, or workshop moment.", block: planCards[4], action: "Review pass" },
     { title: "5. Review Future Unlocks", copy: "Preview what can open later without adding it today.", block: planCards[5], action: "Review unlocks" },
   ];
-  return <section className="space-y-6 px-5 py-7"><div className="rounded-[2rem] bg-hero p-6 shadow-float"><p className="mb-3 text-sm font-semibold text-accent">Guided monthly care stack</p><SectionTitle title="We built your month." copy="Open each section to understand what is included, what can swap, and what stays protected." /><button onClick={() => setShowBlocks(true)} className="mt-5 inline-flex items-center gap-2 rounded-full bg-card px-4 py-3 text-sm font-semibold text-accent shadow-card"><Sparkles className="size-4" /> View all building blocks</button></div><div className="space-y-3">{stepCards.map((step) => <details key={step.title} className="group rounded-3xl bg-card p-5 shadow-card" open={step.title.startsWith("1.")}><summary className="flex cursor-pointer list-none items-start justify-between gap-3"><div><p className="font-display text-2xl leading-tight">{step.title}</p><p className="mt-1 text-sm leading-6 text-muted-foreground">{step.copy}</p></div><span className="rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-accent group-open:bg-primary group-open:text-primary-foreground">Open</span></summary><div className="mt-4 space-y-4"><PlanCard block={step.block} onOpen={() => setDrawerBlock(step.block)} /><Button variant="hero" size="lg" className="w-full" onClick={() => setDrawerBlock(step.block)}>{step.action}</Button></div></details>)}</div><div className="rounded-3xl bg-secondary p-5 shadow-card"><p className="font-display text-2xl">Preview swap</p><p className="mt-2 text-sm leading-6 text-muted-foreground">Swap changes only one guided piece at a time: a pod, kit item, pass, or bounded care option. Your pathway, coach support, safety checks, and locked future previews stay the same.</p><div className="mt-4 grid gap-2">{["Changes: one selected item", "Stays: care route and coach", "Stays: clinician-gated labs and riders", "Stays: future unlock rules"].map((item) => <p key={item} className="flex gap-2 text-sm leading-6"><Check className="mt-1 size-4 shrink-0 text-accent" />{item}</p>)}</div></div><div className="space-y-3"><p className="font-display text-3xl">Your plan cards</p><div className="grid gap-3">{planCards.map((block) => <PlanCard key={block.name} block={block} onOpen={() => setDrawerBlock(block)} />)}</div></div><Button variant="hero" size="xl" className="w-full" onClick={onStart}>Start week one</Button>{drawerBlock && <BlockDrawer block={drawerBlock} pathway={pathway} onClose={() => setDrawerBlock(null)} onCoach={onCoach} />}{showBlocks && <BlocksDemoDrawer onClose={() => setShowBlocks(false)} onTile={setDemoTile} />}{demoTile && <DemoTileDrawer tile={demoTile} onClose={() => setDemoTile(null)} />}</section>;
+  return <section className="space-y-6 px-5 py-7"><div className="rounded-[2rem] bg-hero p-6 shadow-float"><p className="mb-3 text-sm font-semibold text-accent">Guided monthly care stack</p><SectionTitle title="We built your month." copy="Open each section to see what it does, why it is here, and what can safely change." /><button onClick={() => setShowBlocks(true)} className="mt-5 inline-flex items-center gap-2 rounded-full bg-card px-4 py-3 text-sm font-semibold text-accent shadow-card"><Sparkles className="size-4" /> Explore building blocks</button></div><div className="space-y-3">{stepCards.map((step) => <details key={step.title} className="group rounded-3xl bg-card p-5 shadow-card" open={step.title.startsWith("1.")}><summary className="flex cursor-pointer list-none items-start justify-between gap-3"><div><p className="font-display text-2xl leading-tight">{step.title}</p><p className="mt-1 text-sm leading-6 text-muted-foreground">{step.copy}</p></div><span className="rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-accent group-open:bg-primary group-open:text-primary-foreground">Open</span></summary><div className="mt-4 space-y-4"><PlanCard block={step.block} onOpen={() => setDrawerBlock(step.block)} /><Button variant="hero" size="lg" className="w-full" onClick={() => setDrawerBlock(step.block)}>{step.action}</Button></div></details>)}</div><SwapImpactSummary block={swapBlock || planCards[0]} onPick={setSwapBlock} options={planCards.filter((block) => block.swappable)} /><div className="space-y-3"><p className="font-display text-3xl">Your plan cards</p><div className="grid gap-3">{planCards.map((block) => <PlanCard key={block.name} block={block} onOpen={() => setDrawerBlock(block)} />)}</div></div><Button variant="hero" size="xl" className="w-full" onClick={onStart}>Start week one</Button>{drawerBlock && <BlockDrawer block={drawerBlock} pathway={pathway} onClose={() => setDrawerBlock(null)} onCoach={onCoach} />}{showBlocks && <BlocksDemoDrawer onClose={() => setShowBlocks(false)} onTile={setDemoTile} />}{demoTile && <DemoTileDrawer tile={demoTile} onClose={() => setDemoTile(null)} />}</section>;
 }
 
 function PlanCard({ block, onOpen }: { block: MonthBlock; onOpen: () => void }) {
   return <SoftCard onClick={onOpen} className="space-y-3"><div className="flex items-start gap-3"><div className="rounded-full bg-secondary p-3 text-accent">{iconForBlock(block.name)}</div><div className="min-w-0 flex-1"><div className="flex items-start justify-between gap-3"><p className="text-sm font-semibold text-accent">{block.name}</p><span className="shrink-0 rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-accent">{block.status}</span></div><h2 className="mt-1 font-display text-2xl leading-tight">{block.selection}</h2></div></div><p className="text-sm leading-6 text-muted-foreground">{block.plain}</p><p className="flex items-center gap-2 text-xs font-semibold text-accent">Open details <ArrowRight className="size-3" /></p></SoftCard>;
+}
+
+function SwapImpactSummary({ block, options, onPick }: { block: MonthBlock; options: MonthBlock[]; onPick: (block: MonthBlock) => void }) {
+  return <div className="rounded-[2rem] bg-secondary p-5 shadow-card"><div className="mb-4 flex items-start gap-3"><div className="rounded-full bg-card p-3 text-accent shadow-card"><RefreshCw className="size-5" /></div><div><p className="text-sm font-semibold text-accent">Swap impact summary</p><h2 className="font-display text-2xl leading-tight">Preview what changes before you ask.</h2></div></div><div className="mb-4 flex gap-2 overflow-x-auto pb-1">{options.map((option) => <button key={option.name} onClick={() => onPick(option)} className={cn("shrink-0 rounded-full px-4 py-2 text-xs font-semibold transition-smooth focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", block.name === option.name ? "bg-primary text-primary-foreground" : "bg-card text-accent shadow-card")}>{option.name}</button>)}</div><div className="grid gap-3"><div className="rounded-3xl bg-card p-4 shadow-card"><p className="text-xs font-semibold uppercase tracking-wide text-accent">What could change</p><p className="mt-2 text-sm leading-6 text-muted-foreground">One guided {block.name.toLowerCase()} choice can be adjusted, such as the specific session, pod, kit item, pass, or bounded care option.</p></div><div className="rounded-3xl bg-card p-4 shadow-card"><p className="text-xs font-semibold uppercase tracking-wide text-accent">What stays the same</p><p className="mt-2 text-sm leading-6 text-muted-foreground">Your pathway, coach support, safety checks, clinician-gated labs, and locked future previews do not change.</p></div><div className="rounded-3xl bg-card p-4 shadow-card"><p className="text-xs font-semibold uppercase tracking-wide text-accent">Next step</p><p className="mt-2 text-sm leading-6 text-muted-foreground">Open the {block.name} details drawer to see safe options, then ask your coach if the swap affects care or timing.</p></div></div></div>;
 }
 
 function iconForBlock(name: string) {
@@ -633,8 +667,13 @@ function InfoBlock({ label, copy }: { label: string; copy: string }) {
 }
 
 function BlocksDemoDrawer({ onClose, onTile }: { onClose: () => void; onTile: (tile: DemoTile) => void }) {
-  const columns = ["Care", "Coach", "Labs", "Pods", "Experience", "Kit", "Unlocks"];
-  return <div className="absolute inset-0 z-50 bg-shell p-4 pb-24" ><div className="mb-4 flex items-center justify-between"><div><p className="text-sm font-semibold text-accent">Demo mode</p><h2 className="font-display text-3xl">All building blocks</h2><p className="mt-1 text-sm text-muted-foreground">Tap any tile to see how it fits into the guided month.</p></div><button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent">Close</button></div><div className="grid max-h-[calc(100vh-150px)] grid-cols-2 gap-3 overflow-y-auto pb-4">{columns.map((column) => <div key={column} className="space-y-3 rounded-3xl bg-secondary p-3"><p className="rounded-full bg-card px-4 py-2 text-center text-sm font-semibold text-accent shadow-card">{column}</p>{demoTiles.filter((tile) => tile.column === column).map((tile) => <button key={tile.name} onClick={() => onTile(tile)} className="w-full rounded-3xl bg-card p-4 text-left shadow-card transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><p className="font-display text-xl capitalize">{tile.name}</p><p className="mt-2 text-xs text-muted-foreground">{tile.status}</p><p className="mt-3 text-xs font-semibold text-accent">Open details</p></button>)}</div>)}</div></div>;
+  const stories = [
+    { title: "Care lane", copy: "Specialist access, labs, and review moments that keep the plan safe.", columns: ["Care", "Labs"] },
+    { title: "Practice lane", copy: "Coach support and pods that make the month easier to follow.", columns: ["Coach", "Pods"] },
+    { title: "Feel-it lane", copy: "Kit and passes that turn the plan into something tangible.", columns: ["Kit", "Experience"] },
+    { title: "Later lane", copy: "Locked previews that may open after progress or review.", columns: ["Unlocks"] },
+  ];
+  return <div className="absolute inset-0 z-50 bg-shell p-4 pb-24"><div className="mb-4 flex items-center justify-between gap-3"><div><p className="text-sm font-semibold text-accent">Discovery map</p><h2 className="font-display text-3xl">Building blocks</h2><p className="mt-1 text-sm text-muted-foreground">Explore by role in your month, not as a marketplace list.</p></div><button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent">Close</button></div><div className="max-h-[calc(100vh-150px)] space-y-4 overflow-y-auto pb-4">{stories.map((story, index) => <div key={story.title} className={cn("rounded-[2rem] p-4 shadow-card", index % 2 === 0 ? "bg-secondary" : "bg-card")}><div className="mb-3 flex items-start justify-between gap-3"><div><p className="font-display text-2xl">{story.title}</p><p className="mt-1 text-sm leading-6 text-muted-foreground">{story.copy}</p></div><span className="rounded-full bg-card px-3 py-1 text-xs font-semibold text-accent shadow-card">{story.columns.length} blocks</span></div><div className="grid gap-3">{demoTiles.filter((tile) => story.columns.includes(tile.column)).map((tile) => <button key={tile.name} onClick={() => onTile(tile)} className="rounded-3xl bg-card p-4 text-left shadow-card transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><div className="flex items-start justify-between gap-3"><div><p className="text-xs font-semibold text-accent">{tile.column}</p><p className="mt-1 font-display text-xl capitalize">{tile.name}</p></div><span className="rounded-full bg-secondary px-3 py-1 text-[11px] font-semibold text-accent">{tile.status}</span></div><p className="mt-3 text-xs leading-5 text-muted-foreground">{tile.what}</p></button>)}</div></div>)}</div></div>;
 }
 
 function DemoTileDrawer({ tile, onClose }: { tile: DemoTile; onClose: () => void }) {
