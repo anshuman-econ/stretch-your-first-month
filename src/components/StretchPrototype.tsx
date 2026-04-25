@@ -589,7 +589,7 @@ export default function StretchPrototype() {
     setAnswers(next);
     if (quizIndex === quiz.length - 1) {
       setSelectedJourney(detectPathway(next, goal));
-      setStep("unlocks");
+      setStep("built");
       setQuizIndex(0);
     } else setQuizIndex((current) => current + 1);
   };
@@ -603,7 +603,7 @@ export default function StretchPrototype() {
     }}>
       <div className="pointer-events-none fixed inset-0 bg-spotlight" />
       <div className="relative mx-auto flex min-h-screen w-full max-w-md flex-col overflow-hidden bg-shell shadow-shell sm:my-6 sm:min-h-[860px] sm:rounded-[2rem]">
-        <button onClick={() => setShowBehindScenes(true)} className="absolute right-5 top-5 z-40 rounded-full bg-card/90 p-2 text-accent shadow-card backdrop-blur transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label="How Stretch works behind the scenes"><Info className="size-5" /></button>
+        <button onClick={() => setShowBehindScenes(true)} className="absolute right-5 top-5 z-40 inline-flex items-center gap-2 rounded-full bg-card/90 px-3 py-2 text-xs font-bold text-accent shadow-card backdrop-blur transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label="Open Investor / Demo Mode"><Info className="size-4" /> Demo</button>
         {step !== "landing" && step !== "home" && (
           <header className="sticky top-0 z-20 flex items-center justify-between border-b border-border/70 bg-shell/90 px-5 py-4 backdrop-blur-xl">
             <button className="rounded-full bg-secondary p-2 text-foreground transition-smooth hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" onClick={() => setStep("landing")} aria-label="Back to landing"><ChevronLeft className="size-5" /></button>
@@ -621,7 +621,7 @@ export default function StretchPrototype() {
                 <div className="relative flex min-h-[520px] flex-col justify-between">
                   <div className="flex items-center justify-between"><p className="font-display text-3xl text-primary">Stretch</p><span className="rounded-full bg-card/80 px-3 py-1 text-xs font-semibold text-foreground shadow-card backdrop-blur">30 days</span></div>
                   <div className="space-y-5">
-                    <SectionTitle title="Care that follows you home." copy="Answer a few questions. Stretch builds your first month with the right care, coach, kit, pods, and experience pass." />
+                    <SectionTitle title="Care that follows you home." copy="Answer a few questions. Stretch builds your first month with the right care, coach, pods, kit, and experience pass." />
                     <div className="grid gap-3"><Button variant="hero" size="xl" onClick={() => setStep("goal")}>Build my first month <ArrowRight className="size-4" /></Button><Button variant="soft" size="xl" onClick={() => setStep("pathways")}>Explore pathways</Button></div>
                   </div>
                 </div>
@@ -634,9 +634,9 @@ export default function StretchPrototype() {
           {step === "goal" && <GoalScreen setGoal={setGoal} setStep={setStep} />}
           {step === "explainer" && <ExplainerScreen onContinue={() => setStep("quiz")} />}
           {step === "quiz" && <QuizScreen quizIndex={quizIndex} chooseAnswer={chooseAnswer} />}
-          {step === "built" && <BuiltScreen pathway={pathway} resetQuiz={resetQuiz} onUnlocks={() => setStep("unlocks")} onOpenJourney={() => openJourney(pathwayKey)} />}
+          {step === "built" && <BuiltScreen pathway={pathway} resetQuiz={resetQuiz} onUnlocks={() => setStep("unlocks")} onSwap={() => setStep("swap")} onCoach={() => setShowRebalance(true)} />}
           {step === "swap" && <SwapScreen pathway={pathway} reason={answers.slice(0, 3).join(", ") || goal || pathway.reason} onBack={() => setStep("builder")} onCoach={() => setShowRebalance(true)} />}
-          {step === "unlocks" && <UnlocksScreen pathway={pathway} answers={answers} onBuild={() => setStep("builder")} onKeep={() => setStep("confirm")} onSwap={resetQuiz} />}
+          {step === "unlocks" && <UnlocksScreen pathway={pathway} answers={answers} onBuild={() => setStep("builder")} onKeep={() => setStep("confirm")} onSwap={() => setStep("swap")} />}
           {step === "confirm" && <ConfirmScreen pathway={pathway} resetQuiz={resetQuiz} onBuild={() => setStep("builder")} onOpenJourney={() => openJourney(pathwayKey)} />}
           {step === "builder" && <BuilderScreen pathway={pathway} onStart={() => setStep("week")} onCoach={() => setShowRebalance(true)} onSwap={() => setStep("swap")} />}
           {step === "week" && <WeekScreen onHome={() => setStep("home")} />}
