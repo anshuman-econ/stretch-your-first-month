@@ -13,7 +13,15 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ["Manrope", "ui-sans-serif", "system-ui"],
+        display: ["Fraunces", "ui-serif", "Georgia"],
+      },
       colors: {
+        shell: "hsl(var(--shell))",
+        rose: { DEFAULT: "hsl(var(--rose))", foreground: "hsl(var(--rose-foreground))" },
+        olive: { DEFAULT: "hsl(var(--olive))", foreground: "hsl(var(--olive-foreground))" },
+        sand: { DEFAULT: "hsl(var(--sand))", foreground: "hsl(var(--sand-foreground))" },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -58,6 +66,22 @@ export default {
           ring: "hsl(var(--sidebar-ring))",
         },
       },
+      backgroundImage: {
+        hero: "var(--gradient-hero)",
+        heroVeil: "var(--gradient-veil)",
+        spotlight: "var(--gradient-spotlight)",
+      },
+      boxShadow: {
+        card: "var(--shadow-card)",
+        float: "var(--shadow-float)",
+        shell: "var(--shadow-shell)",
+      },
+      transitionTimingFunction: {
+        stretch: "cubic-bezier(0.2, 0.8, 0.2, 1)",
+      },
+      transitionDuration: {
+        smooth: "220ms",
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
@@ -80,10 +104,15 @@ export default {
             height: "0",
           },
         },
+        "slide-up": {
+          from: { opacity: "0", transform: "translateY(14px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "slide-up": "slide-up 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both",
       },
     },
   },
