@@ -624,6 +624,7 @@ export default function StretchPrototype() {
     setExplainerReturnStep(from);
     setStep("explainer");
   };
+  const continueFromExplainer = () => setStep(goal ? "quiz" : "goal");
 
   return (
     <main className="min-h-screen bg-background font-sans text-foreground" onPointerMove={(event) => {
@@ -662,7 +663,7 @@ export default function StretchPrototype() {
           )}
 
           {step === "goal" && <GoalScreen setGoal={setGoal} setStep={setStep} onExplain={() => openExplainer("goal")} />}
-          {step === "explainer" && <ExplainerScreen onContinue={() => setStep(explainerReturnStep === "quiz" ? "quiz" : "goal")} onClose={() => setStep(explainerReturnStep)} />}
+          {step === "explainer" && <ExplainerScreen onContinue={continueFromExplainer} onClose={() => setStep(explainerReturnStep)} />}
           {step === "quiz" && <QuizScreen quizIndex={quizIndex} chooseAnswer={chooseAnswer} onExplain={() => openExplainer("quiz")} />}
           {step === "built" && <BuiltScreen pathway={pathway} resetQuiz={resetQuiz} onUnlocks={() => setStep("unlocks")} />}
           {step === "swap" && <SwapScreen pathway={pathway} reason={answers.slice(0, 3).join(", ") || goal || pathway.reason} initialTarget={swapTarget} onBack={() => setStep("builder")} onCoach={() => setShowRebalance(true)} />}
