@@ -872,20 +872,21 @@ function BehindScenesPanel({ onClose }: { onClose: () => void }) {
   const [showBlocks, setShowBlocks] = useState(false);
   const [demoTile, setDemoTile] = useState<DemoTile | null>(null);
   const memberCards = [
-    ["Intake Guide", "AI helps route you to the right pathway based on your symptoms and goals."],
-    ["Month Builder", "AI assembles your Recommended monthly plan from care, pods, kit, and pass options."],
-    ["Coach Support", "AI helps your coach prepare your monthly plan and next-step adjustments."],
-    ["Progress Engine", "AI watches your streaks, logs, labs, and attendance to unlock Milestone Bonus Credits and future support."],
+    ["Intake Guide", "Helps route the user to the right pathway."],
+    ["Month Builder", "Builds the recommended month from care, coach, pods, pass, kit, progress, and unlocks."],
+    ["Coach Support", "Helps prepare coaching tasks and rebalancing prompts."],
+    ["Progress Engine", "Tracks actions and Milestone Bonus Credits."],
+    ["Future Unlock Engine", "Shows when packs, devices, or riders become relevant."],
   ];
   const operatorCards = [
-    ["Intake Summary Agent", "summarizes questionnaire answers and flags risk."],
-    ["Provider Matching Agent", "matches the user to coaches, clinicians, pods, and partners based on city and availability."],
-    ["Kit Substitution Agent", "suggests safe substitutions if a kit SKU is unavailable."],
-    ["Churn Risk Agent", "flags users who have not built their month or booked a pod / pass by week 2."],
-    ["Escalation Agent", "flags when a pack or Preview should appear."],
-    ["Red Flag Escalation", "flags when human clinician review is needed."],
+    ["Intake Summary Agent", "Summarizes quiz answers and flags risk."],
+    ["Provider Matching Agent", "Matches user to clinician, coach, pod, and partner slot."],
+    ["Kit Substitution Agent", "Suggests valid substitutions when a SKU is unavailable."],
+    ["Churn Risk Agent", "Flags users who haven’t built kit or booked pod / pass by week 2."],
+    ["Escalation Agent", "Flags when pack or rider should appear."],
+    ["Red Flag Escalation", "Routes urgent issues to human review."],
   ];
-  return <div className="absolute inset-0 z-[70] bg-shell p-4 pb-24"><div className="mb-5 flex items-start justify-between gap-4"><div><p className="text-sm font-semibold text-accent">Demo mode</p><h2 className="font-display text-4xl leading-tight">How Stretch works behind the scenes</h2></div><button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent">Close</button></div><button onClick={() => setShowBlocks(true)} className="mb-4 inline-flex items-center gap-2 rounded-full bg-card px-4 py-3 text-sm font-bold text-accent shadow-card"><Sparkles className="size-4" /> View all building blocks</button><div className="rounded-3xl bg-card p-2 shadow-card"><div className="grid grid-cols-2 gap-2">{["Member view", "Operator view"].map((item) => <button key={item} onClick={() => setTab(item as "Member view" | "Operator view")} className={cn("rounded-2xl px-4 py-3 text-sm font-semibold transition-smooth focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", tab === item ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary")}>{item}</button>)}</div></div><div className="mt-5 max-h-[calc(100vh-250px)] space-y-5 overflow-y-auto pr-1">{tab === "Member view" ? <BehindCards cards={memberCards} /> : <><BehindCards cards={operatorCards} /><div className="rounded-3xl bg-secondary p-5 shadow-card"><p className="font-display text-2xl">Safety note</p><p className="mt-2 text-sm leading-6 text-muted-foreground">AI never diagnoses, prescribes, or approves complex clinical decisions. Those are always human-led.</p></div><OperatorConsolePreview onBlocks={() => setShowBlocks(true)} /></>}</div>{showBlocks && <BlocksDemoDrawer onClose={() => setShowBlocks(false)} onTile={setDemoTile} />}{demoTile && <DemoTileDrawer tile={demoTile} onClose={() => setDemoTile(null)} />}</div>;
+  return <div className="absolute inset-0 z-[70] bg-shell p-4 pb-24"><div className="mb-5 flex items-start justify-between gap-4"><div><p className="text-sm font-semibold text-accent">Optional investor demo</p><h2 className="font-display text-4xl leading-tight">How Stretch works behind the scenes</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">A preview of how Stretch coordinates operational complexity without making the member manage it.</p></div><button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent">Close</button></div><button onClick={() => setShowBlocks(true)} className="mb-4 inline-flex items-center gap-2 rounded-full bg-card px-4 py-3 text-sm font-bold text-accent shadow-card"><Sparkles className="size-4" /> View all building blocks</button><div className="rounded-3xl bg-card p-2 shadow-card"><div className="grid grid-cols-2 gap-2">{["Member view", "Operator view"].map((item) => <button key={item} onClick={() => setTab(item as "Member view" | "Operator view")} className={cn("rounded-2xl px-4 py-3 text-sm font-semibold transition-smooth focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", tab === item ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary")}>{item}</button>)}</div></div><div className="mt-5 max-h-[calc(100vh-270px)] space-y-5 overflow-y-auto pr-1">{tab === "Member view" ? <BehindCards cards={memberCards} /> : <><BehindCards cards={operatorCards} /><div className="rounded-3xl bg-secondary p-5 shadow-card"><p className="font-display text-2xl">Safety note</p><p className="mt-2 text-sm leading-6 text-muted-foreground">AI never diagnoses, prescribes, or approves complex clinical decisions. Human clinicians remain responsible.</p></div><OperatorConsolePreview onBlocks={() => setShowBlocks(true)} /></>}</div>{showBlocks && <BlocksDemoDrawer onClose={() => setShowBlocks(false)} onTile={setDemoTile} />}{demoTile && <DemoTileDrawer tile={demoTile} onClose={() => setDemoTile(null)} />}</div>;
 }
 
 function BehindCards({ cards }: { cards: string[][] }) {
@@ -893,7 +894,7 @@ function BehindCards({ cards }: { cards: string[][] }) {
 }
 
 function OperatorConsolePreview({ onBlocks }: { onBlocks?: () => void }) {
-  const tabs = ["Users", "Intake Queue", "Provider Slots", "Kits", "Pods", "Experience Passes", "MBC", "Escalations", "Future Riders"];
+  const tabs = ["Users", "Intake Queue", "Provider Slots", "Kits", "Pods", "Passes", "MBC", "Escalations", "Future Riders"];
   const rows = [
     { name: "Maya R.", pathway: "Peri Sleep + Energy", month: "1", plan: "Yes", care: "Women’s health", coach: "Mara", pods: "2", kit: "Built", pass: "Booked", labs: "Scheduled", mbc: "120 pending", red: "No", churn: "No" },
     { name: "Elena S.", pathway: "Endo Flare + Function", month: "1", plan: "Draft", care: "Endo-aware gyne", coach: "Nia", pods: "1", kit: "Open", pass: "Open", labs: "Upload needed", mbc: "40 pending", red: "No", churn: "Yes" },
