@@ -194,6 +194,7 @@ type MonthBlock = { name: string; selection: string; why: string; status: StackS
 type DemoTile = { column: string; name: string; what: string; where: string; pathways: string; status: string };
 type CatalogOption = { name: string; state?: string };
 type ControlledSwap = { name: string; current: string; why: string; includes: string; alternatives: string[]; change: string; action: string };
+type MonthCardSummary = { title: string; recommendation: string; status: string; cta: string; block: MonthBlock };
 const rebalanceOptions = ["more sleep support", "more energy support", "more glow / visible vitality", "more mood support", "more movement support", "less intensity this month"];
 const pathwayKeyFromTitle = (pathway: Pathway): PathwayKey => pathwayKeys.find((key) => pathways[key].title === pathway.title) || "peri";
 const pathwayDefaults: Record<PathwayKey, Record<string, string>> = {
@@ -333,6 +334,27 @@ const buildPlanCards = (pathway: Pathway): MonthBlock[] => {
     card("Experience Pass", byName["Experience Pass"].selection, "Recommended", [byName["Experience Pass"].includes, "Tier-Low included • Tier-High may be inventory-gated"].join(" • "), true),
     card("Kit", byName.Kit.selection, "Recommended", [byName.Kit.includes, "one swap option • pack / top-up preview when relevant"].join(" • "), true),
     card("Unlocks", byName["Future Unlocks"].selection, "Locked preview", [byName.Packs.includes, byName["Future Unlocks"].includes, "MBC progress"].join(" • "), false),
+  ];
+};
+
+const builderSummaries = (pathway: Pathway, planCards: MonthBlock[]): MonthCardSummary[] => {
+  const key = pathwayKeyFromTitle(pathway);
+  const copy: Record<PathwayKey, Record<string, string>> = {
+    peri: { Care: "Peri-aware review + sleep reset session", Coach: "2 touches + Mood Check", Pods: "Peri Reset + Sleep Reset", "Experience Pass": "Cooling / Sleep Reset Workshop", Kit: "Sleep kit + visible vitality support", Unlocks: "Smart Ring and PeriShield preview" },
+    endo: { Care: "Endo-aware review + pelvic support", Coach: "2 touches + flare pacing", Pods: "Endo Toolkit + GI / Function", "Experience Pass": "Pelvic relaxation / breathwork", Kit: "Comfort kit + GI-safe support", Unlocks: "EndoShield and Surgery Track preview" },
+    metabo: { Care: "Derm review + glow support", Coach: "2 touches + routine support", Pods: "Skin Sunday + Insight Night", "Experience Pass": "LED booth or aftercare workshop", Kit: "Glow shelf + protein / fiber mini", Unlocks: "LED Mask and DermaShield+ preview" },
+    longevity: { Care: "Internal medicine review + recovery support", Coach: "2 touches + focus routine", Pods: "Brain & Focus + Travel", "Experience Pass": "Breathwork or movement-compliance", Kit: "Focus kit + visible vitality support", Unlocks: "Smart Ring and Longevity Rider preview" },
+  };
+  const byName = Object.fromEntries(planCards.map((block) => [block.name, block]));
+  const progressBlock: MonthBlock = { name: "Progress", selection: "0 of 5 actions complete", why: "Complete one guided action at a time.", status: "Recommended", includes: "Care reviewed, pods viewed, pass chosen, kit built, progress checked.", plain: "Your progress shows what is done, what is next, and what is locked for later.", discovery: "A simple roadmap instead of a task dump.", swappable: false };
+  return [
+    { title: "Care", recommendation: copy[key].Care, status: "Ready", cta: "Review care", block: byName.Care },
+    { title: "Coach", recommendation: copy[key].Coach, status: "Included", cta: "View coaching plan", block: byName.Coach },
+    { title: "Pods", recommendation: copy[key].Pods, status: "Needs input", cta: "View pods", block: byName.Pods },
+    { title: "Pass", recommendation: copy[key]["Experience Pass"], status: "Choose", cta: "Choose pass", block: byName["Experience Pass"] },
+    { title: "Kit", recommendation: copy[key].Kit, status: "Build", cta: "Build kit", block: byName.Kit },
+    { title: "Progress", recommendation: "0 of 5 actions complete", status: "Next", cta: "Continue", block: progressBlock },
+    { title: "Unlocks", recommendation: copy[key].Unlocks, status: "Locked preview", cta: "See future unlocks", block: byName.Unlocks },
   ];
 };
 
@@ -690,8 +712,8 @@ function ConfirmScreen({ pathway, resetQuiz, onBuild, onOpenJourney }: { pathway
 function BuilderScreen({ pathway, onStart, onCoach, onSwap }: { pathway: Pathway; onStart: () => void; onCoach: () => void; onSwap: () => void }) {
   const [drawerBlock, setDrawerBlock] = useState<MonthBlock | null>(null);
   const [demoTile, setDemoTile] = useState<DemoTile | null>(null);
-  const [swapBlock, setSwapBlock] = useState<MonthBlock | null>(null);
   const planCards = buildPlanCards(pathway);
+  const summaries = builderSummaries(pathway, planCards);
   const journey = [
     { label: "Pathway", state: "completed", block: planCards[0] },
     { label: "Stack", state: "selected", block: planCards[0] },
@@ -701,7 +723,7 @@ function BuilderScreen({ pathway, onStart, onCoach, onSwap }: { pathway: Pathway
     { label: "Progress", state: "future", block: planCards[5] },
     { label: "Unlocks", state: "locked", block: planCards[5] },
   ];
-  return <section className="space-y-5 px-5 pb-32 pt-6"><div className="rounded-[2rem] bg-hero p-5 shadow-float"><div className="flex items-start justify-between gap-4"><div className="min-w-0"><p className="text-sm font-semibold text-accent">Your Stretch Month</p><h1 className="mt-1 font-display text-4xl leading-tight">{pathway.title}</h1><p className="mt-1 text-sm font-semibold text-foreground/80">Month 1: Foundation</p><p className="mt-3 text-base leading-6 text-muted-foreground">{pathway.monthlyPromise}</p></div><ProgressRing value={38} /></div><div className="mt-5 grid gap-2"><Button variant="hero" size="lg" onClick={onStart}>Keep recommended month</Button><div className="grid grid-cols-2 gap-2"><Button variant="soft" size="lg" onClick={onSwap}><RefreshCw className="size-4" /> Swap one block</Button><Button variant="soft" size="lg" onClick={onCoach}><MessageCircle className="size-4" /> Ask coach</Button></div></div><p className="mt-4 rounded-2xl bg-card/80 p-3 text-xs font-semibold leading-5 text-muted-foreground shadow-card">You can swap one block this month. If you want a bigger change, ask your coach to rebalance.</p></div><div className="grid gap-4">{planCards.map((block, index) => <StackCard key={block.name} block={block} index={index} onOpen={() => setDrawerBlock(block)} />)}</div><SwapImpactSummary block={swapBlock || planCards[0]} onPick={setSwapBlock} onOpen={() => onSwap()} options={planCards.filter((block) => block.swappable)} />{drawerBlock && <BlockDrawer block={drawerBlock} pathway={pathway} onClose={() => setDrawerBlock(null)} onCoach={onCoach} />}{demoTile && <DemoTileDrawer tile={demoTile} onClose={() => setDemoTile(null)} />}<JourneyBar items={journey} onOpen={setDrawerBlock} /></section>;
+  return <section className="space-y-5 px-5 pb-32 pt-6"><div className="rounded-[2rem] bg-hero p-5 shadow-float"><div className="flex items-start justify-between gap-4"><div className="min-w-0"><p className="text-sm font-semibold text-accent">Your Stretch Month</p><h1 className="mt-1 font-display text-4xl leading-tight">{pathway.title}</h1><p className="mt-1 text-sm font-semibold text-foreground/80">Month 1: Foundation</p><p className="mt-3 text-base leading-6 text-muted-foreground">{pathway.monthlyPromise}</p></div><ProgressRing value={20} /></div><div className="mt-5 grid gap-2"><Button variant="hero" size="lg" onClick={onStart}>Keep recommended</Button><div className="grid grid-cols-2 gap-2"><Button variant="soft" size="lg" onClick={onSwap}><RefreshCw className="size-4" /> Swap one block</Button><Button variant="soft" size="lg" onClick={onCoach}><MessageCircle className="size-4" /> Ask coach</Button></div></div></div><div className="grid gap-3">{summaries.slice(0, 5).map((card) => <BuilderSummaryCard key={card.title} card={card} onOpen={() => setDrawerBlock(card.block)} />)}</div><div className="grid grid-cols-2 gap-3">{summaries.slice(5).map((card) => <BuilderSummaryCard key={card.title} card={card} compact onOpen={() => setDrawerBlock(card.block)} />)}</div>{drawerBlock && <BlockDrawer block={drawerBlock} pathway={pathway} onClose={() => setDrawerBlock(null)} onCoach={onCoach} />}{demoTile && <DemoTileDrawer tile={demoTile} onClose={() => setDemoTile(null)} />}<JourneyBar items={journey} onOpen={setDrawerBlock} /></section>;
 }
 
 function ProgressRing({ value }: { value: number }) {
@@ -726,6 +748,10 @@ function RebalanceModal({ onClose }: { onClose: () => void }) {
 
 function StackCard({ block, index, onOpen }: { block: MonthBlock; index: number; onOpen: () => void }) {
   return <button onClick={onOpen} className="group relative w-full overflow-hidden rounded-[2rem] bg-card p-4 text-left shadow-card transition-smooth hover:-translate-y-0.5 hover:shadow-float focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><div className="absolute inset-x-6 top-0 h-1 rounded-b-full bg-primary/60" /><div className="flex items-start gap-4"><div className="grid size-12 shrink-0 place-items-center rounded-2xl bg-secondary text-accent shadow-card">{iconForBlock(block.name)}</div><div className="min-w-0 flex-1"><div className="flex items-start justify-between gap-3"><div><p className="text-xs font-semibold text-accent">0{index + 1} · {block.name}</p><h2 className="mt-1 font-display text-2xl leading-tight">{block.selection}</h2></div><span className="shrink-0 rounded-full bg-secondary px-3 py-1 text-[11px] font-bold text-accent">{index < 2 ? "Ready" : index < 5 ? "Choose" : "Locked"}</span></div><p className="mt-2 line-clamp-2 text-sm leading-6 text-muted-foreground">{block.plain}</p><div className="mt-3 flex items-center justify-between gap-3"><span className="rounded-full bg-muted px-3 py-1 text-[11px] font-semibold text-muted-foreground">{block.status}</span><span className="inline-flex items-center gap-1 text-xs font-bold text-accent">Tap to open <ArrowRight className="size-3 transition-smooth group-hover:translate-x-0.5" /></span></div></div></div></button>;
+}
+
+function BuilderSummaryCard({ card, onOpen, compact = false }: { card: MonthCardSummary; onOpen: () => void; compact?: boolean }) {
+  return <button onClick={onOpen} className={cn("group w-full rounded-[2rem] bg-card text-left shadow-card transition-smooth hover:-translate-y-0.5 hover:shadow-float focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", compact ? "p-4" : "p-5")}><div className="flex items-start justify-between gap-3"><div className="min-w-0"><p className="text-sm font-bold text-accent">{card.title}</p><h2 className={cn("mt-1 font-display leading-tight", compact ? "text-xl" : "text-2xl")}>{card.recommendation}</h2></div><span className="shrink-0 rounded-full bg-secondary px-3 py-1 text-[11px] font-bold text-accent">{card.status}</span></div><div className="mt-4 flex items-center justify-between gap-3"><span className="text-sm font-bold text-accent">{card.cta}</span><ArrowRight className="size-4 text-accent transition-smooth group-hover:translate-x-0.5" /></div></button>;
 }
 
 function JourneyBar({ items, onOpen }: { items: { label: string; state: string; block: MonthBlock }[]; onOpen: (block: MonthBlock) => void }) {
