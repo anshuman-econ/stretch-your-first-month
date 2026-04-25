@@ -194,6 +194,7 @@ type MonthBlock = { name: string; selection: string; why: string; status: StackS
 type DemoTile = { column: string; name: string; what: string; where: string; pathways: string; status: string };
 type CatalogOption = { name: string; state?: string };
 type ControlledSwap = { name: string; current: string; why: string; includes: string; alternatives: string[]; change: string; action: string };
+type MonthCardSummary = { title: string; recommendation: string; status: string; cta: string; block: MonthBlock };
 const rebalanceOptions = ["more sleep support", "more energy support", "more glow / visible vitality", "more mood support", "more movement support", "less intensity this month"];
 const pathwayKeyFromTitle = (pathway: Pathway): PathwayKey => pathwayKeys.find((key) => pathways[key].title === pathway.title) || "peri";
 const pathwayDefaults: Record<PathwayKey, Record<string, string>> = {
@@ -333,6 +334,27 @@ const buildPlanCards = (pathway: Pathway): MonthBlock[] => {
     card("Experience Pass", byName["Experience Pass"].selection, "Recommended", [byName["Experience Pass"].includes, "Tier-Low included • Tier-High may be inventory-gated"].join(" • "), true),
     card("Kit", byName.Kit.selection, "Recommended", [byName.Kit.includes, "one swap option • pack / top-up preview when relevant"].join(" • "), true),
     card("Unlocks", byName["Future Unlocks"].selection, "Locked preview", [byName.Packs.includes, byName["Future Unlocks"].includes, "MBC progress"].join(" • "), false),
+  ];
+};
+
+const builderSummaries = (pathway: Pathway, planCards: MonthBlock[]): MonthCardSummary[] => {
+  const key = pathwayKeyFromTitle(pathway);
+  const copy: Record<PathwayKey, Record<string, string>> = {
+    peri: { Care: "Peri-aware review + sleep reset session", Coach: "2 touches + Mood Check", Pods: "Peri Reset + Sleep Reset", "Experience Pass": "Cooling / Sleep Reset Workshop", Kit: "Sleep kit + visible vitality support", Unlocks: "Smart Ring and PeriShield preview" },
+    endo: { Care: "Endo-aware review + pelvic support", Coach: "2 touches + flare pacing", Pods: "Endo Toolkit + GI / Function", "Experience Pass": "Pelvic relaxation / breathwork", Kit: "Comfort kit + GI-safe support", Unlocks: "EndoShield and Surgery Track preview" },
+    metabo: { Care: "Derm review + glow support", Coach: "2 touches + routine support", Pods: "Skin Sunday + Insight Night", "Experience Pass": "LED booth or aftercare workshop", Kit: "Glow shelf + protein / fiber mini", Unlocks: "LED Mask and DermaShield+ preview" },
+    longevity: { Care: "Internal medicine review + recovery support", Coach: "2 touches + focus routine", Pods: "Brain & Focus + Travel", "Experience Pass": "Breathwork or movement-compliance", Kit: "Focus kit + visible vitality support", Unlocks: "Smart Ring and Longevity Rider preview" },
+  };
+  const byName = Object.fromEntries(planCards.map((block) => [block.name, block]));
+  const progressBlock: MonthBlock = { name: "Progress", selection: "0 of 5 actions complete", why: "Complete one guided action at a time.", status: "Recommended", includes: "Care reviewed, pods viewed, pass chosen, kit built, progress checked.", plain: "Your progress shows what is done, what is next, and what is locked for later.", discovery: "A simple roadmap instead of a task dump.", swappable: false };
+  return [
+    { title: "Care", recommendation: copy[key].Care, status: "Ready", cta: "Review care", block: byName.Care },
+    { title: "Coach", recommendation: copy[key].Coach, status: "Included", cta: "View coaching plan", block: byName.Coach },
+    { title: "Pods", recommendation: copy[key].Pods, status: "Needs input", cta: "View pods", block: byName.Pods },
+    { title: "Pass", recommendation: copy[key]["Experience Pass"], status: "Choose", cta: "Choose pass", block: byName["Experience Pass"] },
+    { title: "Kit", recommendation: copy[key].Kit, status: "Build", cta: "Build kit", block: byName.Kit },
+    { title: "Progress", recommendation: "0 of 5 actions complete", status: "Next", cta: "Continue", block: progressBlock },
+    { title: "Unlocks", recommendation: copy[key].Unlocks, status: "Locked preview", cta: "See future unlocks", block: byName.Unlocks },
   ];
 };
 
