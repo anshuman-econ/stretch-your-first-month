@@ -6,6 +6,7 @@ import {
   ChevronLeft,
   ClipboardList,
   Home,
+  Info,
   Leaf,
   Lock,
   MessageCircle,
@@ -421,6 +422,7 @@ export default function StretchPrototype() {
   const [selectedJourney, setSelectedJourney] = useState<PathwayKey>("peri");
   const [journeyTab, setJourneyTab] = useState<JourneyTab>("Experience");
   const [selectedStamp, setSelectedStamp] = useState<PassportStamp | null>(null);
+  const [showBehindScenes, setShowBehindScenes] = useState(false);
 
   const pathwayKey = useMemo(() => detectPathway(answers, goal), [answers, goal]);
   const pathway = pathways[pathwayKey];
@@ -448,6 +450,7 @@ export default function StretchPrototype() {
     }}>
       <div className="pointer-events-none fixed inset-0 bg-spotlight" />
       <div className="relative mx-auto flex min-h-screen w-full max-w-md flex-col overflow-hidden bg-shell shadow-shell sm:my-6 sm:min-h-[860px] sm:rounded-[2rem]">
+        <button onClick={() => setShowBehindScenes(true)} className="absolute right-5 top-5 z-40 rounded-full bg-card/90 p-2 text-accent shadow-card backdrop-blur transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label="How Stretch works behind the scenes"><Info className="size-5" /></button>
         {step !== "landing" && step !== "home" && (
           <header className="sticky top-0 z-20 flex items-center justify-between border-b border-border/70 bg-shell/90 px-5 py-4 backdrop-blur-xl">
             <button className="rounded-full bg-secondary p-2 text-foreground transition-smooth hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" onClick={() => setStep("landing")} aria-label="Back to landing"><ChevronLeft className="size-5" /></button>
@@ -498,6 +501,7 @@ export default function StretchPrototype() {
           <NavItem icon={<Wallet className="size-5" />} label="Wallet" active={step === "wallet"} onClick={() => setStep("wallet")} />
         </nav>
         {selectedStamp && <StampDrawer stamp={selectedStamp} onClose={() => setSelectedStamp(null)} />}
+        {showBehindScenes && <BehindScenesPanel onClose={() => setShowBehindScenes(false)} />}
       </div>
     </main>
   );
@@ -624,6 +628,39 @@ function PassportSection({ onStamp, compact = false }: { onStamp: (stamp: Passpo
 function MbcCard({ onStamp }: { onStamp: (stamp: PassportStamp) => void }) {
   return <div className="rounded-3xl bg-card p-5 shadow-card"><div className="flex items-start justify-between gap-4"><div><p className="font-display text-2xl">Milestone Bonus Credits</p><p className="mt-2 text-sm leading-6 text-muted-foreground">Milestone Bonus Credits are Stretch-funded credits you earn when you complete the steps that make your plan work — like building your kit, joining pods, finishing labs, booking your pass, or keeping a streak. You can use them later on selected packs, devices, or upgrades.</p></div><span className="rounded-full bg-secondary px-3 py-2 text-sm font-bold text-accent">120</span></div><div className="mt-4 grid gap-2 text-sm"><PreviewRow label="Current balance" value="120 MBC" /><PreviewRow label="Pending rewards" value="3 steps" /><PreviewRow label="Next unlock" value="Seven-day streak" /></div><div className="mt-4 grid gap-2">{passportStamps.filter((s) => s.mbc).slice(0, 5).map((stamp) => <button key={stamp.title} onClick={() => onStamp(stamp)} className="rounded-2xl bg-secondary px-4 py-3 text-left text-xs font-semibold text-accent">{stamp.mbc}</button>)}</div></div>;
 }
+
+function BehindScenesPanel({ onClose }: { onClose: () => void }) {
+  const [tab, setTab] = useState<"Member view" | "Operator view">("Member view");
+  const memberCards = [
+    ["Intake Guide", "AI helps route you to the right pathway based on your symptoms and goals."],
+    ["Month Builder", "AI assembles your recommended monthly plan from care, pods, kit, and pass options."],
+    ["Coach Support", "AI helps your coach prepare your monthly plan and next-step adjustments."],
+    ["Progress Engine", "AI watches your streaks, logs, labs, and attendance to unlock Milestone Bonus Credits and future support."],
+  ];
+  const operatorCards = [
+    ["Intake Summary Agent", "summarizes questionnaire answers and flags risk."],
+    ["Provider Matching Agent", "matches the user to coaches, clinicians, pods, and partners based on city and availability."],
+    ["Kit Substitution Agent", "suggests safe substitutions if a kit SKU is unavailable."],
+    ["Churn Risk Agent", "flags users who have not built their month or booked a pod / pass by week 2."],
+    ["Escalation Agent", "flags when a pack or rider preview should appear."],
+    ["Red Flag Escalation", "flags when human clinician review is needed."],
+  ];
+  return <div className="absolute inset-0 z-[70] bg-shell p-4 pb-24"><div className="mb-5 flex items-start justify-between gap-4"><div><p className="text-sm font-semibold text-accent">Demo mode</p><h2 className="font-display text-4xl leading-tight">How Stretch works behind the scenes</h2></div><button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent">Close</button></div><div className="rounded-3xl bg-card p-2 shadow-card"><div className="grid grid-cols-2 gap-2">{["Member view", "Operator view"].map((item) => <button key={item} onClick={() => setTab(item as "Member view" | "Operator view")} className={cn("rounded-2xl px-4 py-3 text-sm font-semibold transition-smooth focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", tab === item ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary")}>{item}</button>)}</div></div><div className="mt-5 max-h-[calc(100vh-190px)] space-y-5 overflow-y-auto pr-1">{tab === "Member view" ? <BehindCards cards={memberCards} /> : <><BehindCards cards={operatorCards} /><div className="rounded-3xl bg-secondary p-5 shadow-card"><p className="font-display text-2xl">Safety note</p><p className="mt-2 text-sm leading-6 text-muted-foreground">AI never diagnoses, prescribes, or approves complex clinical decisions. Those are always human-led.</p></div><OperatorConsolePreview /></>}</div></div>;
+}
+
+function BehindCards({ cards }: { cards: string[][] }) {
+  return <div className="grid gap-3">{cards.map(([title, copy]) => <div key={title} className="rounded-3xl bg-card p-5 shadow-card"><div className="mb-3 flex items-center gap-3 text-accent"><Sparkles className="size-5" /><p className="font-display text-2xl text-foreground">{title}</p></div><p className="text-sm leading-6 text-muted-foreground">{copy}</p></div>)}</div>;
+}
+
+function OperatorConsolePreview() {
+  const tabs = ["Users", "Intake Queue", "Provider Slots", "Kits", "Pods", "Experience Passes", "MBC", "Escalations", "Future Riders"];
+  const rows = [
+    { name: "Maya R.", pathway: "Peri Sleep + Energy", month: "1", plan: "Yes", care: "Women’s health", coach: "Mara", pods: "2", kit: "Built", pass: "Booked", labs: "Scheduled", mbc: "120 pending", red: "No", churn: "No" },
+    { name: "Elena S.", pathway: "Endo Flare + Function", month: "1", plan: "Draft", care: "Endo-aware gyne", coach: "Nia", pods: "1", kit: "Open", pass: "Open", labs: "Upload needed", mbc: "40 pending", red: "No", churn: "Yes" },
+  ];
+  return <div className="rounded-3xl bg-card p-5 shadow-card"><p className="font-display text-2xl">Operator console preview</p><div className="mt-4 flex gap-2 overflow-x-auto pb-2">{tabs.map((tab) => <span key={tab} className="shrink-0 rounded-full bg-secondary px-3 py-2 text-xs font-semibold text-accent">{tab}</span>)}</div><div className="mt-4 space-y-3">{rows.map((row) => <div key={row.name} className="rounded-2xl border border-border bg-shell p-4"><div className="mb-3 flex items-start justify-between gap-3"><div><p className="font-display text-xl">{row.name}</p><p className="text-xs text-muted-foreground">{row.pathway} · Month {row.month}</p></div><span className={cn("rounded-full px-3 py-1 text-xs font-semibold", row.red === "Yes" ? "bg-destructive text-destructive-foreground" : "bg-secondary text-accent")}>Red flag {row.red}</span></div><div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">{[["Plan selected", row.plan], ["Care route", row.care], ["Coach assigned", row.coach], ["Pods selected", row.pods], ["Kit status", row.kit], ["Pass status", row.pass], ["Labs status", row.labs], ["MBC status", row.mbc], ["Churn risk", row.churn]].map(([label, value]) => <div key={label} className="rounded-xl bg-card p-3"><p className="font-semibold text-foreground">{label}</p><p className="mt-1">{value}</p></div>)}</div></div>)}</div></div>;
+}
+
 
 function StampDrawer({ stamp, onClose }: { stamp: PassportStamp; onClose: () => void }) {
   return <div className="absolute inset-0 z-50 flex items-end bg-primary/35 p-3 backdrop-blur-sm" onClick={onClose}><div className="w-full rounded-[2rem] bg-card p-6 shadow-float" onClick={(event) => event.stopPropagation()}><div className="mb-4 flex items-center justify-between"><p className="font-display text-3xl">{stamp.title}</p><button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent">Close</button></div>{[["What it means", stamp.means], ["How to complete it", stamp.complete], ["What it unlocks", stamp.unlocks]].map(([label, copy]) => <div key={label} className="mb-4 rounded-2xl bg-secondary p-4 last:mb-0"><p className="text-xs font-semibold uppercase tracking-wide text-accent">{label}</p><p className="mt-2 text-sm leading-6 text-muted-foreground">{copy}</p></div>)}</div></div>;
