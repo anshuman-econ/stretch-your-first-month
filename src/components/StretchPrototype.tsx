@@ -771,15 +771,15 @@ function BuilderScreen({ pathway, onStart, onCoach, onSwap }: { pathway: Pathway
   const summaries = builderSummaries(pathway, planCards);
   const defaultTiles = summaries.filter((card) => card.title !== "Progress");
   const journey = [
-    { label: "Pathway", state: "completed", block: planCards[0] },
-    { label: "Stack", state: "selected", block: planCards[0] },
-    { label: "Pods", state: "needs input", block: planCards[2] },
-    { label: "Pass", state: "needs input", block: planCards[3] },
-    { label: "Kit", state: "future", block: planCards[4] },
-    { label: "Progress", state: "future", block: planCards[5] },
-    { label: "Unlocks", state: "locked", block: planCards[6] },
+    { label: "Pathway", state: "Complete", block: planCards[0] },
+    { label: "Stack", state: "Current", block: planCards[0] },
+    { label: "Pods", state: "Needs input", block: planCards[2] },
+    { label: "Pass", state: "Needs input", block: planCards[3] },
+    { label: "Kit", state: "Future", block: planCards[4] },
+    { label: "Progress", state: "Future", block: planCards[5] },
+    { label: "Unlocks", state: "Locked", block: planCards[6] },
   ];
-  return <section className="space-y-5 px-5 pb-32 pt-6"><div className="rounded-[2rem] bg-hero p-5 shadow-float"><div className="flex items-start justify-between gap-4"><div className="min-w-0"><p className="text-sm font-bold text-accent">Month 1: Foundation</p><h1 className="mt-1 font-display text-4xl leading-tight">Your Stretch Month</h1><p className="mt-2 text-sm font-semibold text-muted-foreground">{pathway.title}</p></div><ProgressRing value={20} /></div><div className="mt-5 grid gap-2"><Button variant="hero" size="lg" onClick={onStart}>Keep recommended</Button><div className="grid grid-cols-2 gap-2"><Button variant="soft" size="lg" onClick={() => onSwap()}><RefreshCw className="size-4" /> Swap one block</Button><Button variant="soft" size="lg" onClick={onCoach}><MessageCircle className="size-4" /> Ask coach</Button></div></div></div><div className="grid gap-3">{defaultTiles.map((card) => <BuilderSummaryCard key={card.title} card={card} onOpen={() => setDrawerBlock(card.block)} />)}</div><div className="grid grid-cols-2 gap-3">{summaries.filter((card) => ["Progress", "Unlocks"].includes(card.title)).map((card) => <BuilderSummaryCard key={card.title} card={card} compact onOpen={() => setDrawerBlock(card.block)} />)}</div>{drawerBlock && <BlockDrawer block={drawerBlock} pathway={pathway} onClose={() => setDrawerBlock(null)} onSwap={() => { setDrawerBlock(null); onSwap(drawerBlock.name); }} onCoach={onCoach} />}{demoTile && <DemoTileDrawer tile={demoTile} onClose={() => setDemoTile(null)} />}<JourneyBar items={journey} onOpen={setDrawerBlock} /></section>;
+  return <section className="space-y-5 px-5 pb-44 pt-6"><div className="rounded-[2rem] bg-hero p-5 shadow-float"><div className="flex items-start justify-between gap-4"><div className="min-w-0"><p className="text-sm font-bold text-accent">Month 1: Foundation</p><h1 className="mt-1 font-display text-4xl leading-tight">Your Stretch Month</h1><p className="mt-2 text-sm font-semibold text-muted-foreground">{pathway.title}</p></div><ProgressRing value={20} /></div><div className="mt-5 grid gap-2"><Button variant="hero" size="lg" onClick={onStart}>Keep recommended</Button><div className="grid grid-cols-2 gap-2"><Button variant="soft" size="lg" onClick={() => onSwap()}><RefreshCw className="size-4" /> Swap one block</Button><Button variant="soft" size="lg" onClick={onCoach}><MessageCircle className="size-4" /> Ask coach</Button></div></div></div><div className="grid gap-3">{defaultTiles.map((card) => <BuilderSummaryCard key={card.title} card={card} onOpen={() => setDrawerBlock(card.block)} />)}</div><div className="grid grid-cols-2 gap-3">{summaries.filter((card) => ["Progress", "Unlocks"].includes(card.title)).map((card) => <BuilderSummaryCard key={card.title} card={card} compact onOpen={() => setDrawerBlock(card.block)} />)}</div>{drawerBlock && <BlockDrawer block={drawerBlock} pathway={pathway} onClose={() => setDrawerBlock(null)} onSwap={() => { setDrawerBlock(null); onSwap(drawerBlock.name); }} onCoach={onCoach} />}{demoTile && <DemoTileDrawer tile={demoTile} onClose={() => setDemoTile(null)} />}<JourneyBar items={journey} onOpen={setDrawerBlock} /></section>;
 }
 
 function ProgressRing({ value }: { value: number }) {
