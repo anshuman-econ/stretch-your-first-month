@@ -423,6 +423,35 @@ const pathwaySwapCatalog: Record<PathwayKey, Record<string, { rule: string; opti
 };
 const catalogForBlock = (block: MonthBlock, pathway: Pathway): { rule: string; options: CatalogOption[]; agenda?: string } => {
   const key = pathwayKeyFromTitle(pathway);
+  const planCatalog: Record<string, { rule: string; options: CatalogOption[]; agenda?: string }> = {
+    Care: {
+      rule: "Care combines specialist access, one body-support route, and guided labs when they are useful. You can preview one care swap, but labs and advanced riders stay protected.",
+      options: [
+        { name: pathwayDefaults[key].Specialist, state: "Specialist access" },
+        { name: pathwayDefaults[key]["Functional Care"], state: "Body support" },
+        { name: pathwayDefaults[key].Labs, state: "Guided labs" },
+      ],
+    },
+    Coach: {
+      rule: "Coaching helps turn the plan into a week-by-week routine and prepares questions for the right human expert when something needs review.",
+      options: [
+        { name: pathwayDefaults[key].Coaching, state: "This month" },
+        { name: pathwayDefaults[key]["Mental Support"], state: "Support layer" },
+        { name: "Ask coach before changing care, labs, prescriptions, or advanced unlocks", state: "Safety rule" },
+      ],
+    },
+    Pods: pathwaySwapCatalog[key].Pods,
+    Kit: pathwaySwapCatalog[key].Kit,
+    Pass: pathwaySwapCatalog[key]["Experience Pass"],
+    Unlocks: {
+      rule: "Unlocks are previews only. They open later through progress, coach review, clinical need, inventory, or rider eligibility.",
+      options: [
+        ...packsCatalog[key].slice(0, 3).map((name, i) => ({ name, state: i === 0 ? "Preview" : "Pack-only" })),
+        ...futureCatalog.slice(0, 5).map((name) => ({ name, state: "Locked preview" })),
+      ],
+    },
+  };
+  if (planCatalog[block.name]) return planCatalog[block.name];
   const pathwayCatalog = pathwaySwapCatalog[key][block.name];
   if (pathwayCatalog) return pathwayCatalog;
   if (block.name === "Coaching") return { rule: "User does not directly rebuild coaching. Coaching updates based on selected pod and rebalancing preference.", options: coachingCatalog.slice(0, 8).map((name, i) => ({ name, state: i < 2 ? "current emphasis" : "coach-guided" })) };
