@@ -805,8 +805,8 @@ function VisualStep({ number, title, copy, children }: { number: string; title: 
   return <div className="rounded-[2rem] bg-card p-5 shadow-card animate-fade-in"><div className="mb-4 flex items-start gap-3"><span className="grid size-9 shrink-0 place-items-center rounded-full bg-secondary text-sm font-bold text-accent">{number}</span><div><h2 className="font-display text-2xl leading-tight">{title}</h2><p className="mt-1 text-sm leading-6 text-muted-foreground">{copy}</p></div></div>{children}</div>;
 }
 
-function CompareCard({ title, copy, highlight, muted }: { title: string; copy: string; highlight?: boolean; muted?: boolean }) {
-  return <div className={cn("rounded-3xl p-4 shadow-card", highlight ? "bg-primary text-primary-foreground" : muted ? "bg-secondary text-secondary-foreground" : "bg-card")}><p className="font-display text-xl leading-tight">{title}</p><p className={cn("mt-2 text-xs leading-5", highlight ? "text-primary-foreground/85" : "text-muted-foreground")}>{copy}</p></div>;
+function CompareCard({ title, copy, highlight, muted, small }: { title: string; copy: string; highlight?: boolean; muted?: boolean; small?: boolean }) {
+  return <div className={cn("rounded-3xl shadow-card", small ? "p-3 opacity-85" : "p-4", highlight ? "bg-primary text-primary-foreground" : muted ? "bg-secondary text-secondary-foreground" : "bg-card")}><p className={cn("font-display leading-tight", small ? "text-lg" : "text-xl")}>{title}</p><p className={cn("mt-2 text-xs leading-5", highlight ? "text-primary-foreground/85" : "text-muted-foreground")}>{copy}</p></div>;
 }
 
 function ExplainerSection({ title, children }: { title: string; children: React.ReactNode }) {
