@@ -835,8 +835,18 @@ function ActivationPanel({ eyebrow, title, copy, children }: { eyebrow: string; 
   return <section className="rounded-[2rem] bg-card p-5 shadow-float animate-enter"><p className="text-xs font-bold uppercase tracking-wide text-accent">{eyebrow}</p><h2 className="mt-1 font-display text-3xl leading-tight">{title}</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">{copy}</p><div className="mt-5">{children}</div></section>;
 }
 
-function ActivationButtons({ primary, secondary, onContinue, onSecondary }: { primary: string; secondary: string; onContinue: () => void; onSecondary: () => void }) {
-  return <div className="mt-4 grid gap-3"><Button variant="soft" size="lg">{primary}</Button><Button variant="soft" size="lg" onClick={onSecondary}>{secondary}</Button><Button variant="hero" size="xl" onClick={onContinue}>Continue <ArrowRight className="size-4" /></Button></div>;
+function ActivationButtons({ primary, secondary, onContinue, onPrimary, onSecondary }: { primary: string; secondary: string; onContinue: () => void; onPrimary?: () => void; onSecondary: () => void }) {
+  return <div className="mt-4 grid gap-3"><Button variant="soft" size="lg" onClick={onPrimary}>{primary}</Button><Button variant="soft" size="lg" onClick={onSecondary}>{secondary}</Button><Button variant="hero" size="xl" onClick={onContinue}>Continue <ArrowRight className="size-4" /></Button></div>;
+}
+
+type ActivationDetail = { title: string; eyebrow: string; copy: string; rows?: { label: string; copy: string }[]; chips?: string[]; action?: string };
+
+function ActivationInfoCard({ label, copy, onOpen }: { label: string; copy: string; onOpen: () => void }) {
+  return <button onClick={onOpen} className="group w-full rounded-2xl bg-secondary p-4 text-left shadow-card transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><div className="flex items-start justify-between gap-3"><div><p className="text-xs font-semibold uppercase tracking-wide text-accent">{label}</p><p className="mt-2 text-sm leading-6 text-muted-foreground">{copy}</p></div><ArrowRight className="mt-1 size-4 shrink-0 text-accent transition-smooth group-hover:translate-x-0.5" /></div></button>;
+}
+
+function ActivationDetailDrawer({ detail, onClose }: { detail: ActivationDetail; onClose: () => void }) {
+  return <div className="absolute inset-0 z-50 flex items-end bg-primary/25 p-3 backdrop-blur-sm" onClick={onClose}><div className="max-h-[84vh] w-full overflow-y-auto rounded-[2rem] bg-card p-6 shadow-float animate-slide-up" onClick={(event) => event.stopPropagation()}><div className="mb-5 flex items-start justify-between gap-3"><div><p className="text-sm font-bold text-accent">{detail.eyebrow}</p><h2 className="font-display text-3xl leading-tight">{detail.title}</h2></div><button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Close</button></div><p className="text-sm leading-6 text-muted-foreground">{detail.copy}</p>{detail.rows && <div className="mt-4 grid gap-3">{detail.rows.map((row) => <InfoBlock key={row.label} label={row.label} copy={row.copy} />)}</div>}{detail.chips && <div className="mt-4 flex flex-wrap gap-2">{detail.chips.map((chip) => <span key={chip} className="rounded-full bg-secondary px-3 py-2 text-xs font-bold text-accent shadow-card">{chip}</span>)}</div>}{detail.action && <Button variant="hero" size="lg" className="mt-5 w-full" onClick={onClose}>{detail.action}</Button>}</div></div>;
 }
 
 function BlueprintDrawer({ block, pathway, onClose, onSwap }: { block: MonthBlock; pathway: Pathway; onClose: () => void; onSwap: () => void }) {
