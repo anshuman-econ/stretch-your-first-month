@@ -893,9 +893,9 @@ function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathw
   ];
   if (title === "Experience Pass") return [
     { label: "What this means", copy: "Your experience pass is one bookable monthly experience. It can be movement, recovery, breathwork, LED, workshop, or partner demo depending on pathway and availability." },
-    { label: "What Stretch recommended", items: splitBlueprintList(activation.passes).map((name, i) => ({ name, state: i === 0 ? "Recommended" : highTierPasses.includes(name) ? "inventory-gated" : "Selectable" })) },
+    { label: "What Stretch recommended", items: splitBlueprintList(activation.passes).map((name, i) => ({ name, state: i === 0 ? "Recommended" : inventoryStatus(name) })) },
     { label: "Why it was recommended", copy: "This pass turns the plan into a real-world action rather than just a digital plan." },
-    { label: "What you can choose or swap", copy: "User can pick one monthly pass. If an option is inventory-gated, its status is shown.", items: catalog.options.map((item) => ({ ...item, state: item.state?.toLowerCase().includes("inventory") ? "inventory-gated" : item.state })) },
+    { label: "What you can choose or swap", copy: `User can pick one monthly pass. ${catalog.rule} If an option is inventory-gated, show “inventory-gated” status.`, items: catalog.options.map((item) => ({ ...item, state: item.state?.toLowerCase().includes("inventory") ? "inventory-gated" : inventoryStatus(item.name, item.state || "Selectable") })) },
     { label: "What is locked or future", copy: "Tier-High experiences, procedures, devices, and repeated clinic sessions may require pack, milestone, or rider unlock." },
     { label: "Actions", items: ["Choose pass", "Keep recommended pass", "Swap pass", "Ask coach"].map((name) => ({ name, state: "Action" })) },
   ];
@@ -909,7 +909,7 @@ function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathw
   ];
   return [
     { label: "What this means", copy: "Future unlocks are previews of what can open later. They are not all active on day one." },
-    { label: "What Stretch recommended", items: [...splitBlueprintList(activation.future), pathway.strongestPack, pathway.futureDevice, pathway.futureRider, pathways[pathway.adjacent].title].filter(Boolean).map((name) => ({ name, state: "Preview" })) },
+    { label: "What Stretch recommended", groups: [{ label: "Future unlocks from activation", items: splitBlueprintList(activation.future).map((name) => ({ name, state: "Preview" })) }, { label: "Pathway strongest pack", items: [{ name: pathway.strongestPack, state: "Pack preview" }] }, { label: "Future device", items: [{ name: pathway.futureDevice, state: "Device preview" }] }, { label: "Future rider", items: [{ name: pathway.futureRider, state: "Rider preview" }] }, { label: "Adjacent pathway", items: pathway.adjacent ? [{ name: pathways[pathway.adjacent].title, state: "Adjacent preview" }] : [] }] },
     { label: "Why it was recommended", copy: "Stretch shows only the next relevant layer so the first month stays focused." },
     { label: "What you can choose or swap", copy: "User cannot freely activate riders or devices here. User can view details and mark interest." },
     { label: "What is locked or future", copy: "Packs, devices, riders, advanced labs, and adjacent pathways are locked / preview / eligible / active depending progress, eligibility, or clinician review." },
