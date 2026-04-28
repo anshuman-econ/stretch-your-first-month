@@ -850,12 +850,13 @@ function ActivationDetailDrawer({ detail, onClose }: { detail: ActivationDetail;
 }
 
 type BlueprintTitle = "Care + Labs" | "Coach + Pods" | "Kit + Perks" | "Experience Pass" | "Progress Passport" | "Future Unlocks";
-type BlueprintSection = { label: string; copy?: string; items?: CatalogOption[]; rows?: { label: string; copy: string }[] };
+type BlueprintSection = { label: string; copy?: string; items?: CatalogOption[]; rows?: { label: string; copy: string }[]; groups?: { label: string; items: CatalogOption[] }[] };
 
 const splitBlueprintList = (value: string) => value.split(/, | \+ /).map((item) => item.trim()).filter(Boolean);
 
 function BlueprintSectionBlock({ section }: { section: BlueprintSection }) {
-  return <div className="rounded-2xl bg-secondary p-4"><p className="text-xs font-semibold uppercase tracking-wide text-accent">{section.label}</p>{section.copy && <p className="mt-2 text-sm leading-6 text-muted-foreground">{section.copy}</p>}{section.items && <div className="mt-3 grid gap-2">{section.items.map((item) => <button key={`${section.label}-${item.name}`} className="rounded-2xl bg-card px-4 py-3 text-left shadow-card transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><p className="text-sm font-semibold text-foreground">{item.name}</p>{item.state && <p className="mt-1 text-xs font-bold text-accent">{item.state}</p>}</button>)}</div>}{section.rows && <div className="mt-3 grid gap-2">{section.rows.map((row) => <div key={`${section.label}-${row.label}`} className="rounded-2xl bg-card px-4 py-3 shadow-card"><p className="text-sm font-semibold text-foreground">{row.label}</p><p className="mt-1 text-xs leading-5 text-muted-foreground">{row.copy}</p></div>)}</div>}</div>;
+  const renderItems = (items: CatalogOption[], prefix: string) => <div className="mt-3 grid gap-2">{items.map((item) => <button key={`${prefix}-${item.name}`} className="rounded-2xl bg-card px-4 py-3 text-left shadow-card transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><p className="text-sm font-semibold text-foreground">{item.name}</p>{item.state && <p className="mt-1 text-xs font-bold text-accent">{item.state}</p>}</button>)}</div>;
+  return <div className="rounded-2xl bg-secondary p-4"><p className="text-xs font-semibold uppercase tracking-wide text-accent">{section.label}</p>{section.copy && <p className="mt-2 text-sm leading-6 text-muted-foreground">{section.copy}</p>}{section.rows && <div className="mt-3 grid gap-2">{section.rows.map((row) => <div key={`${section.label}-${row.label}`} className="rounded-2xl bg-card px-4 py-3 shadow-card"><p className="text-sm font-semibold text-foreground">{row.label}</p><p className="mt-1 text-xs leading-5 text-muted-foreground">{row.copy}</p></div>)}</div>}{section.items && renderItems(section.items, section.label)}{section.groups && <div className="mt-3 grid gap-4">{section.groups.map((group) => <div key={`${section.label}-${group.label}`}><p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">{group.label}</p>{renderItems(group.items, `${section.label}-${group.label}`)}</div>)}</div>}</div>;
 }
 
 function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathway: Pathway): BlueprintSection[] {
@@ -865,11 +866,12 @@ function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathw
   const catalog = catalogForBlock(block, pathway);
   const swapCatalog = pathwaySwapCatalog[key];
   const currentPods = splitBlueprintList(activation.pods);
+  const inventoryStatus = (name: string, fallback = "Selectable") => highTierPasses.includes(name) || /inventory|red-light|LED booth|Biopeak|clinic/i.test(name) ? "inventory-gated" : fallback;
   if (title === "Care + Labs") return [
     { label: "What this means", copy: "Your care block is the part of the month that keeps the plan clinically grounded. It includes the recommended specialist route, functional support choice, clinical / LED / review route, and labs or diagnostics when relevant." },
     { label: "What Stretch recommended", rows: [{ label: "Specialist", copy: activation.specialist }, { label: "Functional support", copy: activation.functional }, { label: "Clinical / LED / review route", copy: activation.clinical }, { label: "Labs", copy: activation.labs }] },
     { label: "Why it was recommended", copy: `${pathway.reason} This route was matched to your quiz answers so the month starts with the safest next step instead of a random service list.` },
-    { label: "What you can choose or swap", copy: "Functional support is swappable. Care route is clinically bounded, so only safe alternatives appear here.", items: [...splitBlueprintList(activation.functional).map((name, i) => ({ name, state: i === 0 ? "Recommended" : "Selectable" })), ...(swapCatalog.Specialist?.options || []).filter((item) => item.state !== "Locked preview").map((item) => ({ ...item, state: item.state || "Safe alternative" }))] },
+    { label: "What you can choose or swap", copy: `Functional support is swappable. Care route is clinically bounded. ${swapCatalog.Specialist?.rule || catalog.rule}`, groups: [{ label: "Functional support options", items: splitBlueprintList(activation.functional).map((name, i) => ({ name, state: i === 0 ? "Recommended" : "Selectable" })) }, { label: "Safe care-route alternatives", items: (swapCatalog.Specialist?.options || catalog.options).filter((item) => item.state !== "Locked preview").map((item) => ({ ...item, state: item.state || "Safe alternative" })) }] },
     { label: "What is locked or future", copy: "Advanced diagnostics, riders, devices, and high-cost procedures are not unlocked here. They appear later through milestones, clinician review, pack, or rider eligibility." },
     { label: "Actions", items: ["Keep care route", "Choose functional support", "Swap one block", "Ask coach"].map((name) => ({ name, state: "Action" })) },
   ];
@@ -877,23 +879,23 @@ function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathw
     { label: "What this means", copy: "Your coach and pods work together. The pods provide the guided group rhythm and outputs. The coach turns those pod themes into your weekly actions." },
     { label: "What Stretch recommended", rows: [{ label: "Pods", copy: activation.pods }, { label: "Coaching touch 1", copy: activation.coach1 }, { label: "Coaching touch 2", copy: activation.coach2 }, { label: "Mental / behavioral support", copy: activation.mental }, { label: "Pod covers", copy: activation.podCovers }] },
     { label: "Why it was recommended", copy: `${pathway.reason} Stretch paired your pods with your coaching plan so you are not just attending sessions — you are leaving with actions.` },
-    { label: "What you can choose or swap", copy: "User can swap one pod. When a pod changes, coaching emphasis and kit suggestions may adjust.", rows: currentPods.map((pod) => ({ label: pod, copy: podAgendas[pod] || activation.podCovers })), items: swapCatalog.Pods.options },
+    { label: "What you can choose or swap", copy: `User can swap one pod. ${swapCatalog.Pods.rule} When a pod changes, coaching emphasis and kit suggestions may adjust.`, rows: currentPods.map((pod) => ({ label: pod, copy: podAgendas[pod] || activation.podCovers })), groups: [{ label: "Current selected pods", items: currentPods.map((name) => ({ name, state: "Current" })) }, { label: "Pathway-relevant pod alternatives", items: swapCatalog.Pods.options }] },
     { label: "What is locked or future", copy: "More pods, higher-touch coaching, or mental-health deep dives can appear through packs or future eligibility." },
     { label: "Actions", items: ["View pod agenda", "Swap one pod", "Keep current pods", "Ask coach"].map((name) => ({ name, state: "Action" })) },
   ];
   if (title === "Kit + Perks") return [
     { label: "What this means", copy: "Your kit is the at-home support for the month. It contains the practical items, shelf pulls (supplements), pantry tools(collagen/protein and nutrition support), visible-vitality support , or sticky perks that help you act between care, pods, and coaching." },
-    { label: "What Stretch recommended", rows: [{ label: "Recommended kit", copy: activation.kit }], items: kitCatalog[key].map((name, i) => ({ name, state: i === 0 ? "Recommended" : "Kit option" })) },
+    { label: "What Stretch recommended", rows: [{ label: "Recommended kit", copy: activation.kit }, { label: "Pathway kit detail", copy: kitCatalog[key].join(", ") }, { label: "Sticky perks", copy: stickyPerks.join(", ") }] },
     { label: "Why it was recommended", copy: "The kit was matched to the work your month is asking you to do — sleep, flare support, glow, focus, pantry, recovery, or visible vitality." },
-    { label: "What you can choose or swap", copy: "User can swap one kit item or sticky perk. If a user wants more than one swap or premium items, route to pack / top-up.", items: [...kitCatalog[key].map((name) => ({ name, state: "Kit option" })), ...stickyPerks.map((name) => ({ name, state: "Sticky perk" }))] },
+    { label: "What you can choose or swap", copy: `User can swap one kit item or sticky perk. ${swapCatalog.Kit.rule} If a user wants more than one swap or premium items, route to pack / top-up.`, groups: [{ label: "Available kit options", items: kitCatalog[key].map((name) => ({ name, state: "Kit option" })) }, { label: "Sticky perk alternatives", items: stickyPerks.map((name) => ({ name, state: "Sticky perk" })) }] },
     { label: "What is locked or future", copy: "Premium actives, full boxes, advanced nutrition support, devices, and rider-funded items are not automatic. They appear later through packs, MBC, or future unlocks." },
     { label: "Actions", items: ["Build kit", "Swap one kit item", "Choose sticky perk", "Ask coach"].map((name) => ({ name, state: "Action" })) },
   ];
   if (title === "Experience Pass") return [
     { label: "What this means", copy: "Your experience pass is one bookable monthly experience. It can be movement, recovery, breathwork, LED, workshop, or partner demo depending on pathway and availability." },
-    { label: "What Stretch recommended", items: splitBlueprintList(activation.passes).map((name, i) => ({ name, state: i === 0 ? "Recommended" : highTierPasses.includes(name) ? "inventory-gated" : "Selectable" })) },
+    { label: "What Stretch recommended", items: splitBlueprintList(activation.passes).map((name, i) => ({ name, state: i === 0 ? "Recommended" : inventoryStatus(name) })) },
     { label: "Why it was recommended", copy: "This pass turns the plan into a real-world action rather than just a digital plan." },
-    { label: "What you can choose or swap", copy: "User can pick one monthly pass. If an option is inventory-gated, its status is shown.", items: catalog.options.map((item) => ({ ...item, state: item.state?.toLowerCase().includes("inventory") ? "inventory-gated" : item.state })) },
+    { label: "What you can choose or swap", copy: `User can pick one monthly pass. ${catalog.rule} If an option is inventory-gated, show “inventory-gated” status.`, items: catalog.options.map((item) => ({ ...item, state: item.state?.toLowerCase().includes("inventory") ? "inventory-gated" : inventoryStatus(item.name, item.state || "Selectable") })) },
     { label: "What is locked or future", copy: "Tier-High experiences, procedures, devices, and repeated clinic sessions may require pack, milestone, or rider unlock." },
     { label: "Actions", items: ["Choose pass", "Keep recommended pass", "Swap pass", "Ask coach"].map((name) => ({ name, state: "Action" })) },
   ];
@@ -907,7 +909,7 @@ function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathw
   ];
   return [
     { label: "What this means", copy: "Future unlocks are previews of what can open later. They are not all active on day one." },
-    { label: "What Stretch recommended", items: [...splitBlueprintList(activation.future), pathway.strongestPack, pathway.futureDevice, pathway.futureRider, pathways[pathway.adjacent].title].filter(Boolean).map((name) => ({ name, state: "Preview" })) },
+    { label: "What Stretch recommended", groups: [{ label: "Future unlocks from activation", items: splitBlueprintList(activation.future).map((name) => ({ name, state: "Preview" })) }, { label: "Pathway strongest pack", items: [{ name: pathway.strongestPack, state: "Pack preview" }] }, { label: "Future device", items: [{ name: pathway.futureDevice, state: "Device preview" }] }, { label: "Future rider", items: [{ name: pathway.futureRider, state: "Rider preview" }] }, { label: "Adjacent pathway", items: pathway.adjacent ? [{ name: pathways[pathway.adjacent].title, state: "Adjacent preview" }] : [] }] },
     { label: "Why it was recommended", copy: "Stretch shows only the next relevant layer so the first month stays focused." },
     { label: "What you can choose or swap", copy: "User cannot freely activate riders or devices here. User can view details and mark interest." },
     { label: "What is locked or future", copy: "Packs, devices, riders, advanced labs, and adjacent pathways are locked / preview / eligible / active depending progress, eligibility, or clinician review." },
