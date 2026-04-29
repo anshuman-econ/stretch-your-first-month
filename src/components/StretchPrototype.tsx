@@ -528,6 +528,27 @@ const catalogForBlock = (block: MonthBlock, pathway: Pathway): { rule: string; o
     Pods: pathwaySwapCatalog[key].Pods,
     Kit: pathwaySwapCatalog[key].Kit,
     Pass: pathwaySwapCatalog[key]["Experience Pass"],
+    "Progress Passport": {
+      rule: "Progress Passport is not a swap block. It tracks plan completion and Milestone Bonus Credit eligibility.",
+      options: [
+        { name: "kit built", state: "Progress action" },
+        { name: "pod joined", state: "Progress action" },
+        { name: "pass booked", state: "Progress action" },
+        { name: "labs completed", state: "Progress action" },
+        { name: "coaching done", state: "Progress action" },
+        { name: "7-day streak", state: "Progress action" },
+        { name: "selected packs, kit upgrades, device buy-downs, future pathway add-ons, special partner experiences", state: "Future MBC use" },
+      ],
+    },
+    "Future Unlocks": {
+      rule: "Future Unlocks are previews only. They open later through progress, coach review, clinical need, inventory, or rider eligibility.",
+      options: [
+        ...packsCatalog[key].slice(0, 3).map((name, i) => ({ name, state: i === 0 ? "Preview" : "Pack-only" })),
+        { name: pathways[key].futureDevice, state: "Locked device preview" },
+        { name: pathways[key].futureRider, state: "Rider preview" },
+        { name: pathways[pathways[key].adjacent].title, state: "Adjacent pathway preview" },
+      ],
+    },
     Unlocks: {
       rule: "Unlocks are previews only. They open later through progress, coach review, clinical need, inventory, or rider eligibility.",
       options: [
@@ -934,13 +955,15 @@ function BuiltScreen({ pathway, resetQuiz, onUnlocks, onSwap }: { pathway: Pathw
   const [drawerCard, setDrawerCard] = useState<{ title: BlueprintTitle; block: MonthBlock } | null>(null);
   const [blueprintSelections, setBlueprintSelections] = useState<Partial<Record<BlueprintTitle, string>>>({});
   const planCards = buildPlanCards(pathway);
+  const progressBlock: MonthBlock = { name: "Progress Passport", selection: "Milestone Bonus Credits", why: "Complete the actions that make your plan work to earn progress rewards.", status: "Recommended", includes: "kit built, pod joined, pass booked, labs completed, coaching done, 7-day streak", plain: "Your Progress Passport tracks completion of the actions that move the month forward.", discovery: "This is how Stretch turns progress into future unlocks.", swappable: false };
+  const futureBlock: MonthBlock = { ...planCards.find((card) => card.name === "Unlocks")!, name: "Future Unlocks" };
   const blueprint: { title: BlueprintTitle; subtitle: string; block: MonthBlock }[] = [
-    { title: "Care + Labs", subtitle: "Your expert route, functional support, clinical review, and any useful labs.", block: planCards[0] },
-    { title: "Coach + Pods", subtitle: "Your coaching plan and guided pod seats work together.", block: planCards[1] },
-    { title: "Kit + Perks", subtitle: "Your at-home support: supplements, pantry tools, visible vitality, and sticky perks.", block: planCards[4] },
-    { title: "Experience Pass", subtitle: "One bookable experience this month — movement, recovery, LED, breathwork, or workshop.", block: planCards[3] },
-    { title: "Progress Passport", subtitle: "Complete actions and earn Milestone Bonus Credits.", block: { ...planCards[5], name: "Progress Passport", selection: "Milestone Bonus Credits" } },
-    { title: "Future Unlocks", subtitle: "Packs, devices, riders, and adjacent pathways can open as your pattern becomes clearer.", block: planCards[5] },
+    { title: "Care + Labs", subtitle: "Your expert route, functional support, clinical review, and any useful labs.", block: planCards.find((card) => card.name === "Care")! },
+    { title: "Coach + Pods", subtitle: "Your coaching plan and guided pod seats work together.", block: planCards.find((card) => card.name === "Coach")! },
+    { title: "Kit + Perks", subtitle: "Your at-home support: supplements, pantry tools, visible vitality, and sticky perks.", block: planCards.find((card) => card.name === "Kit")! },
+    { title: "Experience Pass", subtitle: "One bookable experience this month — movement, recovery, LED, breathwork, or workshop.", block: planCards.find((card) => card.name === "Pass")! },
+    { title: "Progress Passport", subtitle: "Complete actions and earn Milestone Bonus Credits.", block: progressBlock },
+    { title: "Future Unlocks", subtitle: "Packs, devices, riders, and adjacent pathways can open as your pattern becomes clearer.", block: futureBlock },
   ];
   return <section className="space-y-5 px-5 py-7"><div className="rounded-[2rem] bg-hero p-6 shadow-float"><Sparkles className="mb-5 size-8 text-accent" /><SectionTitle title="Stretch built your first-month blueprint." copy="Based on your answers, we built a guided month with care, coaching, pods, kit, pass, progress rewards, and future unlocks — all matched to what you want to feel better in 30 days." /></div><div className="rounded-[2rem] bg-card p-5 shadow-card"><p className="text-sm font-semibold text-accent">Recommended pathway</p><h2 className="mt-1 font-display text-3xl leading-tight">{pathway.title}</h2><InfoBlock label="Why" copy={pathway.reason} /></div><div className="grid gap-3">{blueprint.map((card, index) => <button key={card.title} onClick={() => setDrawerCard({ title: card.title, block: card.block })} className="group w-full rounded-[2rem] bg-card p-5 text-left shadow-card transition-smooth hover:-translate-y-0.5 hover:shadow-float focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><div className="flex items-start gap-4"><div className="grid size-12 shrink-0 place-items-center rounded-2xl bg-secondary text-accent shadow-card">{iconForBlock(card.title)}</div><div className="min-w-0 flex-1"><div className="flex items-center justify-between gap-3"><p className="text-xs font-bold uppercase tracking-wide text-accent">Blueprint {index + 1}</p><ArrowRight className="size-4 text-accent transition-smooth group-hover:translate-x-0.5" /></div><h2 className="mt-1 font-display text-2xl leading-tight">{card.title}</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">{blueprintSelections[card.title] || card.subtitle}</p></div></div></button>)}</div><div className="grid gap-3"><Button variant="hero" size="xl" onClick={onUnlocks}>Show activation review</Button><Button variant="soft" size="xl" onClick={() => onSwap()}><RefreshCw className="size-4" /> Swap one block</Button><Button variant="soft" size="lg" onClick={resetQuiz}>Change answers</Button></div>{drawerCard && <BlueprintDrawer title={drawerCard.title} block={drawerCard.block} pathway={pathway} selectedOption={blueprintSelections[drawerCard.title]} onSelect={(name) => setBlueprintSelections((current) => ({ ...current, [drawerCard.title]: name }))} onClose={() => setDrawerCard(null)} onSwap={onSwap} />}</section>;
 }
