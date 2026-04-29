@@ -528,6 +528,27 @@ const catalogForBlock = (block: MonthBlock, pathway: Pathway): { rule: string; o
     Pods: pathwaySwapCatalog[key].Pods,
     Kit: pathwaySwapCatalog[key].Kit,
     Pass: pathwaySwapCatalog[key]["Experience Pass"],
+    "Progress Passport": {
+      rule: "Progress Passport is not a swap block. It tracks plan completion and Milestone Bonus Credit eligibility.",
+      options: [
+        { name: "kit built", state: "Progress action" },
+        { name: "pod joined", state: "Progress action" },
+        { name: "pass booked", state: "Progress action" },
+        { name: "labs completed", state: "Progress action" },
+        { name: "coaching done", state: "Progress action" },
+        { name: "7-day streak", state: "Progress action" },
+        { name: "selected packs, kit upgrades, device buy-downs, future pathway add-ons, special partner experiences", state: "Future MBC use" },
+      ],
+    },
+    "Future Unlocks": {
+      rule: "Future Unlocks are previews only. They open later through progress, coach review, clinical need, inventory, or rider eligibility.",
+      options: [
+        ...packsCatalog[key].slice(0, 3).map((name, i) => ({ name, state: i === 0 ? "Preview" : "Pack-only" })),
+        { name: pathways[key].futureDevice, state: "Locked device preview" },
+        { name: pathways[key].futureRider, state: "Rider preview" },
+        { name: pathways[pathways[key].adjacent].title, state: "Adjacent pathway preview" },
+      ],
+    },
     Unlocks: {
       rule: "Unlocks are previews only. They open later through progress, coach review, clinical need, inventory, or rider eligibility.",
       options: [
