@@ -667,7 +667,7 @@ export default function StretchPrototype() {
           {step === "quiz" && <QuizScreen quizIndex={quizIndex} chooseAnswer={chooseAnswer} onExplain={() => openExplainer("quiz")} />}
           {step === "built" && <BuiltScreen pathway={pathway} resetQuiz={resetQuiz} onUnlocks={() => setStep("unlocks")} onSwap={(target) => openControlledSwap(target)} />}
           {step === "swap" && <SwapScreen pathway={pathway} reason={answers.slice(0, 3).join(", ") || goal || pathway.reason} initialTarget={swapTarget} onBack={() => setStep("builder")} onCoach={() => setShowRebalance(true)} />}
-          {step === "unlocks" && <UnlocksScreen pathway={pathway} answers={answers} onBuild={() => setStep("builder")} onKeep={() => setStep("confirm")} onSwap={() => openControlledSwap()} />}
+          {step === "unlocks" && <UnlocksScreen pathway={pathway} answers={answers} onBuild={() => setStep("builder")} onKeep={() => setStep("confirm")} onSwap={() => openControlledSwap()} onCoach={() => setShowRebalance(true)} />}
           {step === "confirm" && <ConfirmScreen pathway={pathway} resetQuiz={resetQuiz} onBuild={() => setStep("builder")} onOpenJourney={() => openJourney(pathwayKey)} />}
           {step === "builder" && <BuilderScreen pathway={pathway} onStart={() => setStep("week")} onCoach={() => setShowRebalance(true)} onSwap={() => setStep("swap")} />}
           {step === "week" && <WeekScreen onHome={() => setStep("home")} />}
