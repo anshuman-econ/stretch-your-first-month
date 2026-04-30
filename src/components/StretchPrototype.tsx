@@ -1217,12 +1217,14 @@ type ActivationPicker = "functional" | "pods" | "kit" | "pass" | "mbc" | "future
 function ActivationPickerDrawer({ type, pathway, activation, selected, onSelect, onClose, onSwap, onCoach }: { type: ActivationPicker; pathway: Pathway; activation: ActivationCopy; selected?: string; onSelect: (value: string) => void; onClose: () => void; onSwap: () => void; onCoach: () => void }) {
   const key = pathwayKeyFromTitle(pathway);
   const podNames = splitBlueprintList(activation.pods);
-  const selectable = type === "functional" ? splitBlueprintList(activation.functional) : type === "pass" ? splitBlueprintList(activation.passes) : type === "kit" ? kitCatalog[key] : [];
-  const title = { functional: "Choose functional support", pods: "View or swap pods", kit: "Build your kit", pass: "Choose your experience pass", mbc: "Milestone Bonus Credits", future: "Future unlocks" }[type];
+  const podAlternatives = podCatalog.filter((pod) => !podNames.includes(pod)).slice(0, 4);
+  const kitCategories = kitCategoriesFor(key);
+  const selectable = type === "functional" ? splitBlueprintList(activation.functional) : type === "pass" ? splitBlueprintList(activation.passes) : [];
+  const title = { functional: "Choose functional support", pods: "Your pod seats", kit: "Your kit", pass: "Choose your experience pass", mbc: "Milestone Bonus Credits", future: "Future unlocks" }[type];
   const copy = {
     functional: "Choose one practical support option from the functional care layer matched to this pathway.",
-    pods: "Review selected pods and the agenda or output for each seat.",
-    kit: "Build the pathway kit and keep any swap to one eligible item.",
+    pods: "Pods are guided group sessions. Your coach uses them to shape your weekly actions.",
+    kit: "Your kit is the at-home support for the month.",
     pass: "Choose one monthly experience pass from the pathway-specific options.",
     mbc: "MBC are Stretch-funded credits earned by completing plan actions.",
     future: "These are previews, not active day-one benefits.",
@@ -1230,8 +1232,60 @@ function ActivationPickerDrawer({ type, pathway, activation, selected, onSelect,
   const recommendedPackName = pathwayPacks[key][0];
   const recommendedPackInfo = packMetaFor(recommendedPackName);
   const packStatusLabels: Record<PackMeta["status"], string> = { preview: "Preview", "pack-only": "Pack-only", milestone: "Milestone unlock", "top-up": "Top-up" };
-  const rows = type === "pods" ? podNames.map((pod) => ({ label: pod, copy: podAgendas[pod] || activation.podCovers })) : type === "kit" ? [{ label: "Recommended kit", copy: activation.kit }, { label: "One eligible swap", copy: kitCatalog[key][1] || kitCatalog[key][0] }] : type === "mbc" ? [{ label: "Earn with", copy: "kit built, pod joined, pass booked, labs completed, coaching done, 7-day streak" }, { label: "Use for", copy: "selected packs, kit upgrades, device buy-downs, future pathway add-ons, special partner experiences" }] : type === "future" ? [{ label: `Recommended pack · ${recommendedPackName}`, copy: `${packStatusLabels[recommendedPackInfo.status]}. Includes: ${recommendedPackInfo.includes} Useful when: ${recommendedPackInfo.useful}` }, { label: "Pack Store", copy: `Pathway packs: ${pathwayPacks[key].join(", ")}. Tap “View Pack Store” for full bundles.` }, { label: `Perk Store · ${stickyPerks[0]}`, copy: `${explainOption(stickyPerks[0])} Browse more partner perks in the Perk Store.` }, { label: "Devices", copy: [pathway.futureDevice, ...futureCatalog.filter((item) => /Ring|LED Mask|CGM|red-light/i.test(item)).slice(0, 3)].join(", ") }, { label: "Riders", copy: [pathway.futureRider, ...splitBlueprintList(activation.future).filter((item) => /Rider|Shield|Rx|DermaShield|NeuroSleep/i.test(item))].join(", ") }, { label: "Adjacent pathways", copy: pathways[pathway.adjacent].title }] : [];
-  return <div className="absolute inset-0 z-[60] flex items-end bg-primary/25 p-3 backdrop-blur-sm" onClick={onClose}><div className="max-h-[84vh] w-full overflow-y-auto rounded-[2rem] bg-card p-6 shadow-float animate-slide-up" onClick={(event) => event.stopPropagation()}><div className="mb-5 flex items-start justify-between gap-3"><div><p className="text-sm font-bold text-accent">Activation picker</p><h2 className="font-display text-3xl leading-tight">{title}</h2></div><button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Close</button></div><p className="text-sm leading-6 text-muted-foreground">{copy}</p>{rows.length > 0 && <div className="mt-4 grid gap-3">{rows.map((item) => <InfoBlock key={item.label} label={item.label} copy={item.copy} />)}</div>}{selectable.length > 0 && <div className="mt-4 grid gap-2">{selectable.map((item, index) => { const isSelected = selected === item; const status = isSelected ? "Selected" : index === 0 ? "Recommended" : type === "kit" ? "Eligible swap" : "Selectable"; return <button key={item} onClick={() => onSelect(item)} className={cn("rounded-2xl px-4 py-3 text-left shadow-card transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", isSelected ? "bg-primary text-primary-foreground" : "bg-secondary")}><span className="flex items-start justify-between gap-3"><span className="min-w-0 flex-1"><p className="text-sm font-semibold">{item}</p><p className={cn("mt-1 text-xs leading-5", isSelected ? "text-primary-foreground/85" : "text-muted-foreground")}>{explainOption(item)}</p><span className={cn("mt-2 inline-flex rounded-full px-2 py-0.5 text-[11px] font-bold", isSelected ? "bg-primary-foreground/15 text-primary-foreground" : "bg-card text-accent")}>{status}</span></span>{isSelected && <Check className="mt-0.5 size-4 shrink-0" />}</span></button>; })}</div>}<div className="mt-5 grid gap-3">{type === "functional" && <><Button variant="soft" size="lg" onClick={onClose}>Keep recommended</Button><Button variant="hero" size="lg" onClick={onClose}>Choose this</Button><Button variant="soft" size="lg" onClick={onCoach}>Ask coach</Button></>}{type === "pods" && <><Button variant="soft" size="lg" onClick={onClose}>Keep current pods</Button><Button variant="hero" size="lg" onClick={onSwap}>Swap one pod</Button><Button variant="soft" size="lg" onClick={onCoach}>Ask coach</Button></>}{type === "kit" && <><Button variant="soft" size="lg" onClick={onClose}>Keep recommended kit</Button><Button variant="hero" size="lg" onClick={onSwap}>Swap one item</Button><Button variant="soft" size="lg" onClick={onCoach}>Ask coach</Button></>}{type === "pass" && <><Button variant="hero" size="lg" onClick={onClose}>Choose this pass</Button><Button variant="soft" size="lg" onClick={onClose}>Keep recommended</Button><Button variant="soft" size="lg" onClick={onCoach}>Ask coach</Button></>}{type === "mbc" && <><Button variant="hero" size="lg" onClick={onClose}>View Wallet</Button><Button variant="soft" size="lg" onClick={onClose}>Continue</Button></>}{type === "future" && <><Button variant="hero" size="lg" onClick={onClose}>Mark interest</Button><Button variant="soft" size="lg" onClick={onClose}>Not now</Button></>}</div></div></div>;
+  const rows = type === "mbc" ? [{ label: "Earn with", copy: "kit built, pod joined, pass booked, labs completed, coaching done, 7-day streak" }, { label: "Use for", copy: "selected packs, kit upgrades, device buy-downs, future pathway add-ons, special partner experiences" }] : type === "future" ? [{ label: `Recommended pack · ${recommendedPackName}`, copy: `${packStatusLabels[recommendedPackInfo.status]}. Includes: ${recommendedPackInfo.includes} Useful when: ${recommendedPackInfo.useful}` }, { label: "Pack Store", copy: `Pathway packs: ${pathwayPacks[key].join(", ")}. Tap “View Pack Store” for full bundles.` }, { label: `Perk Store · ${stickyPerks[0]}`, copy: `${explainOption(stickyPerks[0])} Browse more partner perks in the Perk Store.` }, { label: "Devices", copy: [pathway.futureDevice, ...futureCatalog.filter((item) => /Ring|LED Mask|CGM|red-light/i.test(item)).slice(0, 3)].join(", ") }, { label: "Riders", copy: [pathway.futureRider, ...splitBlueprintList(activation.future).filter((item) => /Rider|Shield|Rx|DermaShield|NeuroSleep/i.test(item))].join(", ") }, { label: "Adjacent pathways", copy: pathways[pathway.adjacent].title }] : [];
+  const kitStatusClass = (status: KitCategory["status"]) => status === "Recommended" ? "bg-primary text-primary-foreground" : status === "Sticky perk" ? "bg-accent/15 text-accent" : status === "Locked" ? "bg-muted text-muted-foreground" : "bg-secondary text-accent";
+  return <div className="absolute inset-0 z-[60] flex items-end bg-primary/25 p-3 backdrop-blur-sm" onClick={onClose}><div className="max-h-[84vh] w-full overflow-y-auto rounded-[2rem] bg-card p-6 shadow-float animate-slide-up" onClick={(event) => event.stopPropagation()}>
+    <div className="mb-5 flex items-start justify-between gap-3">
+      <div>
+        <p className="text-sm font-bold text-accent">Activation picker</p>
+        <h2 className="font-display text-3xl leading-tight">{title}</h2>
+      </div>
+      <button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Close</button>
+    </div>
+    <p className="text-sm leading-6 text-muted-foreground">{copy}</p>
+
+    {type === "pods" && <div className="mt-4 grid gap-3">
+      {podNames.map((pod) => { const d = podDetails[pod]; return (
+        <div key={pod} className="rounded-2xl bg-secondary p-4 shadow-card">
+          <div className="flex items-start justify-between gap-3">
+            <p className="text-sm font-semibold text-foreground">{pod}</p>
+            <span className="shrink-0 rounded-full bg-primary px-2 py-0.5 text-[11px] font-bold text-primary-foreground">Selected pod</span>
+          </div>
+          {d ? <div className="mt-2 grid gap-1 text-xs leading-5 text-muted-foreground">
+            <p><span className="font-bold text-accent">Covers:</span> {d.covers}</p>
+            <p><span className="font-bold text-accent">You leave with:</span> {d.leaveWith}</p>
+            <p><span className="font-bold text-accent">Coach uses it for:</span> {d.coachUse}</p>
+          </div> : <p className="mt-2 text-xs leading-5 text-muted-foreground">{podAgendas[pod] || activation.podCovers}</p>}
+        </div>
+      ); })}
+      {podAlternatives.length > 0 && <div className="rounded-2xl bg-card p-4 shadow-card">
+        <p className="text-xs font-bold uppercase tracking-wide text-accent">Alternative pods</p>
+        <div className="mt-2 grid gap-2">{podAlternatives.map((pod) => (
+          <div key={pod} className="rounded-xl bg-secondary px-3 py-2">
+            <p className="text-sm font-semibold text-foreground">{pod}</p>
+            <p className="mt-0.5 text-xs leading-5 text-muted-foreground">{podDetails[pod]?.covers || podAgendas[pod] || "Alternative pod option."}</p>
+          </div>
+        ))}</div>
+      </div>}
+    </div>}
+
+    {type === "kit" && <div className="mt-4 grid gap-3">
+      {kitCategories.map((cat) => (
+        <div key={cat.label} className="rounded-2xl bg-secondary p-4 shadow-card">
+          <div className="flex items-start justify-between gap-3">
+            <p className="text-xs font-bold uppercase tracking-wide text-accent">{cat.label}</p>
+            <span className={cn("shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold", kitStatusClass(cat.status))}>{cat.status}</span>
+          </div>
+          <p className="mt-1 text-sm font-semibold text-foreground">{cat.recommendation}</p>
+          <p className="mt-1 text-xs leading-5 text-muted-foreground">{cat.explanation}</p>
+        </div>
+      ))}
+    </div>}
+
+    {rows.length > 0 && <div className="mt-4 grid gap-3">{rows.map((item) => <InfoBlock key={item.label} label={item.label} copy={item.copy} />)}</div>}
+    {selectable.length > 0 && <div className="mt-4 grid gap-2">{selectable.map((item, index) => { const isSelected = selected === item; const status = isSelected ? "Selected" : index === 0 ? "Recommended" : "Selectable"; return <button key={item} onClick={() => onSelect(item)} className={cn("rounded-2xl px-4 py-3 text-left shadow-card transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", isSelected ? "bg-primary text-primary-foreground" : "bg-secondary")}><span className="flex items-start justify-between gap-3"><span className="min-w-0 flex-1"><p className="text-sm font-semibold">{item}</p><p className={cn("mt-1 text-xs leading-5", isSelected ? "text-primary-foreground/85" : "text-muted-foreground")}>{explainOption(item)}</p><span className={cn("mt-2 inline-flex rounded-full px-2 py-0.5 text-[11px] font-bold", isSelected ? "bg-primary-foreground/15 text-primary-foreground" : "bg-card text-accent")}>{status}</span></span>{isSelected && <Check className="mt-0.5 size-4 shrink-0" />}</span></button>; })}</div>}
+    <div className="mt-5 grid gap-3">{type === "functional" && <><Button variant="soft" size="lg" onClick={onClose}>Keep recommended</Button><Button variant="hero" size="lg" onClick={onClose}>Choose this</Button><Button variant="soft" size="lg" onClick={onCoach}>Ask coach</Button></>}{type === "pods" && <><Button variant="soft" size="lg" onClick={onClose}>Keep current pods</Button><Button variant="hero" size="lg" onClick={onSwap}>Swap one pod</Button><Button variant="soft" size="lg" onClick={onCoach}>Ask coach</Button></>}{type === "kit" && <><Button variant="soft" size="lg" onClick={onClose}>Keep recommended kit</Button><Button variant="hero" size="lg" onClick={onSwap}>Swap one item</Button><Button variant="soft" size="lg" onClick={onCoach}>Ask coach</Button></>}{type === "pass" && <><Button variant="hero" size="lg" onClick={onClose}>Choose this pass</Button><Button variant="soft" size="lg" onClick={onClose}>Keep recommended</Button><Button variant="soft" size="lg" onClick={onCoach}>Ask coach</Button></>}{type === "mbc" && <><Button variant="hero" size="lg" onClick={onClose}>View Wallet</Button><Button variant="soft" size="lg" onClick={onClose}>Continue</Button></>}{type === "future" && <><Button variant="hero" size="lg" onClick={onClose}>Mark interest</Button><Button variant="soft" size="lg" onClick={onClose}>Not now</Button></>}</div>
+  </div></div>;
 }
 
 function UnlocksScreen({ pathway, onBuild, onKeep, onSwap, onCoach }: { pathway: Pathway; answers: string[]; onBuild: () => void; onKeep: () => void; onSwap: () => void; onCoach: () => void }) {
