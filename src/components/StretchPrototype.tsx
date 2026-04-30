@@ -724,6 +724,7 @@ export default function StretchPrototype() {
   const [demoTile, setDemoTile] = useState<DemoTile | null>(null);
   const [showRebalance, setShowRebalance] = useState(false);
   const [swapTarget, setSwapTarget] = useState<string | null>(null);
+  const [inlineSwap, setInlineSwap] = useState<ControlledSwap | null>(null);
   const [explainerReturnStep, setExplainerReturnStep] = useState<Step>("landing");
 
   const pathwayKey = useMemo(() => detectPathway(answers, goal), [answers, goal]);
@@ -745,8 +746,12 @@ export default function StretchPrototype() {
   const resetQuiz = () => { setAnswers([]); setQuizIndex(0); setStep("goal"); };
   const openControlledSwap = (target?: string) => {
     setSwapTarget(target || null);
-    setStep("swap");
+    const reason = answers.slice(0, 3).join(", ") || goal || pathway.reason;
+    const options = controlledSwapOptions(pathway, reason);
+    const match = target ? options.find((s) => s.name === target) : undefined;
+    setInlineSwap(match || options[0] || null);
   };
+  const openControlledSwapPage = () => setStep("swap");
   const openExplainer = (from: Step) => {
     setExplainerReturnStep(from);
     setStep("explainer");
@@ -796,7 +801,7 @@ export default function StretchPrototype() {
           {step === "swap" && <SwapScreen pathway={pathway} reason={answers.slice(0, 3).join(", ") || goal || pathway.reason} initialTarget={swapTarget} onBack={() => setStep("builder")} onCoach={() => setShowRebalance(true)} />}
           {step === "unlocks" && <UnlocksScreen pathway={pathway} answers={answers} onBuild={() => setStep("builder")} onKeep={() => setStep("confirm")} onSwap={() => openControlledSwap()} onCoach={() => setShowRebalance(true)} />}
           {step === "confirm" && <ConfirmScreen pathway={pathway} resetQuiz={resetQuiz} onBuild={() => setStep("builder")} onOpenJourney={() => openJourney(pathwayKey)} />}
-          {step === "builder" && <BuilderScreen pathway={pathway} onConfirm={() => setStep("home")} onCoach={() => setShowRebalance(true)} onSwap={() => setStep("swap")} />}
+          {step === "builder" && <BuilderScreen pathway={pathway} onConfirm={() => setStep("home")} onCoach={() => setShowRebalance(true)} onSwap={(target?: string) => openControlledSwap(target)} />}
           {step === "week" && <WeekScreen onHome={() => setStep("home")} />}
           {step === "home" && <HomeScreen pathway={pathway} answers={answers} onCare={() => setStep("care")} onFuture={() => setStep("future")} onJourney={() => setStep("builder")} onStamp={setSelectedStamp} />}
           {step === "wallet" && <WalletScreen pathwayTitle={pathway.title} onFuture={() => setStep("future")} onStamp={setSelectedStamp} />}
@@ -815,6 +820,7 @@ export default function StretchPrototype() {
         </nav>}
         {selectedStamp && <StampDrawer stamp={selectedStamp} onClose={() => setSelectedStamp(null)} />}
         {showRebalance && <RebalanceModal onClose={() => setShowRebalance(false)} />}
+        {inlineSwap && <InlineSwapDrawer swap={inlineSwap} onClose={() => setInlineSwap(null)} onCoach={() => { setInlineSwap(null); setShowRebalance(true); }} />}
         {showBehindScenes && <BehindScenesPanel onClose={() => setShowBehindScenes(false)} />}
         {showBlocksDemo && <BlocksDemoDrawer onClose={() => setShowBlocksDemo(false)} onTile={setDemoTile} />}
         {demoTile && <DemoTileDrawer tile={demoTile} onClose={() => setDemoTile(null)} />}
@@ -1225,6 +1231,83 @@ function SwapScreen({ pathway, reason, initialTarget, onBack, onCoach }: { pathw
 function SwapDrawer({ swap, onClose, onCoach }: { swap: ControlledSwap; onClose: () => void; onCoach: () => void }) {
   const [chosen, setChosen] = useState(swap.alternatives[0]);
   return <div className="absolute inset-0 z-50 flex items-end bg-primary/25 p-3 backdrop-blur-sm" onClick={onClose}><div className="max-h-[84vh] w-full overflow-y-auto rounded-[2rem] bg-card p-6 shadow-float animate-slide-up" onClick={(event) => event.stopPropagation()}><div className="mb-5 flex items-start justify-between gap-3"><div><p className="text-sm font-bold text-accent">{swap.name} swap</p><h2 className="font-display text-3xl leading-tight">{swap.current}</h2></div><button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent">Close</button></div><div className="grid gap-3"><InfoBlock label="Recommended for you" copy={swap.current} /><InfoBlock label="Why we chose it" copy={swap.why} /><InfoBlock label="What it includes" copy={swap.includes} /><div className="rounded-2xl bg-secondary p-4"><p className="text-xs font-semibold uppercase tracking-wide text-accent">Available alternatives</p><div className="mt-3 grid gap-2">{swap.alternatives.slice(0, 3).map((item, index) => { const isSelected = chosen === item; const status = isSelected ? "Selected" : index === 0 ? "Recommended alternative" : "Alternative"; return <button key={item} onClick={() => setChosen(item)} className={cn("rounded-2xl px-4 py-3 text-left shadow-card transition-smooth focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", isSelected ? "bg-primary text-primary-foreground" : "bg-card text-foreground")}><span className="flex items-start justify-between gap-3"><span className="min-w-0 flex-1"><p className="text-sm font-semibold">{item}</p><p className={cn("mt-1 text-xs leading-5", isSelected ? "text-primary-foreground/85" : "text-muted-foreground")}>{explainOption(item)}</p><span className={cn("mt-2 inline-flex rounded-full px-2 py-0.5 text-[11px] font-bold", isSelected ? "bg-primary-foreground/15 text-primary-foreground" : "bg-secondary text-accent")}>{status}</span></span>{isSelected && <Check className="mt-0.5 size-4 shrink-0" />}</span></button>; })}</div></div><InfoBlock label="What changes if you swap" copy={swap.change} /><InfoBlock label="What stays the same" copy={swap.stays} /></div><div className="mt-5 grid gap-3"><Button variant="soft" size="xl" onClick={onClose}>Keep current</Button><Button variant="hero" size="xl" onClick={onClose}>{swap.action}</Button><Button variant="soft" size="xl" onClick={onCoach}>Ask coach</Button></div></div></div>;
+}
+
+function InlineSwapDrawer({ swap, onClose, onCoach }: { swap: ControlledSwap; onClose: () => void; onCoach: () => void }) {
+  const [chosen, setChosen] = useState(swap.alternatives[0]);
+  const [previewing, setPreviewing] = useState(false);
+  const [applied, setApplied] = useState<string | null>(null);
+  const original = swap.current;
+  const currentSelection = applied ?? original;
+  const apply = () => setApplied(chosen);
+  const undo = () => { setApplied(null); setPreviewing(false); };
+  return <div className="absolute inset-0 z-[80] flex items-end bg-primary/30 p-3 backdrop-blur-sm" onClick={onClose}>
+    <div className="max-h-[88vh] w-full overflow-y-auto rounded-[2rem] bg-card p-6 shadow-float animate-slide-up" onClick={(event) => event.stopPropagation()}>
+      <div className="mb-5 flex items-start justify-between gap-3">
+        <div>
+          <p className="text-sm font-bold text-accent">{swap.name} · inline swap</p>
+          <h2 className="font-display text-3xl leading-tight">{currentSelection}</h2>
+          {applied && <p className="mt-1 text-xs font-bold text-accent">Swapped from “{original}”</p>}
+        </div>
+        <button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent">Close</button>
+      </div>
+      {applied ? (
+        <div className="space-y-4">
+          <div className="rounded-2xl bg-olive p-5 text-olive-foreground shadow-card">
+            <Check className="mb-3 size-6" />
+            <p className="font-display text-2xl leading-tight">Swapped. Your plan preview has been updated.</p>
+            <p className="mt-2 text-sm leading-6">{swap.name}: {original} → {applied}</p>
+          </div>
+          <InfoBlock label="What changed" copy={swap.change} />
+          <InfoBlock label="What stays the same" copy={swap.stays} />
+          <div className="mt-2 grid gap-3">
+            <Button variant="hero" size="xl" onClick={onClose}>Done</Button>
+            <Button variant="soft" size="xl" onClick={undo}>Undo</Button>
+            <Button variant="soft" size="xl" onClick={onCoach}>Ask coach</Button>
+          </div>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          <div className="grid gap-3">
+            <InfoBlock label="Current recommendation" copy={swap.current} />
+            <InfoBlock label="Why this was chosen" copy={swap.why} />
+            <InfoBlock label="What this option does" copy={swap.includes} />
+          </div>
+          <div className="rounded-2xl bg-secondary p-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-accent">Choose an alternative</p>
+            <div className="mt-3 grid gap-2">
+              {swap.alternatives.slice(0, 3).map((item, index) => {
+                const isSelected = chosen === item;
+                const status = isSelected ? "Selected" : index === 0 ? "Recommended alternative" : "Alternative";
+                return <button key={item} onClick={() => setChosen(item)} className={cn("rounded-2xl px-4 py-3 text-left shadow-card transition-smooth focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", isSelected ? "bg-primary text-primary-foreground" : "bg-card text-foreground")}>
+                  <span className="flex items-start justify-between gap-3">
+                    <span className="min-w-0 flex-1">
+                      <p className="text-sm font-semibold">{item}</p>
+                      <p className={cn("mt-1 text-xs leading-5", isSelected ? "text-primary-foreground/85" : "text-muted-foreground")}>{explainOption(item)}</p>
+                      <span className={cn("mt-2 inline-flex rounded-full px-2 py-0.5 text-[11px] font-bold", isSelected ? "bg-primary-foreground/15 text-primary-foreground" : "bg-secondary text-accent")}>{status}</span>
+                    </span>
+                    {isSelected && <Check className="mt-0.5 size-4 shrink-0" />}
+                  </span>
+                </button>;
+              })}
+            </div>
+          </div>
+          {previewing && <div className="rounded-2xl bg-secondary/70 p-4">
+            <p className="text-xs font-bold uppercase tracking-wide text-accent">Preview</p>
+            <p className="mt-1 text-sm leading-6 text-foreground">{swap.name}: {original} → {chosen}</p>
+          </div>}
+          <InfoBlock label="What changes if you swap" copy={swap.change} />
+          <InfoBlock label="What stays the same" copy={swap.stays} />
+          <div className="mt-2 grid gap-3">
+            <Button variant="soft" size="xl" onClick={onClose}>Keep current</Button>
+            <Button variant="soft" size="xl" onClick={() => setPreviewing((p) => !p)}>{previewing ? "Hide preview" : "Preview swap"}</Button>
+            <Button variant="hero" size="xl" onClick={apply}>Apply swap</Button>
+            <Button variant="soft" size="xl" onClick={onCoach}>Ask coach</Button>
+          </div>
+        </div>
+      )}
+    </div>
+  </div>;
 }
 
 function RebalanceModal({ onClose }: { onClose: () => void }) {
