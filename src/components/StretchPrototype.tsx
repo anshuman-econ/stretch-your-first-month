@@ -746,8 +746,12 @@ export default function StretchPrototype() {
   const resetQuiz = () => { setAnswers([]); setQuizIndex(0); setStep("goal"); };
   const openControlledSwap = (target?: string) => {
     setSwapTarget(target || null);
-    setStep("swap");
+    const reason = answers.slice(0, 3).join(", ") || goal || pathway.reason;
+    const options = controlledSwapOptions(pathway, reason);
+    const match = target ? options.find((s) => s.name === target) : undefined;
+    setInlineSwap(match || options[0] || null);
   };
+  const openControlledSwapPage = () => setStep("swap");
   const openExplainer = (from: Step) => {
     setExplainerReturnStep(from);
     setStep("explainer");
