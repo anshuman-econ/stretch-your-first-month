@@ -820,6 +820,7 @@ export default function StretchPrototype() {
         </nav>}
         {selectedStamp && <StampDrawer stamp={selectedStamp} onClose={() => setSelectedStamp(null)} />}
         {showRebalance && <RebalanceModal onClose={() => setShowRebalance(false)} />}
+        {inlineSwap && <InlineSwapDrawer swap={inlineSwap} onClose={() => setInlineSwap(null)} onCoach={() => { setInlineSwap(null); setShowRebalance(true); }} />}
         {showBehindScenes && <BehindScenesPanel onClose={() => setShowBehindScenes(false)} />}
         {showBlocksDemo && <BlocksDemoDrawer onClose={() => setShowBlocksDemo(false)} onTile={setDemoTile} />}
         {demoTile && <DemoTileDrawer tile={demoTile} onClose={() => setDemoTile(null)} />}
