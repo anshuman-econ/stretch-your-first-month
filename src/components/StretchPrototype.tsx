@@ -1026,57 +1026,132 @@ function BlueprintSectionBlock({ section, selectedOption, onSelect }: { section:
 function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathway: Pathway): BlueprintSection[] {
   const key = pathwayKeyFromTitle(pathway);
   const activation = activationForPathway(key);
-  const d = pathwayDefaults[key];
   const catalog = catalogForBlock(block, pathway);
   const swapCatalog = pathwaySwapCatalog[key];
   const currentPods = splitBlueprintList(activation.pods);
   const inventoryStatus = (name: string, fallback = "Selectable") => highTierPasses.includes(name) || /inventory|red-light|LED booth|Biopeak|clinic/i.test(name) ? "inventory-gated" : fallback;
+  const packStatusLabel: Record<PackMeta["status"], string> = { preview: "Preview", "pack-only": "Pack-only", milestone: "Milestone unlock", "top-up": "Top-up" };
+
   if (title === "Care + Labs") return [
-    { label: "What this means", copy: "Your care block is the part of the month that keeps the plan clinically grounded. It includes the recommended specialist route, functional support choice, clinical / LED / review route, and labs or diagnostics when relevant." },
-    { label: "What Stretch recommended", rows: [{ label: "Specialist", copy: activation.specialist }, { label: "Functional support", copy: activation.functional }, { label: "Clinical / LED / review route", copy: activation.clinical }, { label: "Labs", copy: activation.labs }] },
-    { label: "Why it was recommended", copy: `${pathway.reason} This route was matched to your quiz answers so the month starts with the safest next step instead of a random service list.` },
-    { label: "What you can choose or swap", copy: `Functional support is swappable. Care route is clinically bounded. ${swapCatalog.Specialist?.rule || catalog.rule}`, groups: [{ label: "Functional support options", items: splitBlueprintList(activation.functional).map((name, i) => ({ name, state: i === 0 ? "Recommended" : "Selectable" })) }, { label: "Safe care-route alternatives", items: (swapCatalog.Specialist?.options || catalog.options).filter((item) => item.state !== "Locked preview").map((item) => ({ ...item, state: item.state || "Safe alternative" })) }] },
-    { label: "What is locked or future", copy: "Advanced diagnostics, riders, devices, and high-cost procedures are not unlocked here. They appear later through milestones, clinician review, pack, or rider eligibility." },
+    { label: "Plain-English summary", copy: "This is the part of the plan that keeps your month safe and grounded. It combines the right expert, one practical support option, one clinical review route, and only the labs that actually matter." },
+    { label: "Your recommended setup", rows: [
+      { label: "Specialist", copy: activation.specialist },
+      { label: "Functional support", copy: activation.functional },
+      { label: "Clinical review", copy: activation.clinical },
+      { label: "Labs", copy: activation.labs },
+    ] },
+    { label: "What each part does", rows: [
+      { label: "Specialist", copy: "Reviews symptoms, risk, and safe next steps." },
+      { label: "Functional support", copy: "One practical session to make the plan real in your body." },
+      { label: "Clinical review", copy: "Checks whether recovery, body composition, or visible vitality needs more attention." },
+      { label: "Labs", copy: "Used only when they help clarify fatigue, metabolism, recovery, or risk." },
+    ] },
+    { label: "Your choices", copy: `Functional support is swappable. Care route is clinically bounded. Diagnostics are not casual swaps. ${swapCatalog.Specialist?.rule || catalog.rule}`, groups: [
+      { label: "Functional support options", items: splitBlueprintList(activation.functional).map((name, i) => ({ name, state: i === 0 ? "Recommended" : "Selectable" })) },
+      { label: "Safe care-route alternatives", items: (swapCatalog.Specialist?.options || catalog.options).filter((item) => item.state !== "Locked preview").map((item) => ({ ...item, state: item.state || "Safe alternative" })) },
+    ] },
+    { label: "What stays fixed", copy: "Your safety checks, pathway, and locked future items do not change. Diagnostics, prescriptions, and clinician-gated routes stay protected." },
+    { label: "What can open later", copy: "Advanced diagnostics, devices, packs, and riders can appear later through milestones, clinician review, or rider eligibility." },
     { label: "Actions", items: ["Keep care route", "Choose functional support", "Swap one block", "Ask coach"].map((name) => ({ name, state: "Action" })) },
   ];
+
   if (title === "Coach + Pods") return [
-    { label: "What this means", copy: "Your coach and pods work together. The pods provide the guided group rhythm and outputs. The coach turns those pod themes into your weekly actions." },
-    { label: "What Stretch recommended", rows: [{ label: "Pods", copy: activation.pods }, { label: "Coaching touch 1", copy: activation.coach1 }, { label: "Coaching touch 2", copy: activation.coach2 }, { label: "Mental / behavioral support", copy: activation.mental }, { label: "Pod covers", copy: activation.podCovers }] },
-    { label: "Why it was recommended", copy: `${pathway.reason} Stretch paired your pods with your coaching plan so you are not just attending sessions — you are leaving with actions.` },
-    { label: "What you can choose or swap", copy: `User can swap one pod. ${swapCatalog.Pods.rule} When a pod changes, coaching emphasis and kit suggestions may adjust.`, rows: currentPods.map((pod) => ({ label: pod, copy: podAgendas[pod] || activation.podCovers })), groups: [{ label: "Current selected pods", items: currentPods.map((name) => ({ name, state: "Current" })) }, { label: "Pathway-relevant pod alternatives", items: swapCatalog.Pods.options }] },
-    { label: "What is locked or future", copy: "More pods, higher-touch coaching, or mental-health deep dives can appear through packs or future eligibility." },
+    { label: "Plain-English summary", copy: "This is the part of the plan that turns information into action. Your pods give the guided group rhythm. Your coach turns those themes into your weekly moves." },
+    { label: "Your recommended setup", rows: [
+      { label: "Pods", copy: activation.pods },
+      { label: "Coaching touch 1", copy: activation.coach1 },
+      { label: "Coaching touch 2", copy: activation.coach2 },
+      { label: "Mental / behavioral support", copy: activation.mental },
+    ] },
+    { label: "What each part does", rows: [
+      { label: "Pods", copy: "Small group seats with a clear theme, agenda, and output." },
+      { label: "Coaching touch 1", copy: "A real person sets your weekly actions and removes friction." },
+      { label: "Coaching touch 2", copy: "Mid-month adjustment to keep the plan honest with how the month is going." },
+      { label: "Mental / behavioral support", copy: "Light-touch support for stress, mood, or follow-through when relevant." },
+    ] },
+    { label: "Your choices", copy: `You can swap one pod. ${swapCatalog.Pods.rule} When a pod changes, coaching emphasis adjusts to follow.`, groups: [
+      { label: "Current selected pods", items: currentPods.map((name) => ({ name, state: "Current" })) },
+      { label: "Pathway-relevant pod alternatives", items: swapCatalog.Pods.options },
+    ] },
+    { label: "What stays fixed", copy: "Your care route, lab plan, and safety checks do not change when you adjust a pod." },
+    { label: "What can open later", copy: "More pods, higher-touch coaching, and mental-health deep dives can appear through packs or future eligibility." },
     { label: "Actions", items: ["View pod agenda", "Swap one pod", "Keep current pods", "Ask coach"].map((name) => ({ name, state: "Action" })) },
   ];
+
   if (title === "Kit + Perks") return [
-    { label: "What this means", copy: "Your kit is the at-home support for the month. It contains the practical items, shelf pulls (supplements), pantry tools(collagen/protein and nutrition support), visible-vitality support , or sticky perks that help you act between care, pods, and coaching." },
-    { label: "What Stretch recommended", rows: [{ label: "Recommended kit", copy: activation.kit }, { label: "Pathway kit detail", copy: kitCatalog[key].join(", ") }, { label: "Sticky perks", copy: stickyPerks.join(", ") }] },
-    { label: "Why it was recommended", copy: "The kit was matched to the work your month is asking you to do — sleep, flare support, glow, focus, pantry, recovery, or visible vitality." },
-    { label: "What you can choose or swap", copy: `User can swap one kit item or sticky perk. ${swapCatalog.Kit.rule} If a user wants more than one swap or premium items, route to pack / top-up.`, groups: [{ label: "Available kit options", items: kitCatalog[key].map((name) => ({ name, state: "Kit option" })) }, { label: "Sticky perk alternatives", items: stickyPerks.map((name) => ({ name, state: "Sticky perk" })) }] },
-    { label: "What is locked or future", copy: "Premium actives, full boxes, advanced nutrition support, devices, and rider-funded items are not automatic. They appear later through packs, MBC, or future unlocks." },
+    { label: "Plain-English summary", copy: "This is your at-home support for the month. Practical items, supplements, pantry tools, visible-vitality support, and one sticky perk to make follow-through easier." },
+    { label: "Your recommended setup", rows: [
+      { label: "Recommended kit", copy: activation.kit },
+      { label: "Pathway kit detail", copy: kitCatalog[key].join(", ") },
+      { label: "Sticky perk", copy: stickyPerks[0] },
+    ] },
+    { label: "What each part does", rows: [
+      { label: "Kit", copy: "The items you actually use between care, pods, and coaching." },
+      { label: "Pantry / nutrition support", copy: "Small structure for energy, cravings, protein, and gut comfort." },
+      { label: "Visible-vitality items", copy: "Skin, hair, or glow support tied to how you want the month to feel." },
+      { label: "Sticky perk", copy: "A low-pressure social or learning moment to make the month feel useful." },
+    ] },
+    { label: "Your choices", copy: `You can swap one kit item or sticky perk. ${swapCatalog.Kit.rule} For more than one swap or premium items, route to pack or top-up.`, groups: [
+      { label: "Available kit options", items: kitCatalog[key].map((name, i) => ({ name, state: i === 0 ? "Recommended" : "Kit option" })) },
+      { label: "Sticky perk alternatives", items: stickyPerks.map((name, i) => ({ name, state: i === 0 ? "Recommended" : "Sticky perk" })) },
+    ] },
+    { label: "What stays fixed", copy: "Care route, lab plan, and safety checks stay the same. Premium actives and full boxes are not freely added." },
+    { label: "What can open later", copy: "Premium actives, full boxes, advanced nutrition support, devices, and rider-funded items appear later through packs, MBC, or future unlocks." },
     { label: "Actions", items: ["Build kit", "Swap one kit item", "Choose sticky perk", "Ask coach"].map((name) => ({ name, state: "Action" })) },
   ];
+
   if (title === "Experience Pass") return [
-    { label: "What this means", copy: "Your experience pass is one bookable monthly experience. It can be movement, recovery, breathwork, LED, workshop, or partner demo depending on pathway and availability." },
-    { label: "What Stretch recommended", items: splitBlueprintList(activation.passes).map((name, i) => ({ name, state: i === 0 ? "Recommended" : inventoryStatus(name) })) },
-    { label: "Why it was recommended", copy: "This pass turns the plan into a real-world action rather than just a digital plan." },
-    { label: "What you can choose or swap", copy: `User can pick one monthly pass. ${catalog.rule} If an option is inventory-gated, show “inventory-gated” status.`, items: catalog.options.map((item) => ({ ...item, state: item.state?.toLowerCase().includes("inventory") ? "inventory-gated" : inventoryStatus(item.name, item.state || "Selectable") })) },
-    { label: "What is locked or future", copy: "Tier-High experiences, procedures, devices, and repeated clinic sessions may require pack, milestone, or rider unlock." },
+    { label: "Plain-English summary", copy: "This is your one bookable monthly experience — movement, recovery, breathwork, LED, workshop, or partner demo. It turns the plan into a real-world action." },
+    { label: "Your recommended setup", items: splitBlueprintList(activation.passes).slice(0, 1).map((name) => ({ name, state: "Recommended" })) },
+    { label: "What each part does", rows: [
+      { label: "Recommended pass", copy: "The default experience matched to your pathway and this month." },
+      { label: "Inventory status", copy: "Some passes depend on partner availability — those are marked inventory-gated." },
+      { label: "Booking", copy: "One pass per month. Booking is handled inside the plan, not as an add-on." },
+    ] },
+    { label: "Your choices", copy: `You can pick one monthly pass. ${catalog.rule}`, items: catalog.options.map((item) => ({ ...item, state: item.state?.toLowerCase().includes("inventory") ? "inventory-gated" : inventoryStatus(item.name, item.state || "Selectable") })) },
+    { label: "What stays fixed", copy: "Care, labs, pods, and pathway identity stay the same when you change passes." },
+    { label: "What can open later", copy: "Tier-high experiences, procedures, devices, and repeated clinic sessions may require pack, milestone, or rider unlock." },
     { label: "Actions", items: ["Choose pass", "Keep recommended pass", "Swap pass", "Ask coach"].map((name) => ({ name, state: "Action" })) },
   ];
+
   if (title === "Progress Passport") return [
-    { label: "What this means", copy: "Your Progress Passport tracks whether you actually used the plan. Completing actions can earn Milestone Bonus Credits." },
-    { label: "What Stretch recommended", items: ["build your kit", "join your pod", "complete your lab", "book your experience pass", "finish coaching", "keep a 7-day tracking streak"].map((name) => ({ name, state: "Progress action" })) },
-    { label: "Why it was recommended", copy: "Progress is how Stretch decides what to unlock next. It also gives the user momentum." },
-    { label: "What you can choose or swap", copy: "This is not a swap block. It is a progress tracker." },
-    { label: "What is locked or future", copy: "MBC can later support selected packs, kit upgrades, device buy-downs, future pathway add-ons, or partner experiences." },
+    { label: "Plain-English summary", copy: "This is how the plan tracks whether you actually used it. Completing actions earns Milestone Bonus Credits, which decide what opens next." },
+    { label: "Your recommended setup", rows: [
+      { label: "Tracker", copy: "Milestone Bonus Credits (MBC) tied to plan completion." },
+      { label: "First milestones", copy: "Build kit, join pod, book pass, complete lab, finish coaching, 7-day streak." },
+    ] },
+    { label: "What each part does", rows: [
+      { label: "Earn actions", copy: "Each completed plan action contributes to MBC." },
+      { label: "Use options", copy: "MBC can support packs, kit upgrades, device buy-downs, or partner experiences." },
+      { label: "Wallet", copy: "Your wallet is where MBC sits and where future unlocks become claimable." },
+    ] },
+    { label: "Your choices", copy: "This is not a swap block — it is a progress tracker. You can choose how you spend earned MBC later." },
+    { label: "What stays fixed", copy: "Earned MBC cannot be removed by changes to other parts of the plan." },
+    { label: "What can open later", copy: "MBC supports selected packs, kit upgrades, device buy-downs, future pathway add-ons, and partner experiences." },
     { label: "Actions", items: ["Learn about MBC", "View Wallet", "Continue"].map((name) => ({ name, state: "Action" })) },
   ];
+
+  // Future Unlocks
   return [
-    { label: "What this means", copy: "Future unlocks are previews of what can open later. They are not all active on day one." },
-    { label: "What Stretch recommended", groups: [{ label: "Future unlocks from activation", items: splitBlueprintList(activation.future).map((name) => ({ name, state: "Preview" })) }, { label: "Pathway strongest pack", items: [{ name: pathway.strongestPack, state: "Pack preview" }] }, { label: "Future device", items: [{ name: pathway.futureDevice, state: "Device preview" }] }, { label: "Future rider", items: [{ name: pathway.futureRider, state: "Rider preview" }] }, { label: "Adjacent pathway", items: pathway.adjacent ? [{ name: pathways[pathway.adjacent].title, state: "Adjacent preview" }] : [] }] },
-    { label: "Why it was recommended", copy: "Stretch shows only the next relevant layer so the first month stays focused." },
-    { label: "What you can choose or swap", copy: "User cannot freely activate riders or devices here. User can view details and mark interest." },
-    { label: "What is locked or future", copy: "Packs, devices, riders, advanced labs, and adjacent pathways are locked / preview / eligible / active depending progress, eligibility, or clinician review." },
+    { label: "Plain-English summary", copy: "These are the parts of Stretch that can open later — packs, devices, riders, and adjacent pathways. They are previews, not active day-one benefits." },
+    { label: "Your recommended setup", rows: [
+      { label: "Strongest pack", copy: `${pathway.strongestPack} — ${packStatusLabel[packMetaFor(pathway.strongestPack).status]}` },
+      { label: "Future device", copy: pathway.futureDevice },
+      { label: "Future rider", copy: pathway.futureRider },
+      { label: "Adjacent pathway", copy: pathway.adjacent ? pathways[pathway.adjacent].title : "—" },
+    ] },
+    { label: "What each part does", rows: [
+      { label: "Packs", copy: "Short boosts for a specific need. Your core plan still works without them." },
+      { label: "Devices", copy: "Hardware that opens later when it actually helps the plan." },
+      { label: "Riders", copy: "Add-on coverage for advanced labs, prescriptions, or deeper care routes." },
+      { label: "Adjacent pathways", copy: "Related care plans you can preview without rebuilding your month." },
+    ] },
+    { label: "Your choices", copy: "You can view details and mark interest. You cannot freely activate riders or devices here.", groups: [
+      { label: "Pathway packs", items: pathwayPacks[key].map((name) => ({ name, state: packStatusLabel[packMetaFor(name).status] })) },
+      { label: "Future from activation", items: splitBlueprintList(activation.future).map((name) => ({ name, state: "Preview" })) },
+    ] },
+    { label: "What stays fixed", copy: "Your day-one plan, safety checks, and pathway identity stay the same whether or not future items open." },
+    { label: "What can open later", copy: "Packs, devices, riders, advanced labs, and adjacent pathways are locked / preview / eligible / active depending on progress, eligibility, or clinician review." },
     { label: "Actions", items: ["See future unlocks", "Mark interest", "Not now"].map((name) => ({ name, state: "Action" })) },
   ];
 }
