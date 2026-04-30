@@ -518,7 +518,35 @@ const packsCatalog: Record<PathwayKey, string[]> = {
   metabo: ["Derma Actives Pack", "Camera-Ready Sprint", "Protein & Pantry Pack", "Procedure Token Booster", "Hair Actives Pack", "Hair Shedding Guard", "GLP packs locked unless GLP route active"],
   longevity: ["Brain Sprint Pack", "Nootropic Builder Pack", "Executive Jet Lag Pack", "Recovery Contrast Pack", "BioAge Test Pack", "CAC / Cardio Screen Pack", "DEXA / Bone Screen Pack"],
 };
-const futureCatalog = ["Smart Ring", "LED Mask", "CGM", "Oura-style ring", "home LED / red-light where relevant", "PeriShield Rx", "Nutrition Rider", "Skin / Hair Longevity Rider", "Prevention / Cardio Rider", "EndoShield Rider", "Endo OPD + Diagnostics Rider", "DermaShield+", "MetaboRx", "Longevity Lab Rider", "NeuroSleep Rider", "Bone & Screening Rider"];
+type PackMeta = { includes: string; useful: string; status: "preview" | "pack-only" | "milestone" | "top-up" };
+const packMeta: Record<string, PackMeta> = {
+  // Peri
+  "Sleep Reset Pack": { includes: "Magnesium, sleep tea, wind-down cues, cooling workshop seat.", useful: "When night waking, temperature, or wind-down is the dominant issue.", status: "pack-only" },
+  "Mood / Fog Pack": { includes: "Mood / Fog Pod seats, focus support, and coaching emphasis on cognitive load.", useful: "When irritability, anxiety, or brain fog dominate the month.", status: "pack-only" },
+  "Metabolic Drift Pack": { includes: "Metabolic Drift Pod, RDN check-in, protein / fiber minis, strength routine.", useful: "When weight drift, cravings, or HbA1c / lipids are the priority.", status: "milestone" },
+  "Skin & Hair Pack": { includes: "Collagen, HA-ceramide, LED routine, derm-tricho review option.", useful: "When visible vitality and hair density are the priority.", status: "top-up" },
+  // Endo
+  "Endo Relief Burst Pack": { includes: "Heat patches, GI-safe support, pelvic-floor PT seat, flare diary.", useful: "Around predictable flare windows or symptom-heavy weeks.", status: "pack-only" },
+  "Surgery Track preview": { includes: "Pre-op prep, recovery routine, escalation logic, doctor-note export.", useful: "Locked preview unless surgical pathway is active.", status: "preview" },
+  "Endo→IVF Bridge preview": { includes: "REI routing preview, fertility-aware scheduling, supplement review.", useful: "Locked preview unless TTC / IVF interest is added.", status: "preview" },
+  // MetaboGlow
+  "Derma Actives Pack": { includes: "Full-size actives, aftercare workshop, derm review check-in.", useful: "When acne, pigment, or barrier work needs more than minis.", status: "pack-only" },
+  "Camera-Ready Sprint": { includes: "Short-window glow protocol, LED booth seat, skin routine demo.", useful: "Around an event, shoot, or visible-vitality deadline.", status: "top-up" },
+  "Protein & Pantry Pack": { includes: "Protein mini, pantry tools, RDN check-in, recipe remix.", useful: "When food structure and cravings need a steady upgrade.", status: "pack-only" },
+  "Procedure Token Booster": { includes: "Token-funded procedure access with derm sign-off.", useful: "When a one-time procedure fits the visible-progress plan.", status: "milestone" },
+  // Longevity
+  "Brain Sprint Pack": { includes: "Brain & Focus Pod, citicoline / L-theanine, focus block routine.", useful: "When focus duration and cognitive output are the priority.", status: "pack-only" },
+  "Nootropic Builder Pack": { includes: "Rhodiola, bacopa, citicoline cadence, coach review.", useful: "When stacking nootropics needs structure and safety review.", status: "top-up" },
+  "Executive Jet Lag Pack": { includes: "Travel routine, hydration, sleep reset cues, recovery booking.", useful: "When travel load is breaking the weekly rhythm.", status: "pack-only" },
+  "Recovery Contrast Pack": { includes: "Sauna / contrast access, mobility seat, recovery coaching.", useful: "When recovery and resilience are the bottleneck.", status: "milestone" },
+};
+const packMetaFor = (name: string): PackMeta => packMeta[name] || { includes: "Bundle details preview only.", useful: "Becomes useful as the plan progresses.", status: "preview" };
+const pathwayPacks: Record<PathwayKey, string[]> = {
+  peri: ["Sleep Reset Pack", "Mood / Fog Pack", "Metabolic Drift Pack", "Skin & Hair Pack"],
+  endo: ["Endo Relief Burst Pack", "Surgery Track preview", "Endo→IVF Bridge preview"],
+  metabo: ["Derma Actives Pack", "Camera-Ready Sprint", "Protein & Pantry Pack", "Procedure Token Booster"],
+  longevity: ["Brain Sprint Pack", "Nootropic Builder Pack", "Executive Jet Lag Pack", "Recovery Contrast Pack"],
+};
 const statusFor = (index: number, state = "Swap available") => index === 0 ? "Recommended" : state;
 const opt = (names: string[], states?: string[]) => names.map((name, i) => ({ name, state: states?.[i] || (i === 0 ? "Recommended" : "Swap available") }));
 const pathwaySwapCatalog: Record<PathwayKey, Record<string, { rule: string; options: CatalogOption[]; agenda?: string }>> = {
