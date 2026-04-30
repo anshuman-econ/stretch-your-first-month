@@ -1428,14 +1428,45 @@ function BuilderScreen({ pathway, onConfirm, onCoach, onSwap, onBack }: { pathwa
       {functionalAlternatives.map((name) => optionRow(name, "Alternative"))}
     </>, { label: "Choose this support", variant: "hero", onClick: () => onSwap("Functional session") })}
 
-    {sectionShell("Section 2", "Pod Seats", "Pods give you the guided group rhythm. Coaching adjusts to follow.", <>
-      {podNames.map((pod, i) => optionRow(pod, i === 0 ? "Primary pod" : "Included pod", true))}
-      {podAlternatives.map((name) => optionRow(name, "Optional swap"))}
+    {sectionShell("Section 2", "Your pod seats", "Pods are guided group sessions. Your coach uses them to shape your weekly actions.", <>
+      {podNames.map((pod) => { const d = podDetails[pod]; return (
+        <div key={pod} className="rounded-2xl bg-secondary p-4 shadow-card">
+          <div className="flex items-start justify-between gap-3">
+            <p className="text-sm font-semibold text-foreground">{pod}</p>
+            <span className="shrink-0 rounded-full bg-primary px-2 py-0.5 text-[11px] font-bold text-primary-foreground">Selected pod</span>
+          </div>
+          {d && <div className="mt-2 grid gap-1 text-xs leading-5 text-muted-foreground">
+            <p><span className="font-bold text-accent">Covers:</span> {d.covers}</p>
+            <p><span className="font-bold text-accent">You leave with:</span> {d.leaveWith}</p>
+            <p><span className="font-bold text-accent">Coach uses it for:</span> {d.coachUse}</p>
+          </div>}
+        </div>
+      ); })}
+      {podAlternatives.slice(0, 3).map((name) => (
+        <div key={name} className="rounded-2xl bg-card px-4 py-3 shadow-card">
+          <div className="flex items-start justify-between gap-3">
+            <p className="text-sm font-semibold text-foreground">{name}</p>
+            <span className="shrink-0 rounded-full bg-secondary px-2 py-0.5 text-[11px] font-bold text-accent">Alternative</span>
+          </div>
+          <p className="mt-1 text-xs leading-5 text-muted-foreground">{podDetails[name]?.covers || podAgendas[name] || "Alternative pod option."}</p>
+        </div>
+      ))}
     </>, { label: "Keep pods or swap one", variant: "soft", onClick: () => onSwap("Pods") })}
 
-    {sectionShell("Section 3", "Kit Builder", "Your at-home support. One eligible item swap and one sticky perk.", <>
-      {kitItems.map((name, i) => optionRow(name, i === 0 ? "Recommended" : "Kit element", i === 0))}
-      {optionRow(stickyRecommended, "Sticky perk")}
+    {sectionShell("Section 3", "Your kit", "Your kit is the at-home support for the month.", <>
+      {kitCategoriesData.map((cat) => {
+        const statusClass = cat.status === "Recommended" ? "bg-primary text-primary-foreground" : cat.status === "Sticky perk" ? "bg-accent/15 text-accent" : cat.status === "Locked" ? "bg-muted text-muted-foreground" : "bg-secondary text-accent";
+        return (
+          <div key={cat.label} className="rounded-2xl bg-secondary p-4 shadow-card">
+            <div className="flex items-start justify-between gap-3">
+              <p className="text-xs font-bold uppercase tracking-wide text-accent">{cat.label}</p>
+              <span className={cn("shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold", statusClass)}>{cat.status}</span>
+            </div>
+            <p className="mt-1 text-sm font-semibold text-foreground">{cat.recommendation}</p>
+            <p className="mt-1 text-xs leading-5 text-muted-foreground">{cat.explanation}</p>
+          </div>
+        );
+      })}
     </>, { label: "Build kit and swap one item", variant: "hero", onClick: () => onSwap("Kit item") })}
 
     {sectionShell("Section 4", "Experience Pass", "One bookable monthly experience. Some options are inventory-gated.", <>
