@@ -392,6 +392,40 @@ const podAgendas: Record<string, string> = {
   "Executive Performance & Travel Pod": "Jet lag, calendar load, travel food, hydration, crash points. Outputs: travel / workday recovery plan.",
   "Healthspan Lab Pod": "ApoB, hs-CRP, biomarkers, prevention timing, sleep / strength patterns. Outputs: 90-day healthspan action plan.",
 };
+type PodDetail = { covers: string; leaveWith: string; coachUse: string };
+const podDetails: Record<string, PodDetail> = {
+  "Peri Reset Pod": { covers: "hot flashes, night sweats, mood, brain fog, symptom tracking.", leaveWith: "2-week reset plan + ask-your-gyn script.", coachUse: "your symptom routine setup." },
+  "Sleep Reset Pod": { covers: "night waking, wind-down routine, light, temperature, caffeine timing.", leaveWith: "14-day sleep reset checklist.", coachUse: "your evening rhythm and adherence." },
+  "Mood / Fog Pod": { covers: "irritability, anxiety, cognitive load, brain fog, meeting-day coping.", leaveWith: "mood/fog routine + recovery pacing.", coachUse: "weekly load and recovery prompts." },
+  "Metabolic Drift Pod": { covers: "weight drift, cravings, meal structure, strength routine.", leaveWith: "appetite rhythm plan + protein/pantry checklist.", coachUse: "weekly food and strength check-in." },
+  "Skin / Hair Pod": { covers: "skin dryness, hair shedding, collagen, HA-ceramide, LED routine.", leaveWith: "3-step visible vitality routine.", coachUse: "visible-vitality adherence." },
+  "Bone / Joint Pod": { covers: "joint pain, stiffness, posture, strength, bone support.", leaveWith: "mobility ladder + strength-first checklist.", coachUse: "movement compliance prompts." },
+  "Endo Toolkit Pod": { covers: "flare mapping, symptom documentation, pacing, doctor-ready notes.", leaveWith: "flare plan + weekly missions.", coachUse: "your flare map and pacing plan." },
+  "GI / Function Support Pod": { covers: "bloating, food tolerability, function days, weekly adjustments.", leaveWith: "GI support plan + function checklist.", coachUse: "GI / function adjustment week-to-week." },
+  "Pain Pacing Pod": { covers: "pain windows, movement pacing, flare days, rest scheduling.", leaveWith: "flare pacing plan.", coachUse: "weekly pacing adjustment." },
+  "Fatigue Support Pod": { covers: "sleep, ferritin / B12 questions, energy conservation, work functioning.", leaveWith: "fatigue map + support checklist.", coachUse: "fatigue pattern review." },
+  "Skin Sunday Pod": { covers: "routine audit, aftercare, acne / pigment logic, visible progress.", leaveWith: "3-step skin routine.", coachUse: "your glow + aftercare plan." },
+  "Insight Night / Metabolic Drift Lite Pod": { covers: "cravings, hydration, meal timing, metabolic-lite rhythms.", leaveWith: "14-day metabolic-lite plan.", coachUse: "event-week and meal-timing prompts." },
+  "Brain & Focus Pod": { covers: "focus duration, fatigue, caffeine timing, nootropic basics, workday design.", leaveWith: "focus plan + caffeine / meal timing plan.", coachUse: "your first workday rhythm." },
+  "Executive Performance & Travel Pod": { covers: "calendar load, travel, hydration, crash points, recovery windows.", leaveWith: "travel / workday recovery plan.", coachUse: "fatigue pattern review." },
+  "Healthspan Lab Pod": { covers: "ApoB, hs-CRP, biomarkers, prevention timing, sleep + strength patterns.", leaveWith: "90-day healthspan action plan.", coachUse: "biomarker-driven prevention prompts." },
+};
+type KitCategory = { label: string; recommendation: string; explanation: string; status: "Recommended" | "Eligible swap" | "Sticky perk" | "Locked" };
+const kitCategoriesFor = (key: PathwayKey): KitCategory[] => {
+  const items = kitCatalog[key];
+  const foundationByKey: Record<PathwayKey, string> = { peri: "Magnesium glycinate", endo: "Omega-3", metabo: "Creatine + electrolytes", longevity: "Creatine + omega-3" };
+  const pantryByKey: Record<PathwayKey, string> = { peri: "Protein / fiber pantry pick", endo: "Broth + ginger / peppermint support", metabo: "Fiber or protein mini", longevity: "Protein + pantry snack tool" };
+  const powderByKey: Record<PathwayKey, string> = { peri: "Collagen mini", endo: "GI-safe protein", metabo: "Protein or fiber powder", longevity: "Citicoline / L-Theanine / Bacopa" };
+  const visibleByKey: Record<PathwayKey, string> = { peri: "HA-ceramide support", endo: "HA-ceramide gentle support", metabo: "SPF + niacinamide / azelaic", longevity: "SPF + collagen support" };
+  return [
+    { label: "Daily foundation", recommendation: foundationByKey[key], explanation: "Supports the daily rhythm your coach is asking you to build.", status: "Recommended" },
+    { label: "Pantry support", recommendation: pantryByKey[key], explanation: "Helps your plan survive real-life meals.", status: "Eligible swap" },
+    { label: "Powder / nootropic", recommendation: powderByKey[key], explanation: "Supports focus, recovery, satiety, or visible vitality.", status: "Eligible swap" },
+    { label: "Visible vitality", recommendation: visibleByKey[key], explanation: "Keeps the plan tied to how you look and feel.", status: "Eligible swap" },
+    { label: "Sticky perk", recommendation: stickyPerks[0], explanation: "Adds delight and retention — a small extra to look forward to.", status: "Sticky perk" },
+    { label: "Locked upgrades", recommendation: "Advanced tests, devices, premium packs, riders", explanation: "Not included day one. Open later through milestones, packs, or coach review.", status: "Locked" },
+  ];
+};
 const passCatalog: Record<PathwayKey, string[]> = {
   peri: ["cooling / sleep reset workshop", "joint mobility primer", "dryness care routine workshop", "restorative yoga", "breathwork reset"],
   endo: ["pelvic relaxation + flare pacing", "gentle Pilates flow", "flare day plan", "restorative yoga", "pain-aware movement"],
