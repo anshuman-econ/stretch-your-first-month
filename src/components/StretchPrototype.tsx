@@ -1377,9 +1377,7 @@ function BuilderScreen({ pathway, onConfirm, onCoach, onSwap, onBack }: { pathwa
   const podNames = splitBlueprintList(activation.pods);
   const podAlternatives = (swap.Pods?.options || []).map((o) => o.name).filter((n) => !podNames.includes(n)).slice(0, 3);
 
-  const kitItems = kitCatalog[key].slice(0, 7);
   const kitCategoriesData = kitCategoriesFor(key);
-  const stickyRecommended = stickyPerks[0];
 
   const passRecommended = splitBlueprintList(activation.passes)[0] || activation.passes;
   const passAlternatives = (swap["Experience Pass"]?.options || []).map((o) => o.name).filter((n) => n !== passRecommended).slice(0, 3);
