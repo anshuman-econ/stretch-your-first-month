@@ -519,6 +519,35 @@ const packsCatalog: Record<PathwayKey, string[]> = {
   longevity: ["Brain Sprint Pack", "Nootropic Builder Pack", "Executive Jet Lag Pack", "Recovery Contrast Pack", "BioAge Test Pack", "CAC / Cardio Screen Pack", "DEXA / Bone Screen Pack"],
 };
 const futureCatalog = ["Smart Ring", "LED Mask", "CGM", "Oura-style ring", "home LED / red-light where relevant", "PeriShield Rx", "Nutrition Rider", "Skin / Hair Longevity Rider", "Prevention / Cardio Rider", "EndoShield Rider", "Endo OPD + Diagnostics Rider", "DermaShield+", "MetaboRx", "Longevity Lab Rider", "NeuroSleep Rider", "Bone & Screening Rider"];
+type PackMeta = { includes: string; useful: string; status: "preview" | "pack-only" | "milestone" | "top-up" };
+const packMeta: Record<string, PackMeta> = {
+  // Peri
+  "Sleep Reset Pack": { includes: "Magnesium, sleep tea, wind-down cues, cooling workshop seat.", useful: "When night waking, temperature, or wind-down is the dominant issue.", status: "pack-only" },
+  "Mood / Fog Pack": { includes: "Mood / Fog Pod seats, focus support, and coaching emphasis on cognitive load.", useful: "When irritability, anxiety, or brain fog dominate the month.", status: "pack-only" },
+  "Metabolic Drift Pack": { includes: "Metabolic Drift Pod, RDN check-in, protein / fiber minis, strength routine.", useful: "When weight drift, cravings, or HbA1c / lipids are the priority.", status: "milestone" },
+  "Skin & Hair Pack": { includes: "Collagen, HA-ceramide, LED routine, derm-tricho review option.", useful: "When visible vitality and hair density are the priority.", status: "top-up" },
+  // Endo
+  "Endo Relief Burst Pack": { includes: "Heat patches, GI-safe support, pelvic-floor PT seat, flare diary.", useful: "Around predictable flare windows or symptom-heavy weeks.", status: "pack-only" },
+  "Surgery Track preview": { includes: "Pre-op prep, recovery routine, escalation logic, doctor-note export.", useful: "Locked preview unless surgical pathway is active.", status: "preview" },
+  "Endo→IVF Bridge preview": { includes: "REI routing preview, fertility-aware scheduling, supplement review.", useful: "Locked preview unless TTC / IVF interest is added.", status: "preview" },
+  // MetaboGlow
+  "Derma Actives Pack": { includes: "Full-size actives, aftercare workshop, derm review check-in.", useful: "When acne, pigment, or barrier work needs more than minis.", status: "pack-only" },
+  "Camera-Ready Sprint": { includes: "Short-window glow protocol, LED booth seat, skin routine demo.", useful: "Around an event, shoot, or visible-vitality deadline.", status: "top-up" },
+  "Protein & Pantry Pack": { includes: "Protein mini, pantry tools, RDN check-in, recipe remix.", useful: "When food structure and cravings need a steady upgrade.", status: "pack-only" },
+  "Procedure Token Booster": { includes: "Token-funded procedure access with derm sign-off.", useful: "When a one-time procedure fits the visible-progress plan.", status: "milestone" },
+  // Longevity
+  "Brain Sprint Pack": { includes: "Brain & Focus Pod, citicoline / L-theanine, focus block routine.", useful: "When focus duration and cognitive output are the priority.", status: "pack-only" },
+  "Nootropic Builder Pack": { includes: "Rhodiola, bacopa, citicoline cadence, coach review.", useful: "When stacking nootropics needs structure and safety review.", status: "top-up" },
+  "Executive Jet Lag Pack": { includes: "Travel routine, hydration, sleep reset cues, recovery booking.", useful: "When travel load is breaking the weekly rhythm.", status: "pack-only" },
+  "Recovery Contrast Pack": { includes: "Sauna / contrast access, mobility seat, recovery coaching.", useful: "When recovery and resilience are the bottleneck.", status: "milestone" },
+};
+const packMetaFor = (name: string): PackMeta => packMeta[name] || { includes: "Bundle details preview only.", useful: "Becomes useful as the plan progresses.", status: "preview" };
+const pathwayPacks: Record<PathwayKey, string[]> = {
+  peri: ["Sleep Reset Pack", "Mood / Fog Pack", "Metabolic Drift Pack", "Skin & Hair Pack"],
+  endo: ["Endo Relief Burst Pack", "Surgery Track preview", "Endo→IVF Bridge preview"],
+  metabo: ["Derma Actives Pack", "Camera-Ready Sprint", "Protein & Pantry Pack", "Procedure Token Booster"],
+  longevity: ["Brain Sprint Pack", "Nootropic Builder Pack", "Executive Jet Lag Pack", "Recovery Contrast Pack"],
+};
 const statusFor = (index: number, state = "Swap available") => index === 0 ? "Recommended" : state;
 const opt = (names: string[], states?: string[]) => names.map((name, i) => ({ name, state: states?.[i] || (i === 0 ? "Recommended" : "Swap available") }));
 const pathwaySwapCatalog: Record<PathwayKey, Record<string, { rule: string; options: CatalogOption[]; agenda?: string }>> = {
@@ -801,7 +830,7 @@ export default function StretchPrototype() {
           {step === "swap" && <SwapScreen pathway={pathway} reason={answers.slice(0, 3).join(", ") || goal || pathway.reason} initialTarget={swapTarget} onBack={() => setStep("builder")} onCoach={() => setShowRebalance(true)} />}
           {step === "unlocks" && <UnlocksScreen pathway={pathway} answers={answers} onBuild={() => setStep("builder")} onKeep={() => setStep("confirm")} onSwap={() => openControlledSwap()} onCoach={() => setShowRebalance(true)} />}
           {step === "confirm" && <ConfirmScreen pathway={pathway} resetQuiz={resetQuiz} onBuild={() => setStep("builder")} onOpenJourney={() => openJourney(pathwayKey)} />}
-          {step === "builder" && <BuilderScreen pathway={pathway} onConfirm={() => setStep("home")} onCoach={() => setShowRebalance(true)} onSwap={(target?: string) => openControlledSwap(target)} />}
+          {step === "builder" && <BuilderScreen pathway={pathway} onConfirm={() => setStep("home")} onCoach={() => setShowRebalance(true)} onSwap={(target?: string) => openControlledSwap(target)} onBack={() => setStep("built")} />}
           {step === "week" && <WeekScreen onHome={() => setStep("home")} />}
           {step === "home" && <HomeScreen pathway={pathway} answers={answers} onCare={() => setStep("care")} onFuture={() => setStep("future")} onJourney={() => setStep("builder")} onStamp={setSelectedStamp} />}
           {step === "wallet" && <WalletScreen pathwayTitle={pathway.title} onFuture={() => setStep("future")} onStamp={setSelectedStamp} />}
@@ -1171,49 +1200,131 @@ function ConfirmScreen({ pathway, resetQuiz, onBuild, onOpenJourney }: { pathway
   return <section className="space-y-6 px-5 py-7"><SectionTitle title="Keep your first month or swap one thing." copy="Your coach can help refine it after you begin." /><SoftCard onClick={onOpenJourney} className="space-y-4 border-Recommended/40"><div className="flex items-center justify-between"><p className="font-display text-2xl">First Month</p><Star className="size-5 text-accent" /></div><p className="text-muted-foreground">{pathway.title}</p><div className="grid grid-cols-3 gap-2 text-center text-xs">{pathway.guidedDefaults.slice(0, 3).map((item) => <span key={item} className="rounded-2xl bg-secondary px-2 py-3">{item}</span>)}</div></SoftCard><Button variant="hero" size="xl" className="w-full" onClick={onBuild}>Build my month</Button><Button variant="soft" size="xl" className="w-full" onClick={resetQuiz}>Swap answers</Button></section>;
 }
 
-function BuilderScreen({ pathway, onConfirm, onCoach, onSwap }: { pathway: Pathway; onConfirm: () => void; onCoach: () => void; onSwap: (target?: string) => void }) {
-  const [drawerBlock, setDrawerBlock] = useState<MonthBlock | null>(null);
+function BuilderScreen({ pathway, onConfirm, onCoach, onSwap, onBack }: { pathway: Pathway; onConfirm: () => void; onCoach: () => void; onSwap: (target?: string) => void; onBack?: () => void }) {
   const key = pathwayKeyFromTitle(pathway);
   const activation = activationForPathway(key);
-  const planCards = buildPlanCards(pathway);
-  const byName = Object.fromEntries(planCards.map((card) => [card.name, card]));
   const swap = pathwaySwapCatalog[key];
 
-  const sections: { title: string; subtitle: string; selection: string; block: MonthBlock; tag: string }[] = [
-    { title: "Functional support", subtitle: "Your hands-on care session — recovery, movement, LED, breathwork, or pelvic-floor.", selection: activation.functional, tag: "Swappable", block: { name: "Functional Care", selection: activation.functional, why: blockWhy["Functional Care"], status: "Recommended", includes: activation.functional, plain: blockPlain["Functional Care"].plain, discovery: blockPlain["Functional Care"].discovery, swappable: true } },
-    { title: "Pods", subtitle: "Pick or swap one pod. Coaching adjusts to follow.", selection: activation.pods, tag: "Choose 1 swap", block: byName.Pods },
-    { title: "Kit", subtitle: "Build the at-home support. One eligible item swap.", selection: activation.kit, tag: "Buildable", block: byName.Kit },
-    { title: "Experience pass", subtitle: "Pick the one bookable monthly experience.", selection: activation.passes, tag: "Choose 1", block: byName.Pass },
-    { title: "Sticky perk", subtitle: "A small motivation perk to make the month easier to finish.", selection: stickyPerks.slice(0, 4).join(", "), tag: "Pick 1", block: { name: "Kit", selection: stickyPerks[0], why: "Sticky perks add a low-pressure social or learning moment.", status: "Recommended", includes: stickyPerks.join(", "), plain: "Sticky perks are small experiential benefits that make the month feel useful.", discovery: "They make follow-through easier without adding obligation.", swappable: true } },
-    { title: "Perk Store preview", subtitle: "Bonus partner perks you can browse this month.", selection: stickyPerks.slice(4).join(", ") || "More perks coming soon", tag: "Preview", block: { name: "Kit", selection: "Perk Store", why: "Perks expand without changing your plan.", status: "Recommended", includes: stickyPerks.join(", "), plain: "The Perk Store is an optional browse layer for partner experiences.", discovery: "Browse without commitment — your plan stays the same.", swappable: false } },
-    { title: "Pack Store preview", subtitle: "Deeper bundles that may unlock from progress or coach review.", selection: packsCatalog[key].join(", "), tag: "Locked preview", block: { name: "Packs", selection: packsCatalog[key][0], why: blockWhy.Packs, status: "Pack-only", includes: packsCatalog[key].join(", "), plain: blockPlain.Packs.plain, discovery: blockPlain.Packs.discovery, swappable: false } },
-  ];
+  const functionalRecommended = splitBlueprintList(activation.functional)[0] || activation.functional;
+  const functionalAlternatives = (swap["Functional Care"]?.options || []).map((o) => o.name).filter((n) => n !== functionalRecommended).slice(0, 3);
 
-  return <section className="space-y-5 px-5 pb-28 pt-6">
+  const podNames = splitBlueprintList(activation.pods);
+  const podAlternatives = (swap.Pods?.options || []).map((o) => o.name).filter((n) => !podNames.includes(n)).slice(0, 3);
+
+  const kitItems = kitCatalog[key].slice(0, 7);
+  const stickyRecommended = stickyPerks[0];
+
+  const passRecommended = splitBlueprintList(activation.passes)[0] || activation.passes;
+  const passAlternatives = (swap["Experience Pass"]?.options || []).map((o) => o.name).filter((n) => n !== passRecommended).slice(0, 3);
+
+  const mbcEarn = ["Build kit", "Join your pod", "Book your experience pass", "Complete your lab", "Finish coaching", "Keep a 7-day streak"];
+  const mbcUse = ["Selected packs", "Kit upgrades", "Device buy-downs", "Future pathway add-ons", "Special partner experiences"];
+
+  const packs = pathwayPacks[key];
+
+  const optionRow = (name: string, status: string, isSelected = false) => (
+    <div key={name} className={cn("rounded-2xl px-4 py-3 shadow-card", isSelected ? "bg-primary text-primary-foreground" : "bg-card")}>
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-semibold">{name}</p>
+          <p className={cn("mt-1 text-xs leading-5", isSelected ? "text-primary-foreground/85" : "text-muted-foreground")}>{explainOption(name)}</p>
+          <span className={cn("mt-2 inline-flex rounded-full px-2 py-0.5 text-[11px] font-bold", isSelected ? "bg-primary-foreground/15 text-primary-foreground" : "bg-secondary text-accent")}>{status}</span>
+        </div>
+        {isSelected && <Check className="mt-0.5 size-4 shrink-0" />}
+      </div>
+    </div>
+  );
+
+  const sectionShell = (eyebrow: string, title: string, copy: string, children: React.ReactNode, action?: { label: string; onClick: () => void; variant?: "hero" | "soft" }) => (
+    <div className="rounded-[2rem] bg-card p-5 shadow-card">
+      <p className="text-xs font-bold uppercase tracking-wide text-accent">{eyebrow}</p>
+      <h2 className="mt-1 font-display text-2xl leading-tight">{title}</h2>
+      <p className="mt-1 text-sm leading-6 text-muted-foreground">{copy}</p>
+      <div className="mt-4 grid gap-2">{children}</div>
+      {action && <Button variant={action.variant || "soft"} size="lg" className="mt-4 w-full" onClick={action.onClick}>{action.label}</Button>}
+    </div>
+  );
+
+  const statusChip = (status: PackMeta["status"]) => {
+    const map: Record<PackMeta["status"], string> = { preview: "Preview", "pack-only": "Pack-only", milestone: "Milestone unlock", "top-up": "Top-up" };
+    return map[status];
+  };
+
+  return <section className="space-y-5 px-5 pb-32 pt-6">
     <div className="rounded-[2rem] bg-hero p-6 shadow-float">
       <p className="text-sm font-bold text-accent">Step 2 of 3</p>
-      <h1 className="mt-1 font-display text-4xl leading-tight">Customize your month.</h1>
-      <p className="mt-2 text-sm leading-6 text-muted-foreground">These are the parts of your month you can actually choose or swap. Everything else stays clinically guided.</p>
+      <h1 className="mt-1 font-display text-4xl leading-tight">Customize Your Month</h1>
+      <p className="mt-2 text-sm leading-6 text-muted-foreground">These are the only parts you can change. Everything else stays clinically guided by your blueprint.</p>
     </div>
-    <div className="grid gap-3">{sections.map((section) => <button key={section.title} onClick={() => setDrawerBlock(section.block)} className="group w-full rounded-[2rem] bg-card p-5 text-left shadow-card transition-smooth hover:-translate-y-0.5 hover:shadow-float focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-      <div className="flex items-start gap-4">
-        <div className="grid size-12 shrink-0 place-items-center rounded-2xl bg-secondary text-accent shadow-card">{iconForBlock(section.title)}</div>
-        <div className="min-w-0 flex-1">
-          <div className="flex items-start justify-between gap-3">
-            <p className="text-xs font-bold uppercase tracking-wide text-accent">{section.title}</p>
-            <span className="shrink-0 rounded-full bg-secondary px-3 py-1 text-[11px] font-bold text-accent">{section.tag}</span>
-          </div>
-          <h2 className="mt-1 font-display text-xl leading-tight">{section.selection}</h2>
-          <p className="mt-2 text-sm leading-6 text-muted-foreground">{section.subtitle}</p>
-          <p className="mt-3 inline-flex items-center gap-1 text-xs font-bold text-accent">Open and adjust <ArrowRight className="size-3 transition-smooth group-hover:translate-x-0.5" /></p>
-        </div>
+
+    {sectionShell("Section 1", "Functional Support", "Your hands-on care session — pick the option that fits this month.", <>
+      {optionRow(functionalRecommended, "Recommended", true)}
+      {functionalAlternatives.map((name) => optionRow(name, "Alternative"))}
+    </>, { label: "Choose this support", variant: "hero", onClick: () => onSwap("Functional session") })}
+
+    {sectionShell("Section 2", "Pod Seats", "Pods give you the guided group rhythm. Coaching adjusts to follow.", <>
+      {podNames.map((pod, i) => optionRow(pod, i === 0 ? "Primary pod" : "Included pod", true))}
+      {podAlternatives.map((name) => optionRow(name, "Optional swap"))}
+    </>, { label: "Keep pods or swap one", variant: "soft", onClick: () => onSwap("Pods") })}
+
+    {sectionShell("Section 3", "Kit Builder", "Your at-home support. One eligible item swap and one sticky perk.", <>
+      {kitItems.map((name, i) => optionRow(name, i === 0 ? "Recommended" : "Kit element", i === 0))}
+      {optionRow(stickyRecommended, "Sticky perk")}
+    </>, { label: "Build kit and swap one item", variant: "hero", onClick: () => onSwap("Kit item") })}
+
+    {sectionShell("Section 4", "Experience Pass", "One bookable monthly experience. Some options are inventory-gated.", <>
+      {optionRow(passRecommended, "Recommended", true)}
+      {passAlternatives.map((name) => {
+        const inventoryGated = highTierPasses.includes(name) || /clinic|LED|red-light|Biopeak/i.test(name);
+        return optionRow(name, inventoryGated ? "Inventory-gated" : "Alternative");
+      })}
+    </>, { label: "Choose this pass", variant: "hero", onClick: () => onSwap("Experience pass") })}
+
+    {sectionShell("Section 5", "Progress Passport", "Earn Milestone Bonus Credits by completing plan actions. Spend them on upgrades.", <>
+      <div className="rounded-2xl bg-secondary p-4">
+        <p className="text-xs font-bold uppercase tracking-wide text-accent">Earn with</p>
+        <ul className="mt-2 grid gap-1 text-sm leading-6 text-foreground">{mbcEarn.map((item) => <li key={item} className="flex items-start gap-2"><Check className="mt-1 size-3 shrink-0 text-accent" />{item}</li>)}</ul>
       </div>
-    </button>)}</div>
-    <div className="grid gap-3">
-      <Button variant="hero" size="xl" onClick={onConfirm}>Confirm my month <ArrowRight className="size-4" /></Button>
-      <Button variant="soft" size="xl" onClick={onCoach}><MessageCircle className="size-4" /> Ask coach to rebalance</Button>
+      <div className="rounded-2xl bg-secondary p-4">
+        <p className="text-xs font-bold uppercase tracking-wide text-accent">Use for</p>
+        <ul className="mt-2 grid gap-1 text-sm leading-6 text-foreground">{mbcUse.map((item) => <li key={item} className="flex items-start gap-2"><Sparkles className="mt-1 size-3 shrink-0 text-accent" />{item}</li>)}</ul>
+      </div>
+    </>, { label: "View Wallet", variant: "soft", onClick: onCoach })}
+
+    <div className="rounded-[2rem] bg-secondary/60 p-5 shadow-card">
+      <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Section 6 · Optional</p>
+      <h2 className="mt-1 font-display text-2xl leading-tight">Perk Store preview</h2>
+      <p className="mt-1 text-sm leading-6 text-muted-foreground">Browse partner perks. These are optional — your plan stays the same.</p>
+      <div className="mt-4 grid gap-2">{stickyPerks.map((perk) => (
+        <div key={perk} className="rounded-2xl bg-card px-4 py-3 shadow-card">
+          <p className="text-sm font-semibold text-foreground">{perk}</p>
+          <p className="mt-1 text-xs leading-5 text-muted-foreground">{explainOption(perk)}</p>
+          <span className="mt-2 inline-flex rounded-full bg-secondary px-2 py-0.5 text-[11px] font-bold text-accent">Preview</span>
+        </div>
+      ))}</div>
     </div>
-    {drawerBlock && <BlockDrawer block={drawerBlock} pathway={pathway} onClose={() => setDrawerBlock(null)} onSwap={() => { const name = drawerBlock.name; setDrawerBlock(null); onSwap(name); }} onCoach={onCoach} />}
+
+    <div className="rounded-[2rem] bg-secondary/60 p-5 shadow-card">
+      <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Section 7 · Optional</p>
+      <h2 className="mt-1 font-display text-2xl leading-tight">Pack Store preview</h2>
+      <p className="mt-1 text-sm leading-6 text-muted-foreground">Deeper bundles that unlock from progress, top-up, or coach review.</p>
+      <div className="mt-4 grid gap-2">{packs.map((name) => { const meta = packMetaFor(name); return (
+        <div key={name} className="rounded-2xl bg-card p-4 shadow-card">
+          <div className="flex items-start justify-between gap-3">
+            <p className="text-sm font-semibold text-foreground">{name}</p>
+            <span className="shrink-0 rounded-full bg-secondary px-2 py-0.5 text-[11px] font-bold text-accent">{statusChip(meta.status)}</span>
+          </div>
+          <p className="mt-2 text-xs leading-5 text-muted-foreground"><span className="font-bold text-accent">Includes:</span> {meta.includes}</p>
+          <p className="mt-1 text-xs leading-5 text-muted-foreground"><span className="font-bold text-accent">Useful when:</span> {meta.useful}</p>
+        </div>
+      ); })}</div>
+    </div>
+
+    <div className="sticky bottom-0 -mx-5 grid gap-2 border-t border-border/70 bg-shell/95 px-5 py-4 backdrop-blur-xl">
+      {onBack && <Button variant="soft" size="lg" onClick={onBack}><ChevronLeft className="size-4" /> Back to Blueprint</Button>}
+      <Button variant="hero" size="xl" onClick={onConfirm}>Confirm my month <ArrowRight className="size-4" /></Button>
+      <Button variant="soft" size="lg" onClick={onCoach}><MessageCircle className="size-4" /> Ask coach</Button>
+    </div>
   </section>;
 }
 
