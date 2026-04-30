@@ -400,6 +400,112 @@ const passCatalog: Record<PathwayKey, string[]> = {
 };
 const highTierPasses = ["Longefit cold plunge", "sauna / contrast", "Biopeak red-light", "facility breathwork", "clinic red-light recovery", "small-group strength", "in-clinic LED recovery", "pelvic PT group", "pain-aware reformer", "in-clinic LED booth add-on", "post-facial recovery", "camera-ready skin prep", "glow / derm partner demo"];
 const stickyPerks = ["Friend Pod Pass", "Masterclass Access", "Partner Demo", "Pop-Up Event Access", "Step / Stretch Challenge", "Tonic-Bar Visit", "Broth / Nourish Circle Moment", "Recovery Facility Prompt", "Premium Workshop Invite"];
+const optionExplainers: Record<string, string> = {
+  // Care / specialist
+  "Peri-aware OB-GYN / women’s health review": "A women’s-health review for sleep, VMS, cycle changes, mood, and midlife symptom patterns.",
+  "OB-GYN / Endo-aware gyne": "A gyne route for pelvic pain, flare days, endo-like symptoms, imaging, and escalation.",
+  "Dermatologist": "A skin-focused review for acne, pigmentation, barrier issues, glow, and procedure planning.",
+  "Trichologist / derm-tricho review": "A hair and scalp review for shedding, thinning, density, scalp irritation, or regrowth planning.",
+  "Endocrinologist / internal medicine": "A metabolic and medical review for weight drift, insulin resistance, fatigue, thyroid, and GLP readiness.",
+  "Longevity-oriented IM review": "A physician review for focus, fatigue, recovery, biomarkers, and healthspan direction.",
+  "GI specialist": "Appears only when GI red flags or strong gut overlap are present.",
+  "Fertility / REI specialist": "Locked preview unless fertility or IVF pathway is active.",
+  // Functional support
+  "RDN consult": "Nutrition strategy for energy, meal timing, protein, cravings, gut comfort, or GLP support.",
+  "Mobility / physio session": "Movement and posture support for stiffness, recovery, pain, strength, or function.",
+  "Pilates / Barre seat": "A structured strength and mobility session, often off-peak or inventory-gated.",
+  "Acupuncture": "A recovery support option for stress, sleep, pain, or GI comfort.",
+  "Clinic LED / red-light session": "A clinic-based recovery or visible-vitality session when available.",
+  "Recovery coaching": "A practical review of rest, pacing, fatigue, and weekly load.",
+  "Pelvic-floor PT": "Pelvic pain, endo, urinary, sexual discomfort, or pelvic relaxation support.",
+  "Pain-aware Pilates / movement": "Gentle movement support designed for flare-sensitive or pain-aware users.",
+  "Breathwork reset": "A nervous-system downshift session for sleep, stress, fatigue, or recovery.",
+  "Strength + VO2 prep": "A performance and strength-support session for energy, longevity, and recovery.",
+  "Movement-compliance micro-session": "A low-friction movement session to help users start rather than overthink.",
+  "Cooling / sleep reset workshop": "A peri-focused workshop for night waking, temperature, wind-down, and sleep routine.",
+  // Pods
+  "Peri Reset Pod": "Hot flashes, sleep disruption, mood, brain fog, and midlife symptom rhythm.",
+  "Sleep Reset Pod": "Night waking, wind-down, light, temperature, caffeine timing, and sleep regularity.",
+  "Mood / Fog Pod": "Irritability, anxiety, cognitive load, brain fog, and meeting-day coping.",
+  "Metabolic Drift Pod": "Weight drift, cravings, HbA1c / lipids, meal structure, and strength routine.",
+  "Skin / Hair Pod": "Dry skin, hair shedding, collagen, HA-ceramide, LED, and routine support.",
+  "Bone / Joint Pod": "Joint pain, stiffness, posture, strength, and bone-support habits.",
+  "Endo Toolkit Pod": "Flare diary, pain pacing, pelvic relaxation, GI symptoms, and doctor note export.",
+  "GI / Function Support Pod": "Bloating, constipation, food tolerability, function days, and flare patterns.",
+  "Pain Pacing Pod": "Pain windows, movement pacing, flare-day support, and rest scheduling.",
+  "Fatigue Support Pod": "Sleep, ferritin / B12 questions, energy conservation, and work functioning.",
+  "Skin Sunday Pod": "Routine audit, acne or pigment logic, aftercare, LED, and actives.",
+  "Insight Night / Metabolic Drift Lite Pod": "Energy, glucose, meal timing, cravings, and strength adherence.",
+  "Brain & Focus Pod": "Focus duration, fatigue, caffeine timing, nootropic basics, and workday design.",
+  "Executive Performance & Travel Pod": "Calendar load, travel, hydration, crash points, and recovery windows.",
+  "Healthspan Lab Pod": "ApoB, hs-CRP, biomarkers, prevention timing, sleep, and strength patterns.",
+  // Passes / micro-passes
+  "Restorative mobility": "Gentle mobility to reduce stiffness and support recovery.",
+  "Clinic red-light": "Clinic red-light or LED-style support when inventory is available.",
+  "Pelvic relaxation / breathwork": "A pain-aware relaxation session for pelvic tension and flare support.",
+  "Gentle Pilates flow": "Gentle movement support for endo, peri, or mobility-sensitive users.",
+  "Pain-aware movement": "Movement designed around flare risk, discomfort, and pacing.",
+  "LED booth": "A visible-vitality or recovery moment for skin, glow, scalp, or relaxation.",
+  "Aftercare workshop": "A routine and recovery workshop for skin, actives, procedures, or glow.",
+  "Acne-safe routine workshop": "A skin routine session for acne, body acne, and barrier-safe habits.",
+  "Skin routine demo": "A simple demonstration of AM / PM routine, actives, SPF, and aftercare.",
+  "Biopeak intro group talk": "A premium longevity-style intro around recovery, biomarkers, and healthspan.",
+  "Movement-compliance session": "A low-friction movement session to help the plan become action.",
+  "Red-light": "A recovery or visible-vitality session when partner inventory allows.",
+  // Kit options
+  "Magnesium": "Supports sleep routine, recovery, cramps, and nervous-system downshift.",
+  "magnesium": "Supports sleep routine, recovery, cramps, and nervous-system downshift.",
+  "Omega-3": "Supports inflammation, skin, metabolic, and hormonal health routines.",
+  "omega-3": "Supports inflammation, skin, metabolic, and hormonal health routines.",
+  "D3+K2": "Used when appropriate for Vitamin D / bone / midlife support.",
+  "Sleep kit": "Sleep tea, wind-down cues, or PM support tied to the Sleep Reset path.",
+  "sleep kit": "Sleep tea, wind-down cues, or PM support tied to the Sleep Reset path.",
+  "Collagen": "Visible-vitality, hair, skin, joint, or recovery support.",
+  "collagen": "Visible-vitality, hair, skin, joint, or recovery support.",
+  "Electrolytes": "Hydration support for sleep, GLP, heat, travel, workouts, or fatigue.",
+  "electrolyte": "Hydration support for sleep, GLP, heat, travel, workouts, or fatigue.",
+  "HA-ceramide": "Barrier and body-skin support for visible vitality.",
+  "Broths": "Gut-friendly, low-appetite, recovery, or comfort support.",
+  "broths": "Gut-friendly, low-appetite, recovery, or comfort support.",
+  "Heat patches": "Flare-day comfort support for Endo or pain-aware paths.",
+  "heat patches": "Flare-day comfort support for Endo or pain-aware paths.",
+  "Ginger / peppermint support": "GI comfort, bloating, nausea, or flare-day support.",
+  "ginger / peppermint support": "GI comfort, bloating, nausea, or flare-day support.",
+  "SPF": "Daily skin protection and visible-vitality baseline.",
+  "HA": "Hydration and barrier support for glow, recovery, and skin texture.",
+  "Vitamin C": "Brightening and antioxidant routine support.",
+  "Niacinamide": "Barrier, tone, redness, and routine support.",
+  "Azelaic": "Pigment, redness, acne, and sensitive-skin compatible support where appropriate.",
+  "Ceramide": "Barrier repair and sensitive-skin support.",
+  "Underarm AHA": "Body skin / texture / underarm support.",
+  "Fiber mini": "Satiety, gut, metabolic-lite, and pantry support.",
+  "Protein mini": "Protein adequacy, cravings, strength, and GLP / metabolic support.",
+  "Citicoline": "Focus and cognitive output support.",
+  "L-Theanine": "Calm focus and sleep-onset support.",
+  "Rhodiola": "Stress fatigue and performance-load support.",
+  "Bacopa": "Longer-onset focus and cognition support.",
+  "Longevity Pulse Stack": "NMN + Fisetin + Quercetin cadence where appropriate and tolerated.",
+  "Gut-Sensitive Pulse Variant": "Pulse support without Quercetin when gut tolerance is a concern.",
+  "Defer / Ask Coach": "Hold the pulse and discuss with coach before starting.",
+  // Sticky perks
+  "Friend Pod Pass": "Invite a friend to one eligible pod or replay.",
+  "Masterclass Access": "Join an expert session or replay.",
+  "Partner Demo": "Try a partner product or service demo.",
+  "Pop-Up Event Access": "Preview access to city or quarterly events.",
+  "Step / Stretch Challenge": "A guided movement challenge with possible MBC.",
+  "Tonic-Bar Visit": "A QR tonic or broth visit where available.",
+  "Broth / Nourish Circle Moment": "Food community moment, chef demo, or nourish-circle session.",
+  "Recovery Facility Prompt": "Longefit / Biopeak-style booking prompt when available.",
+  "Premium Workshop Invite": "Tier-high or quarterly premium workshop access.",
+};
+const explainOption = (name: string): string => {
+  if (optionExplainers[name]) return optionExplainers[name];
+  const lower = name.toLowerCase();
+  for (const key of Object.keys(optionExplainers)) {
+    if (key.toLowerCase() === lower) return optionExplainers[key];
+  }
+  return "Part of your guided monthly stack.";
+};
 const kitCatalog: Record<PathwayKey, string[]> = {
   peri: ["magnesium", "omega-3", "D3+K2", "sleep kit", "collagen", "electrolyte", "HA-ceramide", "pantry support"],
   endo: ["omega-3", "magnesium", "broths", "heat patches", "ginger / peppermint support", "GI-safe swap", "anti-inflammatory box"],
@@ -878,7 +984,7 @@ const splitBlueprintList = (value: string) => value.split(/, | \+ /).map((item) 
 const swapTargetForBlueprint = (title: BlueprintTitle) => ({ "Care + Labs": "Care route", "Coach + Pods": "Pods", "Kit + Perks": "Kit item", "Experience Pass": "Experience pass", "Progress Passport": "Progress Passport", "Future Unlocks": "Future Unlocks" }[title]);
 
 function BlueprintSectionBlock({ section, selectedOption, onSelect }: { section: BlueprintSection; selectedOption?: string; onSelect: (name: string) => void }) {
-  const renderItems = (items: CatalogOption[], prefix: string) => <div className="mt-3 grid gap-2">{items.map((item) => { const selected = selectedOption === item.name; return <button key={`${prefix}-${item.name}`} onClick={() => onSelect(item.name)} className={cn("rounded-2xl px-4 py-3 text-left shadow-card transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", selected ? "bg-primary text-primary-foreground" : "bg-card") }><span className="flex items-start justify-between gap-3"><span><p className={cn("text-sm font-semibold", selected ? "text-primary-foreground" : "text-foreground")}>{item.name}</p>{item.state && <p className={cn("mt-1 text-xs font-bold", selected ? "text-primary-foreground/80" : "text-accent")}>{selected ? "Selected" : item.state}</p>}</span>{selected && <Check className="mt-0.5 size-4 shrink-0" />}</span></button>; })}</div>;
+  const renderItems = (items: CatalogOption[], prefix: string) => <div className="mt-3 grid gap-2">{items.map((item) => { const selected = selectedOption === item.name; return <button key={`${prefix}-${item.name}`} onClick={() => onSelect(item.name)} className={cn("rounded-2xl px-4 py-3 text-left shadow-card transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", selected ? "bg-primary text-primary-foreground" : "bg-card") }><span className="flex items-start justify-between gap-3"><span className="min-w-0 flex-1"><p className={cn("text-sm font-semibold", selected ? "text-primary-foreground" : "text-foreground")}>{item.name}</p><p className={cn("mt-1 text-xs leading-5", selected ? "text-primary-foreground/85" : "text-muted-foreground")}>{explainOption(item.name)}</p>{item.state && <span className={cn("mt-2 inline-flex rounded-full px-2 py-0.5 text-[11px] font-bold", selected ? "bg-primary-foreground/15 text-primary-foreground" : "bg-secondary text-accent")}>{selected ? "Selected" : item.state}</span>}</span>{selected && <Check className="mt-0.5 size-4 shrink-0" />}</span></button>; })}</div>;
   return <div className="rounded-2xl bg-secondary p-4"><p className="text-xs font-semibold uppercase tracking-wide text-accent">{section.label}</p>{section.copy && <p className="mt-2 text-sm leading-6 text-muted-foreground">{section.copy}</p>}{section.rows && <div className="mt-3 grid gap-2">{section.rows.map((row) => <div key={`${section.label}-${row.label}`} className="rounded-2xl bg-card px-4 py-3 shadow-card"><p className="text-sm font-semibold text-foreground">{row.label}</p><p className="mt-1 text-xs leading-5 text-muted-foreground">{row.copy}</p></div>)}</div>}{section.items && renderItems(section.items, section.label)}{section.groups && <div className="mt-3 grid gap-4">{section.groups.map((group) => <div key={`${section.label}-${group.label}`}><p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">{group.label}</p>{renderItems(group.items, `${section.label}-${group.label}`)}</div>)}</div>}</div>;
 }
 
@@ -978,7 +1084,7 @@ function ActivationPickerDrawer({ type, pathway, activation, selected, onSelect,
     future: "These are previews, not active day-one benefits.",
   }[type];
   const rows = type === "pods" ? podNames.map((pod) => ({ label: pod, copy: podAgendas[pod] || activation.podCovers })) : type === "kit" ? [{ label: "Recommended kit", copy: activation.kit }, { label: "One eligible swap", copy: kitCatalog[key][1] || kitCatalog[key][0] }] : type === "mbc" ? [{ label: "Earn with", copy: "kit built, pod joined, pass booked, labs completed, coaching done, 7-day streak" }, { label: "Use for", copy: "selected packs, kit upgrades, device buy-downs, future pathway add-ons, special partner experiences" }] : type === "future" ? [{ label: "Packs", copy: packsCatalog[key].join(", ") }, { label: "Devices", copy: [pathway.futureDevice, ...futureCatalog.filter((item) => /Ring|LED Mask|CGM|red-light/i.test(item)).slice(0, 3)].join(", ") }, { label: "Riders", copy: [pathway.futureRider, ...splitBlueprintList(activation.future).filter((item) => /Rider|Shield|Rx|DermaShield|NeuroSleep/i.test(item))].join(", ") }, { label: "Adjacent pathways", copy: pathways[pathway.adjacent].title }] : [];
-  return <div className="absolute inset-0 z-[60] flex items-end bg-primary/25 p-3 backdrop-blur-sm" onClick={onClose}><div className="max-h-[84vh] w-full overflow-y-auto rounded-[2rem] bg-card p-6 shadow-float animate-slide-up" onClick={(event) => event.stopPropagation()}><div className="mb-5 flex items-start justify-between gap-3"><div><p className="text-sm font-bold text-accent">Activation picker</p><h2 className="font-display text-3xl leading-tight">{title}</h2></div><button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Close</button></div><p className="text-sm leading-6 text-muted-foreground">{copy}</p>{rows.length > 0 && <div className="mt-4 grid gap-3">{rows.map((item) => <InfoBlock key={item.label} label={item.label} copy={item.copy} />)}</div>}{selectable.length > 0 && <div className="mt-4 grid gap-2">{selectable.map((item, index) => { const isSelected = selected === item; return <button key={item} onClick={() => onSelect(item)} className={cn("rounded-2xl px-4 py-3 text-left shadow-card transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", isSelected ? "bg-primary text-primary-foreground" : "bg-secondary")}><span className="flex items-start justify-between gap-3"><span><p className="text-sm font-semibold">{item}</p><p className={cn("mt-1 text-xs font-bold", isSelected ? "text-primary-foreground/80" : "text-accent")}>{isSelected ? "Selected" : index === 0 ? "Recommended" : type === "kit" ? "Eligible swap" : "Selectable"}</p></span>{isSelected && <Check className="mt-0.5 size-4 shrink-0" />}</span></button>; })}</div>}<div className="mt-5 grid gap-3">{type === "functional" && <><Button variant="soft" size="lg" onClick={onClose}>Keep recommended</Button><Button variant="hero" size="lg" onClick={onClose}>Choose this</Button><Button variant="soft" size="lg" onClick={onCoach}>Ask coach</Button></>}{type === "pods" && <><Button variant="soft" size="lg" onClick={onClose}>Keep current pods</Button><Button variant="hero" size="lg" onClick={onSwap}>Swap one pod</Button><Button variant="soft" size="lg" onClick={onCoach}>Ask coach</Button></>}{type === "kit" && <><Button variant="soft" size="lg" onClick={onClose}>Keep recommended kit</Button><Button variant="hero" size="lg" onClick={onSwap}>Swap one item</Button><Button variant="soft" size="lg" onClick={onCoach}>Ask coach</Button></>}{type === "pass" && <><Button variant="hero" size="lg" onClick={onClose}>Choose this pass</Button><Button variant="soft" size="lg" onClick={onClose}>Keep recommended</Button><Button variant="soft" size="lg" onClick={onCoach}>Ask coach</Button></>}{type === "mbc" && <><Button variant="hero" size="lg" onClick={onClose}>View Wallet</Button><Button variant="soft" size="lg" onClick={onClose}>Continue</Button></>}{type === "future" && <><Button variant="hero" size="lg" onClick={onClose}>Mark interest</Button><Button variant="soft" size="lg" onClick={onClose}>Not now</Button></>}</div></div></div>;
+  return <div className="absolute inset-0 z-[60] flex items-end bg-primary/25 p-3 backdrop-blur-sm" onClick={onClose}><div className="max-h-[84vh] w-full overflow-y-auto rounded-[2rem] bg-card p-6 shadow-float animate-slide-up" onClick={(event) => event.stopPropagation()}><div className="mb-5 flex items-start justify-between gap-3"><div><p className="text-sm font-bold text-accent">Activation picker</p><h2 className="font-display text-3xl leading-tight">{title}</h2></div><button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Close</button></div><p className="text-sm leading-6 text-muted-foreground">{copy}</p>{rows.length > 0 && <div className="mt-4 grid gap-3">{rows.map((item) => <InfoBlock key={item.label} label={item.label} copy={item.copy} />)}</div>}{selectable.length > 0 && <div className="mt-4 grid gap-2">{selectable.map((item, index) => { const isSelected = selected === item; const status = isSelected ? "Selected" : index === 0 ? "Recommended" : type === "kit" ? "Eligible swap" : "Selectable"; return <button key={item} onClick={() => onSelect(item)} className={cn("rounded-2xl px-4 py-3 text-left shadow-card transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", isSelected ? "bg-primary text-primary-foreground" : "bg-secondary")}><span className="flex items-start justify-between gap-3"><span className="min-w-0 flex-1"><p className="text-sm font-semibold">{item}</p><p className={cn("mt-1 text-xs leading-5", isSelected ? "text-primary-foreground/85" : "text-muted-foreground")}>{explainOption(item)}</p><span className={cn("mt-2 inline-flex rounded-full px-2 py-0.5 text-[11px] font-bold", isSelected ? "bg-primary-foreground/15 text-primary-foreground" : "bg-card text-accent")}>{status}</span></span>{isSelected && <Check className="mt-0.5 size-4 shrink-0" />}</span></button>; })}</div>}<div className="mt-5 grid gap-3">{type === "functional" && <><Button variant="soft" size="lg" onClick={onClose}>Keep recommended</Button><Button variant="hero" size="lg" onClick={onClose}>Choose this</Button><Button variant="soft" size="lg" onClick={onCoach}>Ask coach</Button></>}{type === "pods" && <><Button variant="soft" size="lg" onClick={onClose}>Keep current pods</Button><Button variant="hero" size="lg" onClick={onSwap}>Swap one pod</Button><Button variant="soft" size="lg" onClick={onCoach}>Ask coach</Button></>}{type === "kit" && <><Button variant="soft" size="lg" onClick={onClose}>Keep recommended kit</Button><Button variant="hero" size="lg" onClick={onSwap}>Swap one item</Button><Button variant="soft" size="lg" onClick={onCoach}>Ask coach</Button></>}{type === "pass" && <><Button variant="hero" size="lg" onClick={onClose}>Choose this pass</Button><Button variant="soft" size="lg" onClick={onClose}>Keep recommended</Button><Button variant="soft" size="lg" onClick={onCoach}>Ask coach</Button></>}{type === "mbc" && <><Button variant="hero" size="lg" onClick={onClose}>View Wallet</Button><Button variant="soft" size="lg" onClick={onClose}>Continue</Button></>}{type === "future" && <><Button variant="hero" size="lg" onClick={onClose}>Mark interest</Button><Button variant="soft" size="lg" onClick={onClose}>Not now</Button></>}</div></div></div>;
 }
 
 function UnlocksScreen({ pathway, onBuild, onKeep, onSwap, onCoach }: { pathway: Pathway; answers: string[]; onBuild: () => void; onKeep: () => void; onSwap: () => void; onCoach: () => void }) {
@@ -1118,7 +1224,7 @@ function SwapScreen({ pathway, reason, initialTarget, onBack, onCoach }: { pathw
 
 function SwapDrawer({ swap, onClose, onCoach }: { swap: ControlledSwap; onClose: () => void; onCoach: () => void }) {
   const [chosen, setChosen] = useState(swap.alternatives[0]);
-  return <div className="absolute inset-0 z-50 flex items-end bg-primary/25 p-3 backdrop-blur-sm" onClick={onClose}><div className="max-h-[84vh] w-full overflow-y-auto rounded-[2rem] bg-card p-6 shadow-float animate-slide-up" onClick={(event) => event.stopPropagation()}><div className="mb-5 flex items-start justify-between gap-3"><div><p className="text-sm font-bold text-accent">{swap.name} swap</p><h2 className="font-display text-3xl leading-tight">{swap.current}</h2></div><button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent">Close</button></div><div className="grid gap-3"><InfoBlock label="Recommended for you" copy={swap.current} /><InfoBlock label="Why we chose it" copy={swap.why} /><InfoBlock label="What it includes" copy={swap.includes} /><div className="rounded-2xl bg-secondary p-4"><p className="text-xs font-semibold uppercase tracking-wide text-accent">Available alternatives</p><div className="mt-3 grid gap-2">{swap.alternatives.slice(0, 3).map((item) => <button key={item} onClick={() => setChosen(item)} className={cn("rounded-2xl px-4 py-3 text-left text-sm font-semibold shadow-card transition-smooth focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", chosen === item ? "bg-primary text-primary-foreground" : "bg-card text-foreground")}>{item}</button>)}</div></div><InfoBlock label="What changes if you swap" copy={swap.change} /><InfoBlock label="What stays the same" copy={swap.stays} /></div><div className="mt-5 grid gap-3"><Button variant="soft" size="xl" onClick={onClose}>Keep current</Button><Button variant="hero" size="xl" onClick={onClose}>{swap.action}</Button><Button variant="soft" size="xl" onClick={onCoach}>Ask coach</Button></div></div></div>;
+  return <div className="absolute inset-0 z-50 flex items-end bg-primary/25 p-3 backdrop-blur-sm" onClick={onClose}><div className="max-h-[84vh] w-full overflow-y-auto rounded-[2rem] bg-card p-6 shadow-float animate-slide-up" onClick={(event) => event.stopPropagation()}><div className="mb-5 flex items-start justify-between gap-3"><div><p className="text-sm font-bold text-accent">{swap.name} swap</p><h2 className="font-display text-3xl leading-tight">{swap.current}</h2></div><button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent">Close</button></div><div className="grid gap-3"><InfoBlock label="Recommended for you" copy={swap.current} /><InfoBlock label="Why we chose it" copy={swap.why} /><InfoBlock label="What it includes" copy={swap.includes} /><div className="rounded-2xl bg-secondary p-4"><p className="text-xs font-semibold uppercase tracking-wide text-accent">Available alternatives</p><div className="mt-3 grid gap-2">{swap.alternatives.slice(0, 3).map((item, index) => { const isSelected = chosen === item; const status = isSelected ? "Selected" : index === 0 ? "Recommended alternative" : "Alternative"; return <button key={item} onClick={() => setChosen(item)} className={cn("rounded-2xl px-4 py-3 text-left shadow-card transition-smooth focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", isSelected ? "bg-primary text-primary-foreground" : "bg-card text-foreground")}><span className="flex items-start justify-between gap-3"><span className="min-w-0 flex-1"><p className="text-sm font-semibold">{item}</p><p className={cn("mt-1 text-xs leading-5", isSelected ? "text-primary-foreground/85" : "text-muted-foreground")}>{explainOption(item)}</p><span className={cn("mt-2 inline-flex rounded-full px-2 py-0.5 text-[11px] font-bold", isSelected ? "bg-primary-foreground/15 text-primary-foreground" : "bg-secondary text-accent")}>{status}</span></span>{isSelected && <Check className="mt-0.5 size-4 shrink-0" />}</span></button>; })}</div></div><InfoBlock label="What changes if you swap" copy={swap.change} /><InfoBlock label="What stays the same" copy={swap.stays} /></div><div className="mt-5 grid gap-3"><Button variant="soft" size="xl" onClick={onClose}>Keep current</Button><Button variant="hero" size="xl" onClick={onClose}>{swap.action}</Button><Button variant="soft" size="xl" onClick={onCoach}>Ask coach</Button></div></div></div>;
 }
 
 function RebalanceModal({ onClose }: { onClose: () => void }) {
