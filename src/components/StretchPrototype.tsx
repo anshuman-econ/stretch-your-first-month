@@ -703,7 +703,7 @@ export default function StretchPrototype() {
         {(["home", "wallet", "future", "pathways", "journey", "care"] as Step[]).includes(step) && <nav className="absolute bottom-0 left-0 right-0 z-30 grid grid-cols-5 border-t border-border/80 bg-shell/95 px-2 py-2 backdrop-blur-xl">
           <NavItem icon={<Home className="size-5" />} label="Home" active={step === "home"} onClick={() => setStep("home")} />
           <NavItem icon={<Leaf className="size-5" />} label="Pathways" active={step === "pathways" || step === "journey"} onClick={() => setStep("pathways")} />
-          <NavItem icon={<CalendarDays className="size-5" />} label="Plan" active={["explainer", "built", "unlocks", "confirm", "builder", "week"].includes(step)} onClick={() => setStep(answers.length ? "built" : "goal")} />
+          <NavItem icon={<CalendarDays className="size-5" />} label="Plan" active={["explainer", "built", "builder", "confirm", "week", "unlocks"].includes(step)} onClick={() => setStep(answers.length ? "built" : "goal")} />
           <NavItem icon={<MessageCircle className="size-5" />} label="Care" active={step === "care"} onClick={() => setStep("care")} />
           <NavItem icon={<Wallet className="size-5" />} label="Wallet" active={step === "wallet"} onClick={() => setStep("wallet")} />
         </nav>}
