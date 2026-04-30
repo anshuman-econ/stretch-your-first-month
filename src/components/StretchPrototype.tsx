@@ -724,6 +724,7 @@ export default function StretchPrototype() {
   const [demoTile, setDemoTile] = useState<DemoTile | null>(null);
   const [showRebalance, setShowRebalance] = useState(false);
   const [swapTarget, setSwapTarget] = useState<string | null>(null);
+  const [inlineSwap, setInlineSwap] = useState<ControlledSwap | null>(null);
   const [explainerReturnStep, setExplainerReturnStep] = useState<Step>("landing");
 
   const pathwayKey = useMemo(() => detectPathway(answers, goal), [answers, goal]);
