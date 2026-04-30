@@ -1065,22 +1065,50 @@ function ConfirmScreen({ pathway, resetQuiz, onBuild, onOpenJourney }: { pathway
   return <section className="space-y-6 px-5 py-7"><SectionTitle title="Keep your first month or swap one thing." copy="Your coach can help refine it after you begin." /><SoftCard onClick={onOpenJourney} className="space-y-4 border-Recommended/40"><div className="flex items-center justify-between"><p className="font-display text-2xl">First Month</p><Star className="size-5 text-accent" /></div><p className="text-muted-foreground">{pathway.title}</p><div className="grid grid-cols-3 gap-2 text-center text-xs">{pathway.guidedDefaults.slice(0, 3).map((item) => <span key={item} className="rounded-2xl bg-secondary px-2 py-3">{item}</span>)}</div></SoftCard><Button variant="hero" size="xl" className="w-full" onClick={onBuild}>Build my month</Button><Button variant="soft" size="xl" className="w-full" onClick={resetQuiz}>Swap answers</Button></section>;
 }
 
-function BuilderScreen({ pathway, onStart, onCoach, onSwap }: { pathway: Pathway; onStart: () => void; onCoach: () => void; onSwap: (target?: string) => void }) {
+function BuilderScreen({ pathway, onConfirm, onCoach, onSwap }: { pathway: Pathway; onConfirm: () => void; onCoach: () => void; onSwap: (target?: string) => void }) {
   const [drawerBlock, setDrawerBlock] = useState<MonthBlock | null>(null);
-  const [demoTile, setDemoTile] = useState<DemoTile | null>(null);
+  const key = pathwayKeyFromTitle(pathway);
+  const activation = activationForPathway(key);
   const planCards = buildPlanCards(pathway);
-  const summaries = builderSummaries(pathway, planCards);
-  const defaultTiles = summaries.filter((card) => card.title !== "Progress");
-  const journey = [
-    { label: "Pathway", state: "Complete", block: planCards[0] },
-    { label: "Stack", state: "Current", block: planCards[0] },
-    { label: "Pods", state: "Needs input", block: planCards[2] },
-    { label: "Pass", state: "Needs input", block: planCards[3] },
-    { label: "Kit", state: "Future", block: planCards[4] },
-    { label: "Progress", state: "Future", block: planCards[5] },
-    { label: "Unlocks", state: "Locked", block: planCards[6] },
+  const byName = Object.fromEntries(planCards.map((card) => [card.name, card]));
+  const swap = pathwaySwapCatalog[key];
+
+  const sections: { title: string; subtitle: string; selection: string; block: MonthBlock; tag: string }[] = [
+    { title: "Functional support", subtitle: "Your hands-on care session — recovery, movement, LED, breathwork, or pelvic-floor.", selection: activation.functional, tag: "Swappable", block: { name: "Functional Care", selection: activation.functional, why: blockWhy["Functional Care"], status: "Recommended", includes: activation.functional, plain: blockPlain["Functional Care"].plain, discovery: blockPlain["Functional Care"].discovery, swappable: true } },
+    { title: "Pods", subtitle: "Pick or swap one pod. Coaching adjusts to follow.", selection: activation.pods, tag: "Choose 1 swap", block: byName.Pods },
+    { title: "Kit", subtitle: "Build the at-home support. One eligible item swap.", selection: activation.kit, tag: "Buildable", block: byName.Kit },
+    { title: "Experience pass", subtitle: "Pick the one bookable monthly experience.", selection: activation.passes, tag: "Choose 1", block: byName.Pass },
+    { title: "Sticky perk", subtitle: "A small motivation perk to make the month easier to finish.", selection: stickyPerks.slice(0, 4).join(", "), tag: "Pick 1", block: { name: "Kit", selection: stickyPerks[0], why: "Sticky perks add a low-pressure social or learning moment.", status: "Recommended", includes: stickyPerks.join(", "), plain: "Sticky perks are small experiential benefits that make the month feel useful.", discovery: "They make follow-through easier without adding obligation.", swappable: true } },
+    { title: "Perk Store preview", subtitle: "Bonus partner perks you can browse this month.", selection: stickyPerks.slice(4).join(", ") || "More perks coming soon", tag: "Preview", block: { name: "Kit", selection: "Perk Store", why: "Perks expand without changing your plan.", status: "Recommended", includes: stickyPerks.join(", "), plain: "The Perk Store is an optional browse layer for partner experiences.", discovery: "Browse without commitment — your plan stays the same.", swappable: false } },
+    { title: "Pack Store preview", subtitle: "Deeper bundles that may unlock from progress or coach review.", selection: packsCatalog[key].join(", "), tag: "Locked preview", block: { name: "Packs", selection: packsCatalog[key][0], why: blockWhy.Packs, status: "Pack-only", includes: packsCatalog[key].join(", "), plain: blockPlain.Packs.plain, discovery: blockPlain.Packs.discovery, swappable: false } },
   ];
-  return <section className="space-y-5 px-5 pb-44 pt-6"><div className="rounded-[2rem] bg-hero p-5 shadow-float"><div className="flex items-start justify-between gap-4"><div className="min-w-0"><p className="text-sm font-bold text-accent">Month 1: Foundation</p><h1 className="mt-1 font-display text-4xl leading-tight">Your Stretch Month</h1><p className="mt-2 text-sm font-semibold text-muted-foreground">{pathway.title}</p></div><ProgressRing value={20} /></div><div className="mt-5 grid gap-2"><Button variant="hero" size="lg" onClick={onStart}>Keep recommended</Button><div className="grid grid-cols-2 gap-2"><Button variant="soft" size="lg" onClick={() => onSwap()}><RefreshCw className="size-4" /> Swap one block</Button><Button variant="soft" size="lg" onClick={onCoach}><MessageCircle className="size-4" /> Ask coach</Button></div></div></div><div className="grid gap-3">{defaultTiles.map((card) => <BuilderSummaryCard key={card.title} card={card} onOpen={() => setDrawerBlock(card.block)} />)}</div><div className="grid grid-cols-2 gap-3">{summaries.filter((card) => ["Progress", "Unlocks"].includes(card.title)).map((card) => <BuilderSummaryCard key={card.title} card={card} compact onOpen={() => setDrawerBlock(card.block)} />)}</div>{drawerBlock && <BlockDrawer block={drawerBlock} pathway={pathway} onClose={() => setDrawerBlock(null)} onSwap={() => { setDrawerBlock(null); onSwap(drawerBlock.name); }} onCoach={onCoach} />}{demoTile && <DemoTileDrawer tile={demoTile} onClose={() => setDemoTile(null)} />}<JourneyBar items={journey} onOpen={setDrawerBlock} /></section>;
+
+  return <section className="space-y-5 px-5 pb-28 pt-6">
+    <div className="rounded-[2rem] bg-hero p-6 shadow-float">
+      <p className="text-sm font-bold text-accent">Step 2 of 3</p>
+      <h1 className="mt-1 font-display text-4xl leading-tight">Customize your month.</h1>
+      <p className="mt-2 text-sm leading-6 text-muted-foreground">These are the parts of your month you can actually choose or swap. Everything else stays clinically guided.</p>
+    </div>
+    <div className="grid gap-3">{sections.map((section) => <button key={section.title} onClick={() => setDrawerBlock(section.block)} className="group w-full rounded-[2rem] bg-card p-5 text-left shadow-card transition-smooth hover:-translate-y-0.5 hover:shadow-float focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+      <div className="flex items-start gap-4">
+        <div className="grid size-12 shrink-0 place-items-center rounded-2xl bg-secondary text-accent shadow-card">{iconForBlock(section.title)}</div>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-start justify-between gap-3">
+            <p className="text-xs font-bold uppercase tracking-wide text-accent">{section.title}</p>
+            <span className="shrink-0 rounded-full bg-secondary px-3 py-1 text-[11px] font-bold text-accent">{section.tag}</span>
+          </div>
+          <h2 className="mt-1 font-display text-xl leading-tight">{section.selection}</h2>
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">{section.subtitle}</p>
+          <p className="mt-3 inline-flex items-center gap-1 text-xs font-bold text-accent">Open and adjust <ArrowRight className="size-3 transition-smooth group-hover:translate-x-0.5" /></p>
+        </div>
+      </div>
+    </button>)}</div>
+    <div className="grid gap-3">
+      <Button variant="hero" size="xl" onClick={onConfirm}>Confirm my month <ArrowRight className="size-4" /></Button>
+      <Button variant="soft" size="xl" onClick={onCoach}><MessageCircle className="size-4" /> Ask coach to rebalance</Button>
+    </div>
+    {drawerBlock && <BlockDrawer block={drawerBlock} pathway={pathway} onClose={() => setDrawerBlock(null)} onSwap={() => { const name = drawerBlock.name; setDrawerBlock(null); onSwap(name); }} onCoach={onCoach} />}
+  </section>;
 }
 
 function ProgressRing({ value }: { value: number }) {
