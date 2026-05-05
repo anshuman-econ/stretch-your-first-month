@@ -1528,8 +1528,8 @@ function ConfirmScreen({ pathway, resetQuiz, onBuild, onOpenJourney }: { pathway
   return <section className="space-y-6 px-5 py-7"><SectionTitle title="Keep your first month or swap one thing." copy="Your coach can help refine it after you begin." /><SoftCard onClick={onOpenJourney} className="space-y-4 border-Recommended/40"><div className="flex items-center justify-between"><p className="font-display text-2xl">First Month</p><Star className="size-5 text-accent" /></div><p className="text-muted-foreground">{pathway.title}</p><div className="grid grid-cols-3 gap-2 text-center text-xs">{pathway.guidedDefaults.slice(0, 3).map((item) => <span key={item} className="rounded-2xl bg-secondary px-2 py-3">{item}</span>)}</div></SoftCard><Button variant="hero" size="xl" className="w-full" onClick={onBuild}>Build my month</Button><Button variant="soft" size="xl" className="w-full" onClick={resetQuiz}>Swap answers</Button></section>;
 }
 
-function BuilderScreen({ pathway, onConfirm, onCoach, onSwap, onBack }: { pathway: Pathway; onConfirm: () => void; onCoach: () => void; onSwap: (target?: string) => void; onBack?: () => void }) {
-  const [customizePage, setCustomizePage] = useState<"core" | "extras">("core");
+function BuilderScreen({ pathway, onConfirm, onCoach, onSwap, onBack, initialPage = "core" }: { pathway: Pathway; onConfirm: () => void; onCoach: () => void; onSwap: (target?: string) => void; onBack?: () => void; initialPage?: "core" | "extras" }) {
+  const [customizePage, setCustomizePage] = useState<"core" | "extras">(initialPage);
   const key = pathwayKeyFromTitle(pathway);
   const activation = activationForPathway(key);
   const swap = pathwaySwapCatalog[key];
