@@ -1648,31 +1648,33 @@ function BuilderScreen({ pathway, onConfirm, onCoach, onSwap, onBack, initialPag
 
     {compactCard("Section 1", "Pick a sticky perk", "A small bonus that makes the month feel more useful, social, or motivating.", stickyPerks[0], explainOption(stickyPerks[0]), "Included", "Browse perks", onCoach)}
 
-    <div className="rounded-[2rem] bg-secondary/60 p-5 shadow-card">
-      <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Section 2 · Optional</p>
-      <h2 className="mt-1 font-display text-2xl leading-tight">Preview the Perk Store</h2>
-      <p className="mt-1 text-sm leading-6 text-muted-foreground">Small extras like masterclasses, partner demos, friend passes, tonic moments, and challenges.</p>
-      <div className="mt-3 rounded-2xl bg-card px-4 py-3 shadow-card">
-        <p className="text-sm font-semibold text-foreground">{stickyPerks[1] || stickyPerks[0]}</p>
-        <p className="mt-1 text-xs leading-5 text-muted-foreground">{explainOption(stickyPerks[1] || stickyPerks[0])}</p>
-        <span className="mt-2 inline-flex rounded-full bg-secondary px-2 py-0.5 text-[11px] font-bold text-accent">Preview</span>
-      </div>
-      <Button variant="soft" size="lg" className="mt-3 w-full" onClick={onCoach}>View Perk Store <ArrowRight className="size-4" /></Button>
+    <div className="rounded-[2rem] bg-card p-5 shadow-card">
+      <p className="text-xs font-bold uppercase tracking-wide text-accent">Section 2</p>
+      <h2 className="mt-1 font-display text-2xl leading-tight">Perk Store</h2>
+      <p className="mt-1 text-sm leading-6 text-muted-foreground">Small extras that make your month feel more useful — demos, challenges, pod passes, tonic moments, partner perks, and workshops.</p>
+      <div className="mt-3 grid gap-2">{featuredPerks.map((perk) => <div key={perk} className="rounded-2xl bg-secondary px-4 py-3">
+        <div className="flex items-start justify-between gap-3">
+          <p className="text-sm font-semibold text-foreground">{perk}</p>
+          <span className={cn("shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold", perkStatusMap[perk] === "Included" ? "bg-primary text-primary-foreground" : "bg-card text-accent")}>{perkStatusMap[perk]}</span>
+        </div>
+        <p className="mt-1 text-xs leading-5 text-muted-foreground">{explainOption(perk)}</p>
+      </div>)}</div>
+      <Button variant="soft" size="lg" className="mt-3 w-full" onClick={() => setShowPerkStore(true)}>View all perks <ArrowRight className="size-4" /></Button>
     </div>
 
-    <div className="rounded-[2rem] bg-secondary/60 p-5 shadow-card">
-      <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Section 3 · Optional</p>
-      <h2 className="mt-1 font-display text-2xl leading-tight">Preview Pack Store</h2>
-      <p className="mt-1 text-sm leading-6 text-muted-foreground">Packs are optional boosts. Your core month still works without them.</p>
-      <div className="mt-3 rounded-2xl bg-card p-4 shadow-card">
+    <div className="rounded-[2rem] bg-card p-5 shadow-card">
+      <p className="text-xs font-bold uppercase tracking-wide text-accent">Section 3</p>
+      <h2 className="mt-1 font-display text-2xl leading-tight">Pack Store</h2>
+      <p className="mt-1 text-sm leading-6 text-muted-foreground">Packs are optional boosts for a specific need. Your core month still works without them.</p>
+      {(() => { const recPack = recommendedPackForPathway[key]; const meta = packMetaFor(recPack); return <div className="mt-3 rounded-2xl bg-secondary p-4">
         <div className="flex items-start justify-between gap-3">
-          <p className="text-sm font-semibold text-foreground">{recommendedPack}</p>
-          <span className="shrink-0 rounded-full bg-secondary px-2 py-0.5 text-[11px] font-bold text-accent">{statusChip(recommendedPackMeta.status)}</span>
+          <p className="text-sm font-semibold text-foreground">{recPack}</p>
+          <span className="shrink-0 rounded-full bg-card px-2 py-0.5 text-[11px] font-bold text-accent">{statusChip(meta.status)}</span>
         </div>
-        <p className="mt-2 text-xs leading-5 text-muted-foreground"><span className="font-bold text-accent">Includes:</span> {recommendedPackMeta.includes}</p>
-        <p className="mt-1 text-xs leading-5 text-muted-foreground"><span className="font-bold text-accent">Useful when:</span> {recommendedPackMeta.useful}</p>
-      </div>
-      <Button variant="soft" size="lg" className="mt-3 w-full" onClick={onCoach}>View Pack Store <ArrowRight className="size-4" /></Button>
+        <p className="mt-2 text-xs leading-5 text-muted-foreground"><span className="font-bold text-accent">Includes:</span> {meta.includes}</p>
+        <p className="mt-1 text-xs leading-5 text-muted-foreground"><span className="font-bold text-accent">Useful when:</span> {meta.useful}</p>
+      </div>; })()}
+      <Button variant="soft" size="lg" className="mt-3 w-full" onClick={() => setShowPackStore(true)}>View pack options <ArrowRight className="size-4" /></Button>
     </div>
 
     <div className="rounded-[2rem] bg-card p-5 shadow-card">
