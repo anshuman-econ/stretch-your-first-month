@@ -245,7 +245,7 @@ const pathwayDefaults: Record<PathwayKey, Record<string, string>> = {
     Labs: "First rotation: HbA1c, lipids, ApoB; second rotation: hs-CRP, Vitamin D, ferritin; third rotation: TSH / FT4, Lp(a) if family history",
     Pods: "Brain & Focus Pod + Executive Performance & Travel Pod",
     "Experience Pass": "breathwork reset, Biopeak intro group talk, movement-compliance session, red-light",
-    Kit: "foundational support, pantry / snack tool, powder, nootropic, pulse stack, visible vitality, Swap available",
+    Kit: "foundational support, pantry / snack tool, powder, nootropic, pulse stack, visible vitality, sticky perk",
     Packs: "Brain Sprint or Nootropic Builder",
     "Future Unlocks": "Brain Sprint, Nootropic Builder, Executive Jet Lag, Smart Ring, Longevity Lab Rider, NeuroSleep Rider",
   },
@@ -696,7 +696,7 @@ const kitCatalog: Record<PathwayKey, string[]> = {
   peri: ["magnesium", "omega-3", "D3+K2", "sleep kit", "collagen", "electrolyte", "HA-ceramide", "pantry support"],
   endo: ["omega-3", "magnesium", "broths", "heat patches", "ginger / peppermint support", "GI-safe swap", "anti-inflammatory box"],
   metabo: ["SPF", "HA", "vitamin C", "niacinamide", "azelaic", "ceramide", "underarm AHA", "fiber mini", "protein mini"],
-  longevity: ["foundational supplement pick", "pantry / snack tool", "powder pick", "nootropic pick", "longevity pulse stack", "visible-vitality pick", "Swap available"],
+  longevity: ["foundational supplement pick", "pantry / snack tool", "powder pick", "nootropic pick", "longevity pulse stack", "visible-vitality pick", "sticky perk"],
 };
 const packsCatalog: Record<PathwayKey, string[]> = {
   peri: ["Sleep Reset Pack", "Mood / Fog Pack", "Metabolic Drift Pack", "Skin & Hair Pack"],
@@ -746,21 +746,21 @@ const pathwaySwapCatalog: Record<PathwayKey, Record<string, { rule: string; opti
   },
   endo: {
     Specialist: { rule: "GI specialist only if GI red flags. Fertility / REI stays Locked preview.", options: opt(["OB-GYN / Endo-aware gyne", "GI specialist", "Fertility / REI specialist"], ["Recommended", "Clinician-gated", "Locked preview"]) },
-    "Functional Care": { rule: "Pelvic-floor PT can swap only to bounded pain-aware Includeds.", options: opt(["pelvic-floor PT", "acupuncture", "pain-aware Pilates / mobility", "recovery movement"], ["Recommended", "Swap available", "Swap available", "Swap available"]) },
+    "Functional Care": { rule: "Pelvic-floor PT can swap only to bounded pain-aware options.", options: opt(["pelvic-floor PT", "acupuncture", "pain-aware Pilates / mobility", "recovery movement"], ["Recommended", "Swap available", "Swap available", "Swap available"]) },
     Pods: { rule: "Endo Toolkit Pod stays primary. GI / Function Support can swap to one support pod.", options: opt(["Endo Toolkit Pod", "GI / Function Support Pod", "Pain Pacing Pod", "Fatigue Support Pod"], ["Recommended", "Included", "Swap available", "Swap available"]), agenda: podAgendas["Endo Toolkit Pod"] },
     "Experience Pass": { rule: "Pelvic relaxation can swap within Endo-safe passes.", options: opt(["pelvic relaxation / breathwork", "gentle Pilates flow", "flare day plan", "restorative yoga", "breathwork"], ["Recommended", "Swap available", "Swap available", "Swap available", "Swap available"]) },
     Kit: { rule: "Pick one comfort trade. Anything tied to labs stays protected.", options: opt(["Anti-inflammatory support", "Warmth + comfort", "Ginger or peppermint tea", "GI fiber support", "Iron support"], ["Swap available", "Swap available", "Swap available", "Clinician-gated", "Clinician-gated"]) },
   },
   metabo: {
-    Specialist: { rule: "Derm can swap to IM / metabolic review if metabolic overlay is active. Tricho appears if hair Included is added.", options: opt(["dermatology review", "IM / metabolic review", "tricho review"], ["Recommended", "Clinician-gated", "Clinician-gated"]) },
-    "Functional Care": { rule: "LED booth can swap to bounded glow or metabolic-lite Includeds.", options: opt(["LED booth", "RDN", "Pilates / Barre", "mobility", "acupuncture", "recovery coaching"], ["Recommended", "Swap available", "Swap available", "Swap available", "Swap available", "Swap available"]) },
+    Specialist: { rule: "Derm can swap to IM / metabolic review if metabolic overlay is active. Tricho review appears only if hair or scalp support is added.", options: opt(["dermatology review", "IM / metabolic review", "tricho review"], ["Recommended", "Clinician-gated", "Clinician-gated"]) },
+    "Functional Care": { rule: "LED booth can swap to bounded glow or metabolic-lite options.", options: opt(["LED booth", "RDN", "Pilates / Barre", "mobility", "acupuncture", "recovery coaching"], ["Recommended", "Swap available", "Swap available", "Swap available", "Swap available", "Swap available"]) },
     Pods: { rule: "Insight Night can swap to Hair Lab if hair concern is added. Skin Sunday can swap to Cravings & Calm only if adherence or body image issue is selected.", options: opt(["Skin Sunday Pod", "Insight Night / Metabolic Drift Lite Pod", "Hair Lab", "Cravings & Calm"], ["Recommended", "Included", "Clinician-gated", "Clinician-gated"]), agenda: podAgendas["Skin Sunday Pod"] },
     "Experience Pass": { rule: "LED booth can swap to a bounded MetaboGlow pass.", options: opt(["LED booth", "aftercare workshop", "acne-safe routine", "Pilates / Barre intro", "skin routine demo"], ["Recommended", "Swap available", "Swap available", "Swap available", "Swap available"]) },
     Kit: { rule: "One item swap. Full-size actives require Derma Actives Pack; procedures require tokens; LED Mask is Milestone unlock; DermaShield+ is Preview; MetaboRx Locked preview.", options: opt(["SPF ↔ HA", "vitamin C ↔ niacinamide", "azelaic ↔ ceramide", "underarm AHA ↔ salicylic wash", "fiber mini ↔ protein mini", "full-size actives", "procedures", "LED Mask", "DermaShield+", "MetaboRx"], ["Swap available", "Swap available", "Swap available", "Swap available", "Swap available", "Pack-only", "Milestone unlock", "Milestone unlock", "Preview", "Locked preview"]) },
   },
   longevity: {
     Specialist: { rule: "IM can swap to metabolic review, sleep / recovery review, or derm-adjacent review if visible vitality is active.", options: opt(["longevity-oriented IM review", "metabolic review", "sleep / recovery review", "derm-adjacent review"], ["Recommended", "Swap available", "Swap available", "Clinician-gated"]) },
-    "Functional Care": { rule: "Breathwork / recovery can swap to bounded longevity Includeds.", options: opt(["breathwork / recovery", "strength + VO2 prep", "RDN", "mobility", "Biopeak-style recovery / red-light"], ["Recommended", "Swap available", "Swap available", "Swap available", "Inventory-gated"]) },
+    "Functional Care": { rule: "Breathwork / recovery can swap to bounded longevity options.", options: opt(["breathwork / recovery", "strength + VO2 prep", "RDN", "mobility", "Biopeak-style recovery / red-light"], ["Recommended", "Swap available", "Swap available", "Swap available", "Inventory-gated"]) },
     Pods: { rule: "Brain & Focus stays primary. Executive Performance can swap if fatigue or sleep dominates.", options: opt(["Brain & Focus Pod", "Executive Performance & Travel Pod", "Healthspan Lab Pod", "Sleep & Recovery"], ["Recommended", "Included", "Swap available", "Clinician-gated"]), agenda: podAgendas["Brain & Focus Pod"] },
     "Experience Pass": { rule: "Breathwork reset can swap to bounded recovery and movement options.", options: opt(["breathwork reset", "movement-compliance", "Biopeak intro", "red-light", "mobility micro-class"], ["Recommended", "Swap available", "Swap available", "Inventory-gated", "Swap available"]) },
     Kit: { rule: "Pick one focus or vitality lane. Advanced testing and devices stay locked until they make sense.", options: opt(["Daily foundation", "Pantry support", "Powder support", "Focus support", "Pulse stack", "Visible vitality", "Sticky perk", "Advanced tests + devices"], ["Swap available", "Swap available", "Swap available", "Swap available", "Swap available", "Recommended", "Swap available", "Locked preview"]) },
@@ -882,9 +882,9 @@ const catalogForBlock = (block: MonthBlock, pathway: Pathway): { rule: string; o
   const pathwayCatalog = pathwaySwapCatalog[key][block.name];
   if (pathwayCatalog) return pathwayCatalog;
   if (block.name === "Coaching") return { rule: "User does not directly rebuild coaching. Coaching updates based on selected pod and rebalancing preference.", options: coachingCatalog.slice(0, 8).map((name, i) => ({ name, state: i < 2 ? "current emphasis" : "coach-guided" })) };
-  if (block.name === "Mental Support") return { rule: "Behavioral Included follows the plan and coach rebalancing; full sessions are quarterly or pack-based.", options: mentalCatalog.map((name, i) => ({ name, state: i < 2 ? "Included" : i === mentalCatalog.length - 1 ? "quarterly / pack-based" : "coach-guided" })) };
+  if (block.name === "Mental Support") return { rule: "Behavioral support follows the plan and coach rebalancing; full sessions are quarterly or pack-based.", options: mentalCatalog.map((name, i) => ({ name, state: i < 2 ? "Included" : i === mentalCatalog.length - 1 ? "quarterly / pack-based" : "coach-guided" })) };
   if (block.name === "Clinical / LED / Review") return { rule: "Choose 1 route per month if included. High-cost procedures are Milestone unlock or Pack-only.", options: reviewCatalog.map((name, i) => ({ name, state: i > 10 ? "Locked preview / Pack-only" : i > 5 ? "Milestone unlock" : "Pick 1" })) };
-  if (block.name === "Labs") return { rule: "Diagnostics are not casual swaps. They are Included, selective, advanced, or Clinician-gated.", options: diagnosticsCatalog[key].map((name, i) => ({ name, state: i === 0 ? "Included" : "Clinician-gated" })) };
+  if (block.name === "Labs") return { rule: "Diagnostics are not casual swaps. They are guided, selective, advanced, or clinician-gated.", options: diagnosticsCatalog[key].map((name, i) => ({ name, state: i === 0 ? "Included" : "Clinician-gated" })) };
   if (block.name === "Packs") return { rule: "Packs are not active by default; they unlock from progress or need.", options: packsCatalog[key].map((name, i) => ({ name, state: i === 0 ? "Preview" : "Pack-only" })) };
   return { rule: "Riders and devices are not active day 1. States: Locked, Preview, Eligible, Active.", options: futureCatalog.map((name, i) => ({ name, state: i < 2 ? "Preview" : "Locked" })) };
 };
