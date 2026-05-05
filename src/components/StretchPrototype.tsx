@@ -1296,7 +1296,7 @@ function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathw
     { label: "Your choices", copy: `You can pick one monthly pass. ${catalog.rule}`, items: catalog.options.map((item) => ({ ...item, state: item.state?.toLowerCase().includes("inventory") ? "inventory-gated" : inventoryStatus(item.name, item.state || "Selectable") })) },
     { label: "What stays fixed", copy: "Care, labs, pods, and pathway identity stay the same when you change passes." },
     { label: "What can open later", copy: "Tier-high experiences, procedures, devices, and repeated clinic sessions may require pack, milestone, or rider unlock." },
-    { label: "Actions", items: ["Choose pass", "Keep recommended pass", "Swap pass", "Ask coach"].map((name) => ({ name, state: "Action" })) },
+    { label: "Actions", items: ["Customize this", "Keep as is", "Ask coach"].map((name) => ({ name, state: "Action" })) },
   ];
 
   if (title === "Progress Passport") return [
