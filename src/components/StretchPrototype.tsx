@@ -1568,13 +1568,13 @@ function BuilderScreen({ pathway, onConfirm, onCoach, onSwap, onBack }: { pathwa
       <p className="mt-2 text-sm leading-6 text-muted-foreground">These are the choices that shape your month. Everything else stays clinically guided by your blueprint.</p>
     </div>
 
-    {compactCard("Section 1", "Functional Support", functionalRecommended, explainOption(functionalRecommended), "Recommended", "Choose or swap", () => onSwap("Functional session"))}
+    {compactCard("Section 1", "Choose your functional support", functionalRecommended, explainOption(functionalRecommended), "Recommended", "Choose or swap", () => onSwap("Functional session"))}
 
-    {compactCard("Section 2", "Pod Seats", podPrimary, explainOption(podPrimary), "Selected", "View pods or swap one", () => onSwap("Pods"))}
+    {compactCard("Section 2", "Choose your pod seats", podPrimary, explainOption(podPrimary), "Selected", "View pods or swap one", () => onSwap("Pods"))}
 
-    {compactCard("Section 3", "Experience Pass", passRecommended, explainOption(passRecommended), "Recommended", "Choose your pass", () => onSwap("Experience pass"))}
+    {compactCard("Section 3", "Choose your experience pass", passRecommended, explainOption(passRecommended), "Recommended", "Choose your pass", () => onSwap("Experience pass"))}
 
-    {compactCard("Section 4", "Kit Builder", kitPrimary?.recommendation || activation.kit, kitPrimary?.explanation || explainOption(activation.kit), kitPrimary?.status || "Recommended", "Build your kit", () => onSwap("Kit item"))}
+    {compactCard("Section 4", "Build your kit", kitPrimary?.recommendation || activation.kit, kitPrimary?.explanation || explainOption(activation.kit), kitPrimary?.status || "Recommended", "Build your kit", () => onSwap("Kit item"))}
 
     <div className="sticky bottom-0 -mx-5 grid gap-2 border-t border-border/70 bg-shell/95 px-5 py-4 backdrop-blur-xl">
       {onBack && <Button variant="soft" size="lg" onClick={onBack}><ChevronLeft className="size-4" /> Back to Blueprint</Button>}
@@ -1590,12 +1590,12 @@ function BuilderScreen({ pathway, onConfirm, onCoach, onSwap, onBack }: { pathwa
       <p className="mt-2 text-sm leading-6 text-muted-foreground">Optional perks, packs, progress rewards, and future unlocks. Your core plan stays the same.</p>
     </div>
 
-    {compactCard("Section 1", "Sticky Perk", stickyPerks[0], explainOption(stickyPerks[0]), "Included", "Browse perks", onCoach)}
+    {compactCard("Section 1", "Pick a sticky perk", stickyPerks[0], explainOption(stickyPerks[0]), "Included", "Browse perks", onCoach)}
 
     <div className="rounded-[2rem] bg-secondary/60 p-5 shadow-card">
       <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Section 2 · Optional</p>
-      <h2 className="mt-1 font-display text-2xl leading-tight">Perk Store</h2>
-      <p className="mt-1 text-sm leading-6 text-muted-foreground">Small extras that make your month more useful — demos, challenges, pod passes, and workshops.</p>
+      <h2 className="mt-1 font-display text-2xl leading-tight">Preview the Perk Store</h2>
+      <p className="mt-1 text-sm leading-6 text-muted-foreground">Small extras like masterclasses, partner demos, friend passes, tonic moments, and challenges.</p>
       <div className="mt-3 rounded-2xl bg-card px-4 py-3 shadow-card">
         <p className="text-sm font-semibold text-foreground">{stickyPerks[1] || stickyPerks[0]}</p>
         <p className="mt-1 text-xs leading-5 text-muted-foreground">{explainOption(stickyPerks[1] || stickyPerks[0])}</p>
@@ -1606,8 +1606,8 @@ function BuilderScreen({ pathway, onConfirm, onCoach, onSwap, onBack }: { pathwa
 
     <div className="rounded-[2rem] bg-secondary/60 p-5 shadow-card">
       <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Section 3 · Optional</p>
-      <h2 className="mt-1 font-display text-2xl leading-tight">Pack Store</h2>
-      <p className="mt-1 text-sm leading-6 text-muted-foreground">Deeper bundles that unlock from progress, top-up, or coach review.</p>
+      <h2 className="mt-1 font-display text-2xl leading-tight">Preview Pack Store</h2>
+      <p className="mt-1 text-sm leading-6 text-muted-foreground">Packs are optional boosts. Your core month still works without them.</p>
       <div className="mt-3 rounded-2xl bg-card p-4 shadow-card">
         <div className="flex items-start justify-between gap-3">
           <p className="text-sm font-semibold text-foreground">{recommendedPack}</p>
@@ -1621,8 +1621,8 @@ function BuilderScreen({ pathway, onConfirm, onCoach, onSwap, onBack }: { pathwa
 
     <div className="rounded-[2rem] bg-card p-5 shadow-card">
       <p className="text-xs font-bold uppercase tracking-wide text-accent">Section 4</p>
-      <h2 className="mt-1 font-display text-2xl leading-tight">Progress Passport</h2>
-      <p className="mt-1 text-sm leading-6 text-muted-foreground">Earn Milestone Bonus Credits by completing plan actions. Spend them on upgrades.</p>
+      <h2 className="mt-1 font-display text-2xl leading-tight">Track progress and earn MBC</h2>
+      <p className="mt-1 text-sm leading-6 text-muted-foreground">Complete plan actions to earn Milestone Bonus Credits toward selected upgrades.</p>
       <div className="mt-3 grid grid-cols-2 gap-2">
         <div className="rounded-2xl bg-secondary p-3">
           <p className="text-[11px] font-bold uppercase tracking-wide text-accent">Earn with</p>
@@ -1636,7 +1636,7 @@ function BuilderScreen({ pathway, onConfirm, onCoach, onSwap, onBack }: { pathwa
       <Button variant="soft" size="lg" className="mt-3 w-full" onClick={onCoach}>Learn about MBC <ArrowRight className="size-4" /></Button>
     </div>
 
-    {compactCard("Section 5", "Future Unlocks", pathway.strongestPack, `${statusChip(packMetaFor(pathway.strongestPack).status)}. ${packMetaFor(pathway.strongestPack).includes}`, "Preview", "See future unlocks", onCoach)}
+    {compactCard("Section 5", "What can open later", pathway.strongestPack, `${statusChip(packMetaFor(pathway.strongestPack).status)}. ${packMetaFor(pathway.strongestPack).includes}`, "Preview", "See future unlocks", onCoach)}
 
     <div className="sticky bottom-0 -mx-5 grid gap-2 border-t border-border/70 bg-shell/95 px-5 py-4 backdrop-blur-xl">
       <Button variant="soft" size="lg" onClick={() => setCustomizePage("core")}><ChevronLeft className="size-4" /> Back to Core Choices</Button>
