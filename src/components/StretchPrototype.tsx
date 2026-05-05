@@ -1537,7 +1537,50 @@ function ConfirmScreen({ pathway, resetQuiz, onBuild, onOpenJourney }: { pathway
   return <section className="space-y-6 px-5 py-7"><SectionTitle title="Keep your first month or swap one thing." copy="Your coach can help refine it after you begin." /><SoftCard onClick={onOpenJourney} className="space-y-4 border-Recommended/40"><div className="flex items-center justify-between"><p className="font-display text-2xl">First Month</p><Star className="size-5 text-accent" /></div><p className="text-muted-foreground">{pathway.title}</p><div className="grid grid-cols-3 gap-2 text-center text-xs">{pathway.guidedDefaults.slice(0, 3).map((item) => <span key={item} className="rounded-2xl bg-secondary px-2 py-3">{item}</span>)}</div></SoftCard><Button variant="hero" size="xl" className="w-full" onClick={onBuild}>Build my month</Button><Button variant="soft" size="xl" className="w-full" onClick={resetQuiz}>Swap answers</Button></section>;
 }
 
-function BuilderScreen({ pathway, onConfirm, onCoach, onSwap, onBack, initialPage = "core" }: { pathway: Pathway; onConfirm: () => void; onCoach: () => void; onSwap: (target?: string) => void; onBack?: () => void; initialPage?: "core" | "extras" }) {
+function PerkStoreDrawer({ onClose }: { onClose: () => void }) {
+  return <div className="absolute inset-0 z-[60] flex items-end bg-primary/25 p-3 backdrop-blur-sm" onClick={onClose}><div className="max-h-[84vh] w-full overflow-y-auto rounded-[2rem] bg-card p-6 shadow-float animate-slide-up" onClick={(event) => event.stopPropagation()}>
+    <div className="mb-5 flex items-start justify-between gap-3">
+      <div><p className="text-sm font-bold text-accent">Browse</p><h2 className="font-display text-3xl leading-tight">Perk Store</h2></div>
+      <button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent">Close</button>
+    </div>
+    <p className="text-sm leading-6 text-muted-foreground">Small extras that make your month feel more useful — demos, challenges, pod passes, tonic moments, partner perks, and workshops.</p>
+    <div className="mt-4 grid gap-2">{stickyPerks.map((perk) => {
+      const status = perkStatusMap[perk] || "Preview";
+      const statusClass = status === "Included" ? "bg-primary text-primary-foreground" : status === "Milestone" ? "bg-accent/15 text-accent" : "bg-secondary text-accent";
+      return <div key={perk} className="rounded-2xl bg-secondary p-4 shadow-card">
+        <div className="flex items-start justify-between gap-3">
+          <p className="text-sm font-semibold text-foreground">{perk}</p>
+          <span className={cn("shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold", statusClass)}>{status}</span>
+        </div>
+        <p className="mt-1 text-xs leading-5 text-muted-foreground">{explainOption(perk)}</p>
+      </div>;
+    })}</div>
+    <Button variant="soft" size="lg" className="mt-5 w-full" onClick={onClose}>Close</Button>
+  </div></div>;
+}
+
+function PackStoreDrawer({ pathway, onClose }: { pathway: Pathway; onClose: () => void }) {
+  const key = pathwayKeyFromTitle(pathway);
+  const packs = pathwayPacks[key];
+  const statusLabel: Record<PackMeta["status"], string> = { preview: "Preview", "pack-only": "Pack-only", milestone: "Milestone unlock", "top-up": "Top-up" };
+  return <div className="absolute inset-0 z-[60] flex items-end bg-primary/25 p-3 backdrop-blur-sm" onClick={onClose}><div className="max-h-[84vh] w-full overflow-y-auto rounded-[2rem] bg-card p-6 shadow-float animate-slide-up" onClick={(event) => event.stopPropagation()}>
+    <div className="mb-5 flex items-start justify-between gap-3">
+      <div><p className="text-sm font-bold text-accent">Browse</p><h2 className="font-display text-3xl leading-tight">Pack Store</h2></div>
+      <button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent">Close</button>
+    </div>
+    <p className="text-sm leading-6 text-muted-foreground">Packs are optional boosts for a specific need. Your core month still works without them.</p>
+    <div className="mt-4 grid gap-2">{packs.map((name) => { const meta = packMetaFor(name); return <div key={name} className="rounded-2xl bg-secondary p-4 shadow-card">
+      <div className="flex items-start justify-between gap-3">
+        <p className="text-sm font-semibold text-foreground">{name}</p>
+        <span className="shrink-0 rounded-full bg-card px-2 py-0.5 text-[11px] font-bold text-accent">{statusLabel[meta.status]}</span>
+      </div>
+      <p className="mt-2 text-xs leading-5 text-muted-foreground"><span className="font-bold text-accent">Includes:</span> {meta.includes}</p>
+      <p className="mt-1 text-xs leading-5 text-muted-foreground"><span className="font-bold text-accent">Useful when:</span> {meta.useful}</p>
+    </div>; })}</div>
+    <Button variant="soft" size="lg" className="mt-5 w-full" onClick={onClose}>Close</Button>
+  </div></div>;
+}
+
   const [customizePage, setCustomizePage] = useState<"core" | "extras">(initialPage);
   const key = pathwayKeyFromTitle(pathway);
   const activation = activationForPathway(key);
