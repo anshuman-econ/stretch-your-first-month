@@ -939,6 +939,7 @@ export default function StretchPrototype() {
   const [demoTile, setDemoTile] = useState<DemoTile | null>(null);
   const [showRebalance, setShowRebalance] = useState(false);
   const [swapTarget, setSwapTarget] = useState<string | null>(null);
+  const [builderInitialPage, setBuilderInitialPage] = useState<"core" | "extras">("core");
   const [inlineSwap, setInlineSwap] = useState<ControlledSwap | null>(null);
   const [explainerReturnStep, setExplainerReturnStep] = useState<Step>("landing");
 
@@ -1012,11 +1013,11 @@ export default function StretchPrototype() {
           {step === "goal" && <GoalScreen setGoal={setGoal} setStep={setStep} onExplain={() => openExplainer("goal")} />}
           {step === "explainer" && <ExplainerScreen onContinue={continueFromExplainer} onClose={() => setStep(explainerReturnStep)} />}
           {step === "quiz" && <QuizScreen quizIndex={quizIndex} chooseAnswer={chooseAnswer} onExplain={() => openExplainer("quiz")} />}
-          {step === "built" && <BuiltScreen pathway={pathway} resetQuiz={resetQuiz} onCustomize={() => setStep("builder")} onKeep={() => setStep("home")} onSwap={(target) => openControlledSwap(target)} />}
+          {step === "built" && <BuiltScreen pathway={pathway} resetQuiz={resetQuiz} onCustomize={(page) => { setBuilderInitialPage(page || "core"); setStep("builder"); }} onKeep={() => setStep("home")} onCoach={() => setShowRebalance(true)} />}
           {step === "swap" && <SwapScreen pathway={pathway} reason={answers.slice(0, 3).join(", ") || goal || pathway.reason} initialTarget={swapTarget} onBack={() => setStep("builder")} onCoach={() => setShowRebalance(true)} />}
           {step === "unlocks" && <UnlocksScreen pathway={pathway} answers={answers} onBuild={() => setStep("builder")} onKeep={() => setStep("confirm")} onSwap={() => openControlledSwap()} onCoach={() => setShowRebalance(true)} />}
           {step === "confirm" && <ConfirmScreen pathway={pathway} resetQuiz={resetQuiz} onBuild={() => setStep("builder")} onOpenJourney={() => openJourney(pathwayKey)} />}
-          {step === "builder" && <BuilderScreen pathway={pathway} onConfirm={() => setStep("home")} onCoach={() => setShowRebalance(true)} onSwap={(target?: string) => openControlledSwap(target)} onBack={() => setStep("built")} />}
+          {step === "builder" && <BuilderScreen pathway={pathway} onConfirm={() => setStep("home")} onCoach={() => setShowRebalance(true)} onSwap={(target?: string) => openControlledSwap(target)} onBack={() => setStep("built")} initialPage={builderInitialPage} />}
           {step === "week" && <WeekScreen onHome={() => setStep("home")} />}
           {step === "home" && <HomeScreen pathway={pathway} answers={answers} onCare={() => setStep("care")} onFuture={() => setStep("future")} onJourney={() => setStep("builder")} onStamp={setSelectedStamp} />}
           {step === "wallet" && <WalletScreen pathwayTitle={pathway.title} onFuture={() => setStep("future")} onStamp={setSelectedStamp} />}
@@ -1235,7 +1236,7 @@ function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathw
       { label: "Safe alternatives preview", copy: "These are informational only. To make a change, use Customize Your Month.", chips: specialistAlts.map((item) => ({ name: item.name, explanation: explainOption(item.name) })) },
       { label: "What stays fixed", copy: "Your pathway, safety checks, diagnostics rules, prescriptions, riders, and high-cost procedures stay protected." },
       { label: "What can open later", copy: "Advanced diagnostics, devices, packs, riders, and higher-cost services can appear later through milestones, clinician review, pack, or rider eligibility." },
-      { label: "Actions", items: ["Customize functional support", "Keep care route", "Ask coach"].map((name) => ({ name, state: "Action" })) },
+      { label: "Actions", items: ["Customize this", "Keep as is", "Ask coach"].map((name) => ({ name, state: "Action" })) },
     ];
   }
 
@@ -1259,7 +1260,7 @@ function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathw
     ] },
     { label: "What stays fixed", copy: "Your care route, lab plan, and safety checks do not change when you adjust a pod." },
     { label: "What can open later", copy: "More pods, higher-touch coaching, and mental-health deep dives can appear through packs or future eligibility." },
-    { label: "Actions", items: ["View pod agenda", "Swap one pod", "Keep current pods", "Ask coach"].map((name) => ({ name, state: "Action" })) },
+    { label: "Actions", items: ["Customize this", "Keep as is", "Ask coach"].map((name) => ({ name, state: "Action" })) },
   ];
 
   if (title === "Kit + Perks") return [
@@ -1281,7 +1282,7 @@ function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathw
     ] },
     { label: "What stays fixed", copy: "Care route, lab plan, and safety checks stay the same. Premium actives and full boxes are not freely added." },
     { label: "What can open later", copy: "Premium actives, full boxes, advanced nutrition support, devices, and rider-funded items appear later through packs, MBC, or future unlocks." },
-    { label: "Actions", items: ["Build kit", "Swap one kit item", "Choose sticky perk", "Ask coach"].map((name) => ({ name, state: "Action" })) },
+    { label: "Actions", items: ["Customize this", "Keep as is", "Ask coach"].map((name) => ({ name, state: "Action" })) },
   ];
 
   if (title === "Experience Pass") return [
@@ -1295,7 +1296,7 @@ function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathw
     { label: "Your choices", copy: `You can pick one monthly pass. ${catalog.rule}`, items: catalog.options.map((item) => ({ ...item, state: item.state?.toLowerCase().includes("inventory") ? "inventory-gated" : inventoryStatus(item.name, item.state || "Selectable") })) },
     { label: "What stays fixed", copy: "Care, labs, pods, and pathway identity stay the same when you change passes." },
     { label: "What can open later", copy: "Tier-high experiences, procedures, devices, and repeated clinic sessions may require pack, milestone, or rider unlock." },
-    { label: "Actions", items: ["Choose pass", "Keep recommended pass", "Swap pass", "Ask coach"].map((name) => ({ name, state: "Action" })) },
+    { label: "Actions", items: ["Customize this", "Keep as is", "Ask coach"].map((name) => ({ name, state: "Action" })) },
   ];
 
   if (title === "Progress Passport") return [
@@ -1312,7 +1313,7 @@ function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathw
     { label: "Your choices", copy: "This is not a swap block — it is a progress tracker. You can choose how you spend earned MBC later." },
     { label: "What stays fixed", copy: "Earned MBC cannot be removed by changes to other parts of the plan." },
     { label: "What can open later", copy: "MBC supports selected packs, kit upgrades, device buy-downs, future pathway add-ons, and partner experiences." },
-    { label: "Actions", items: ["Learn about MBC", "View Wallet", "Continue"].map((name) => ({ name, state: "Action" })) },
+    { label: "Actions", items: ["Customize this", "Keep as is", "Ask coach"].map((name) => ({ name, state: "Action" })) },
   ];
 
   // Future Unlocks
@@ -1336,28 +1337,23 @@ function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathw
     ] },
     { label: "What stays fixed", copy: "Your day-one plan, safety checks, and pathway identity stay the same whether or not future items open." },
     { label: "What can open later", copy: "Packs, devices, riders, advanced labs, and adjacent pathways are locked / preview / eligible / active depending on progress, eligibility, or clinician review." },
-    { label: "Actions", items: ["See future unlocks", "Mark interest", "Not now"].map((name) => ({ name, state: "Action" })) },
+    { label: "Actions", items: ["Customize this", "Keep as is", "Ask coach"].map((name) => ({ name, state: "Action" })) },
   ];
 }
 
-function BlueprintDrawer({ title, block, pathway, selectedOption, onSelect, onClose, onSwap }: { title: BlueprintTitle; block: MonthBlock; pathway: Pathway; selectedOption?: string; onSelect: (name: string) => void; onClose: () => void; onSwap: (target?: string) => void }) {
+function BlueprintDrawer({ title, block, pathway, selectedOption, onSelect, onClose, onCustomize, onCoach }: { title: BlueprintTitle; block: MonthBlock; pathway: Pathway; selectedOption?: string; onSelect: (name: string) => void; onClose: () => void; onCustomize: (title: BlueprintTitle) => void; onCoach: () => void }) {
   const sections = blueprintDrawerSections(title, block, pathway);
   const handleAction = (action: string) => {
     const lower = action.toLowerCase();
-    if (/keep|continue|not now/i.test(lower)) { onClose(); return; }
-    if (/choose functional|functional support/i.test(lower)) { onSwap("Functional Care"); return; }
-    if (/swap one block|swap one pod|swap one kit|swap pass/i.test(lower)) { onSwap(swapTargetForBlueprint(title)); return; }
-    if (/ask coach/i.test(lower)) { onClose(); return; }
-    if (/build kit|choose sticky/i.test(lower)) { onSwap("Kit item"); return; }
-    if (/choose pass|keep recommended pass/i.test(lower)) { onSwap("Experience pass"); return; }
-    if (/learn about mbc|view wallet/i.test(lower)) { onClose(); return; }
-    if (/see future|mark interest|view pod/i.test(lower)) { onClose(); return; }
+    if (/keep/i.test(lower)) { onClose(); return; }
+    if (/customize/i.test(lower)) { onCustomize(title); return; }
+    if (/ask coach/i.test(lower)) { onCoach(); return; }
     onClose();
   };
-  return <div className="absolute inset-0 z-50 flex items-end bg-primary/25 p-3 backdrop-blur-sm" onClick={onClose}><div className="max-h-[84vh] w-full overflow-y-auto rounded-[2rem] bg-card p-6 shadow-float animate-slide-up" onClick={(event) => event.stopPropagation()}><div className="mb-5 flex items-start justify-between gap-3"><div className="flex items-start gap-3"><div className="rounded-full bg-secondary p-3 text-accent">{iconForBlock(title)}</div><div><p className="text-sm font-bold text-accent">Blueprint detail</p><h2 className="font-display text-3xl leading-tight">{title}</h2>{selectedOption && <p className="mt-1 text-xs font-bold text-accent">Selected: {selectedOption}</p>}</div></div><button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Close</button></div><div className="grid gap-3">{sections.map((section) => <BlueprintSectionBlock key={section.label} section={section} selectedOption={selectedOption} onSelect={onSelect} onAction={handleAction} />)}</div><div className="mt-5 grid gap-3"><Button variant="hero" size="xl" onClick={onClose}>Keep this piece</Button>{block.swappable && <Button variant="soft" size="xl" onClick={() => onSwap(swapTargetForBlueprint(title))}>Swap this block</Button>}<Button variant="soft" size="xl" onClick={onClose}>Ask coach</Button></div></div></div>;
+  return <div className="absolute inset-0 z-50 flex items-end bg-primary/25 p-3 backdrop-blur-sm" onClick={onClose}><div className="max-h-[84vh] w-full overflow-y-auto rounded-[2rem] bg-card p-6 shadow-float animate-slide-up" onClick={(event) => event.stopPropagation()}><div className="mb-5 flex items-start justify-between gap-3"><div className="flex items-start gap-3"><div className="rounded-full bg-secondary p-3 text-accent">{iconForBlock(title)}</div><div><p className="text-sm font-bold text-accent">Blueprint detail</p><h2 className="font-display text-3xl leading-tight">{title}</h2>{selectedOption && <p className="mt-1 text-xs font-bold text-accent">Selected: {selectedOption}</p>}</div></div><button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Close</button></div><div className="grid gap-3">{sections.map((section) => <BlueprintSectionBlock key={section.label} section={section} selectedOption={selectedOption} onSelect={onSelect} onAction={handleAction} />)}</div><div className="mt-5 grid gap-3"><Button variant="hero" size="xl" onClick={() => onCustomize(title)}>Customize this</Button><Button variant="soft" size="xl" onClick={onClose}>Keep as is</Button><Button variant="soft" size="xl" onClick={onCoach}>Ask coach</Button></div></div></div>;
 }
 
-function BuiltScreen({ pathway, resetQuiz, onCustomize, onKeep, onSwap }: { pathway: Pathway; resetQuiz: () => void; onCustomize: () => void; onKeep: () => void; onSwap: (target?: string) => void }) {
+function BuiltScreen({ pathway, resetQuiz, onCustomize, onKeep, onCoach }: { pathway: Pathway; resetQuiz: () => void; onCustomize: (page?: "core" | "extras") => void; onKeep: () => void; onCoach: () => void }) {
   const [drawerCard, setDrawerCard] = useState<{ title: BlueprintTitle; block: MonthBlock } | null>(null);
   const [blueprintSelections, setBlueprintSelections] = useState<Partial<Record<BlueprintTitle, string>>>({});
   const planCards = buildPlanCards(pathway);
@@ -1371,7 +1367,12 @@ function BuiltScreen({ pathway, resetQuiz, onCustomize, onKeep, onSwap }: { path
     { title: "Progress Passport", subtitle: "Complete actions and earn Milestone Bonus Credits.", block: progressBlock },
     { title: "Future Unlocks", subtitle: "Packs, devices, riders, and adjacent pathways can open as your pattern becomes clearer.", block: futureBlock },
   ];
-  return <section className="space-y-5 px-5 py-7"><div className="rounded-[2rem] bg-hero p-6 shadow-float"><Sparkles className="mb-5 size-8 text-accent" /><SectionTitle title="Stretch built your first-month blueprint." copy="Based on your answers, we built a guided month with care, coaching, pods, kit, pass, progress rewards, and future unlocks — all matched to what you want to feel better in 30 days." /></div><div className="rounded-[2rem] bg-card p-5 shadow-card"><p className="text-sm font-semibold text-accent">Recommended pathway</p><h2 className="mt-1 font-display text-3xl leading-tight">{pathway.title}</h2><InfoBlock label="Why" copy={pathway.reason} /></div><div className="grid gap-3">{blueprint.map((card, index) => <button key={card.title} onClick={() => setDrawerCard({ title: card.title, block: card.block })} className="group w-full rounded-[2rem] bg-card p-5 text-left shadow-card transition-smooth hover:-translate-y-0.5 hover:shadow-float focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><div className="flex items-start gap-4"><div className="grid size-12 shrink-0 place-items-center rounded-2xl bg-secondary text-accent shadow-card">{iconForBlock(card.title)}</div><div className="min-w-0 flex-1"><div className="flex items-center justify-between gap-3"><p className="text-xs font-bold uppercase tracking-wide text-accent">Blueprint {index + 1}</p><ArrowRight className="size-4 text-accent transition-smooth group-hover:translate-x-0.5" /></div><h2 className="mt-1 font-display text-2xl leading-tight">{card.title}</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">{blueprintSelections[card.title] || card.subtitle}</p></div></div></button>)}</div><div className="grid gap-3"><Button variant="hero" size="xl" onClick={onCustomize}>Customize my month <ArrowRight className="size-4" /></Button><Button variant="soft" size="xl" onClick={onKeep}>Keep recommended</Button><Button variant="soft" size="lg" onClick={resetQuiz}>Change answers</Button></div>{drawerCard && <BlueprintDrawer title={drawerCard.title} block={drawerCard.block} pathway={pathway} selectedOption={blueprintSelections[drawerCard.title]} onSelect={(name) => setBlueprintSelections((current) => ({ ...current, [drawerCard.title]: name }))} onClose={() => setDrawerCard(null)} onSwap={onSwap} />}</section>;
+  const handleCustomizeFromDrawer = (drawerTitle: BlueprintTitle) => {
+    setDrawerCard(null);
+    const extrasPages: BlueprintTitle[] = ["Progress Passport", "Future Unlocks"];
+    onCustomize(extrasPages.includes(drawerTitle) ? "extras" : "core");
+  };
+  return <section className="space-y-5 px-5 py-7"><div className="rounded-[2rem] bg-hero p-6 shadow-float"><Sparkles className="mb-5 size-8 text-accent" /><SectionTitle title="Stretch built your first-month blueprint." copy="Based on your answers, we built a guided month with care, coaching, pods, kit, pass, progress rewards, and future unlocks — all matched to what you want to feel better in 30 days." /></div><div className="rounded-[2rem] bg-card p-5 shadow-card"><p className="text-sm font-semibold text-accent">Recommended pathway</p><h2 className="mt-1 font-display text-3xl leading-tight">{pathway.title}</h2><InfoBlock label="Why" copy={pathway.reason} /></div><div className="grid gap-3">{blueprint.map((card, index) => <button key={card.title} onClick={() => setDrawerCard({ title: card.title, block: card.block })} className="group w-full rounded-[2rem] bg-card p-5 text-left shadow-card transition-smooth hover:-translate-y-0.5 hover:shadow-float focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><div className="flex items-start gap-4"><div className="grid size-12 shrink-0 place-items-center rounded-2xl bg-secondary text-accent shadow-card">{iconForBlock(card.title)}</div><div className="min-w-0 flex-1"><div className="flex items-center justify-between gap-3"><p className="text-xs font-bold uppercase tracking-wide text-accent">Blueprint {index + 1}</p><ArrowRight className="size-4 text-accent transition-smooth group-hover:translate-x-0.5" /></div><h2 className="mt-1 font-display text-2xl leading-tight">{card.title}</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">{blueprintSelections[card.title] || card.subtitle}</p></div></div></button>)}</div><div className="grid gap-3"><Button variant="hero" size="xl" onClick={() => onCustomize()}>Customize my month <ArrowRight className="size-4" /></Button><Button variant="soft" size="xl" onClick={onKeep}>Keep recommended</Button><Button variant="soft" size="lg" onClick={resetQuiz}>Change answers</Button></div>{drawerCard && <BlueprintDrawer title={drawerCard.title} block={drawerCard.block} pathway={pathway} selectedOption={blueprintSelections[drawerCard.title]} onSelect={(name) => setBlueprintSelections((current) => ({ ...current, [drawerCard.title]: name }))} onClose={() => setDrawerCard(null)} onCustomize={handleCustomizeFromDrawer} onCoach={onCoach} />}</section>;
 }
 
 type ActivationPicker = "functional" | "pods" | "kit" | "pass" | "mbc" | "future";
@@ -1528,8 +1529,8 @@ function ConfirmScreen({ pathway, resetQuiz, onBuild, onOpenJourney }: { pathway
   return <section className="space-y-6 px-5 py-7"><SectionTitle title="Keep your first month or swap one thing." copy="Your coach can help refine it after you begin." /><SoftCard onClick={onOpenJourney} className="space-y-4 border-Recommended/40"><div className="flex items-center justify-between"><p className="font-display text-2xl">First Month</p><Star className="size-5 text-accent" /></div><p className="text-muted-foreground">{pathway.title}</p><div className="grid grid-cols-3 gap-2 text-center text-xs">{pathway.guidedDefaults.slice(0, 3).map((item) => <span key={item} className="rounded-2xl bg-secondary px-2 py-3">{item}</span>)}</div></SoftCard><Button variant="hero" size="xl" className="w-full" onClick={onBuild}>Build my month</Button><Button variant="soft" size="xl" className="w-full" onClick={resetQuiz}>Swap answers</Button></section>;
 }
 
-function BuilderScreen({ pathway, onConfirm, onCoach, onSwap, onBack }: { pathway: Pathway; onConfirm: () => void; onCoach: () => void; onSwap: (target?: string) => void; onBack?: () => void }) {
-  const [customizePage, setCustomizePage] = useState<"core" | "extras">("core");
+function BuilderScreen({ pathway, onConfirm, onCoach, onSwap, onBack, initialPage = "core" }: { pathway: Pathway; onConfirm: () => void; onCoach: () => void; onSwap: (target?: string) => void; onBack?: () => void; initialPage?: "core" | "extras" }) {
+  const [customizePage, setCustomizePage] = useState<"core" | "extras">(initialPage);
   const key = pathwayKeyFromTitle(pathway);
   const activation = activationForPathway(key);
   const swap = pathwaySwapCatalog[key];
