@@ -1701,6 +1701,8 @@ function BuilderScreen({ pathway, onConfirm, onCoach, onSwap, onBack, initialPag
       <Button variant="hero" size="xl" onClick={onConfirm}>Confirm my month <ArrowRight className="size-4" /></Button>
       <Button variant="soft" size="lg" onClick={onCoach}><MessageCircle className="size-4" /> Ask coach</Button>
     </div>
+    {showPerkStore && <PerkStoreDrawer onClose={() => setShowPerkStore(false)} />}
+    {showPackStore && <PackStoreDrawer pathway={pathway} onClose={() => setShowPackStore(false)} />}
   </section>;
 }
 function ProgressRing({ value }: { value: number }) {
