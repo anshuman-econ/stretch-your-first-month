@@ -245,7 +245,7 @@ const pathwayDefaults: Record<PathwayKey, Record<string, string>> = {
     Labs: "First rotation: HbA1c, lipids, ApoB; second rotation: hs-CRP, Vitamin D, ferritin; third rotation: TSH / FT4, Lp(a) if family history",
     Pods: "Brain & Focus Pod + Executive Performance & Travel Pod",
     "Experience Pass": "breathwork reset, Biopeak intro group talk, movement-compliance session, red-light",
-    Kit: "foundational support, pantry / snack tool, powder, nootropic, pulse stack, visible vitality, Swap available",
+    Kit: "foundational support, pantry / snack tool, powder, nootropic, pulse stack, visible vitality, sticky perk",
     Packs: "Brain Sprint or Nootropic Builder",
     "Future Unlocks": "Brain Sprint, Nootropic Builder, Executive Jet Lag, Smart Ring, Longevity Lab Rider, NeuroSleep Rider",
   },
