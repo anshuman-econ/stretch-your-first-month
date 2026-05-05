@@ -1313,7 +1313,7 @@ function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathw
     { label: "Your choices", copy: "This is not a swap block — it is a progress tracker. You can choose how you spend earned MBC later." },
     { label: "What stays fixed", copy: "Earned MBC cannot be removed by changes to other parts of the plan." },
     { label: "What can open later", copy: "MBC supports selected packs, kit upgrades, device buy-downs, future pathway add-ons, and partner experiences." },
-    { label: "Actions", items: ["Learn about MBC", "View Wallet", "Continue"].map((name) => ({ name, state: "Action" })) },
+    { label: "Actions", items: ["Customize this", "Keep as is", "Ask coach"].map((name) => ({ name, state: "Action" })) },
   ];
 
   // Future Unlocks
