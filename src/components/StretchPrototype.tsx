@@ -1337,7 +1337,7 @@ function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathw
     ] },
     { label: "What stays fixed", copy: "Your day-one plan, safety checks, and pathway identity stay the same whether or not future items open." },
     { label: "What can open later", copy: "Packs, devices, riders, advanced labs, and adjacent pathways are locked / preview / eligible / active depending on progress, eligibility, or clinician review." },
-    { label: "Actions", items: ["See future unlocks", "Mark interest", "Not now"].map((name) => ({ name, state: "Action" })) },
+    { label: "Actions", items: ["Customize this", "Keep as is", "Ask coach"].map((name) => ({ name, state: "Action" })) },
   ];
 }
 
