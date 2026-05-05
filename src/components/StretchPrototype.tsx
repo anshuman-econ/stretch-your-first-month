@@ -1236,7 +1236,7 @@ function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathw
       { label: "Safe alternatives preview", copy: "These are informational only. To make a change, use Customize Your Month.", chips: specialistAlts.map((item) => ({ name: item.name, explanation: explainOption(item.name) })) },
       { label: "What stays fixed", copy: "Your pathway, safety checks, diagnostics rules, prescriptions, riders, and high-cost procedures stay protected." },
       { label: "What can open later", copy: "Advanced diagnostics, devices, packs, riders, and higher-cost services can appear later through milestones, clinician review, pack, or rider eligibility." },
-      { label: "Actions", items: ["Customize functional support", "Keep care route", "Ask coach"].map((name) => ({ name, state: "Action" })) },
+      { label: "Actions", items: ["Customize this", "Keep as is", "Ask coach"].map((name) => ({ name, state: "Action" })) },
     ];
   }
 
