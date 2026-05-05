@@ -1529,163 +1529,122 @@ function ConfirmScreen({ pathway, resetQuiz, onBuild, onOpenJourney }: { pathway
 }
 
 function BuilderScreen({ pathway, onConfirm, onCoach, onSwap, onBack }: { pathway: Pathway; onConfirm: () => void; onCoach: () => void; onSwap: (target?: string) => void; onBack?: () => void }) {
+  const [customizePage, setCustomizePage] = useState<"core" | "extras">("core");
   const key = pathwayKeyFromTitle(pathway);
   const activation = activationForPathway(key);
   const swap = pathwaySwapCatalog[key];
 
   const functionalRecommended = splitBlueprintList(activation.functional)[0] || activation.functional;
-  const functionalAlternatives = (swap["Functional Care"]?.options || []).map((o) => o.name).filter((n) => n !== functionalRecommended).slice(0, 3);
-
-  const podNames = splitBlueprintList(activation.pods);
-  const podAlternatives = (swap.Pods?.options || []).map((o) => o.name).filter((n) => !podNames.includes(n)).slice(0, 3);
-
-  const kitCategoriesData = kitCategoriesFor(key);
-
+  const podPrimary = splitBlueprintList(activation.pods)[0] || activation.pods;
   const passRecommended = splitBlueprintList(activation.passes)[0] || activation.passes;
-  const passAlternatives = (swap["Experience Pass"]?.options || []).map((o) => o.name).filter((n) => n !== passRecommended).slice(0, 3);
-
-  const mbcEarn = ["Build kit", "Join your pod", "Book your experience pass", "Complete your lab", "Finish coaching", "Keep a 7-day streak"];
-  const mbcUse = ["Selected packs", "Kit upgrades", "Device buy-downs", "Future pathway add-ons", "Special partner experiences"];
-
+  const kitPrimary = kitCategoriesFor(key)[0];
   const packs = pathwayPacks[key];
+  const recommendedPack = packs[0];
+  const recommendedPackMeta = packMetaFor(recommendedPack);
 
-  const optionRow = (name: string, status: string, isSelected = false) => (
-    <div key={name} className={cn("rounded-2xl px-4 py-3 shadow-card", isSelected ? "bg-primary text-primary-foreground" : "bg-card")}>
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0 flex-1">
-          <p className="text-sm font-semibold">{name}</p>
-          <p className={cn("mt-1 text-xs leading-5", isSelected ? "text-primary-foreground/85" : "text-muted-foreground")}>{explainOption(name)}</p>
-          <span className={cn("mt-2 inline-flex rounded-full px-2 py-0.5 text-[11px] font-bold", isSelected ? "bg-primary-foreground/15 text-primary-foreground" : "bg-secondary text-accent")}>{status}</span>
-        </div>
-        {isSelected && <Check className="mt-0.5 size-4 shrink-0" />}
-      </div>
-    </div>
-  );
-
-  const sectionShell = (eyebrow: string, title: string, copy: string, children: React.ReactNode, action?: { label: string; onClick: () => void; variant?: "hero" | "soft" }) => (
+  const compactCard = (eyebrow: string, title: string, recommended: string, explanation: string, status: string, cta: string, onCta: () => void) => (
     <div className="rounded-[2rem] bg-card p-5 shadow-card">
       <p className="text-xs font-bold uppercase tracking-wide text-accent">{eyebrow}</p>
       <h2 className="mt-1 font-display text-2xl leading-tight">{title}</h2>
-      <p className="mt-1 text-sm leading-6 text-muted-foreground">{copy}</p>
-      <div className="mt-4 grid gap-2">{children}</div>
-      {action && <Button variant={action.variant || "soft"} size="lg" className="mt-4 w-full" onClick={action.onClick}>{action.label}</Button>}
+      <div className="mt-3 rounded-2xl bg-secondary p-4">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-semibold text-foreground">{recommended}</p>
+            <p className="mt-1 text-xs leading-5 text-muted-foreground">{explanation}</p>
+          </div>
+          <span className="shrink-0 rounded-full bg-primary px-2 py-0.5 text-[11px] font-bold text-primary-foreground">{status}</span>
+        </div>
+      </div>
+      <Button variant="soft" size="lg" className="mt-3 w-full" onClick={onCta}>{cta} <ArrowRight className="size-4" /></Button>
     </div>
   );
 
-  const statusChip = (status: PackMeta["status"]) => {
-    const map: Record<PackMeta["status"], string> = { preview: "Preview", "pack-only": "Pack-only", milestone: "Milestone unlock", "top-up": "Top-up" };
-    return map[status];
-  };
+  const statusChip = (status: PackMeta["status"]) => ({ preview: "Preview", "pack-only": "Pack-only", milestone: "Milestone unlock", "top-up": "Top-up" }[status]);
 
-  return <section className="space-y-5 px-5 pb-32 pt-6">
+  if (customizePage === "core") return <section className="space-y-5 px-5 pb-32 pt-6">
     <div className="rounded-[2rem] bg-hero p-6 shadow-float">
-      <p className="text-sm font-bold text-accent">Step 2 of 3</p>
+      <p className="text-sm font-bold text-accent">Step 2 of 3 · Core Choices</p>
       <h1 className="mt-1 font-display text-4xl leading-tight">Customize Your Month</h1>
-      <p className="mt-2 text-sm leading-6 text-muted-foreground">These are the only parts you can change. Everything else stays clinically guided by your blueprint.</p>
+      <p className="mt-2 text-sm leading-6 text-muted-foreground">These are the choices that shape your month. Everything else stays clinically guided by your blueprint.</p>
     </div>
 
-    {sectionShell("Section 1", "Functional Support", "Your hands-on care session — pick the option that fits this month.", <>
-      {optionRow(functionalRecommended, "Recommended", true)}
-      {functionalAlternatives.map((name) => optionRow(name, "Alternative"))}
-    </>, { label: "Choose this support", variant: "hero", onClick: () => onSwap("Functional session") })}
+    {compactCard("Section 1", "Functional Support", functionalRecommended, explainOption(functionalRecommended), "Recommended", "Choose or swap", () => onSwap("Functional session"))}
 
-    {sectionShell("Section 2", "Your pod seats", "Pods are guided group sessions. Your coach uses them to shape your weekly actions.", <>
-      {podNames.map((pod) => { const d = podDetails[pod]; return (
-        <div key={pod} className="rounded-2xl bg-secondary p-4 shadow-card">
-          <div className="flex items-start justify-between gap-3">
-            <p className="text-sm font-semibold text-foreground">{pod}</p>
-            <span className="shrink-0 rounded-full bg-primary px-2 py-0.5 text-[11px] font-bold text-primary-foreground">Selected pod</span>
-          </div>
-          {d && <div className="mt-2 grid gap-1 text-xs leading-5 text-muted-foreground">
-            <p><span className="font-bold text-accent">Covers:</span> {d.covers}</p>
-            <p><span className="font-bold text-accent">You leave with:</span> {d.leaveWith}</p>
-            <p><span className="font-bold text-accent">Coach uses it for:</span> {d.coachUse}</p>
-          </div>}
-        </div>
-      ); })}
-      {podAlternatives.slice(0, 3).map((name) => (
-        <div key={name} className="rounded-2xl bg-card px-4 py-3 shadow-card">
-          <div className="flex items-start justify-between gap-3">
-            <p className="text-sm font-semibold text-foreground">{name}</p>
-            <span className="shrink-0 rounded-full bg-secondary px-2 py-0.5 text-[11px] font-bold text-accent">Alternative</span>
-          </div>
-          <p className="mt-1 text-xs leading-5 text-muted-foreground">{podDetails[name]?.covers || podAgendas[name] || "Alternative pod option."}</p>
-        </div>
-      ))}
-    </>, { label: "Keep pods or swap one", variant: "soft", onClick: () => onSwap("Pods") })}
+    {compactCard("Section 2", "Pod Seats", podPrimary, explainOption(podPrimary), "Selected", "View pods or swap one", () => onSwap("Pods"))}
 
-    {sectionShell("Section 3", "Your kit", "Your kit is the at-home support for the month.", <>
-      {kitCategoriesData.map((cat) => {
-        const statusClass = cat.status === "Recommended" ? "bg-primary text-primary-foreground" : cat.status === "Sticky perk" ? "bg-accent/15 text-accent" : cat.status === "Locked" ? "bg-muted text-muted-foreground" : "bg-secondary text-accent";
-        return (
-          <div key={cat.label} className="rounded-2xl bg-secondary p-4 shadow-card">
-            <div className="flex items-start justify-between gap-3">
-              <p className="text-xs font-bold uppercase tracking-wide text-accent">{cat.label}</p>
-              <span className={cn("shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold", statusClass)}>{cat.status}</span>
-            </div>
-            <p className="mt-1 text-sm font-semibold text-foreground">{cat.recommendation}</p>
-            <p className="mt-1 text-xs leading-5 text-muted-foreground">{cat.explanation}</p>
-          </div>
-        );
-      })}
-    </>, { label: "Build kit and swap one item", variant: "hero", onClick: () => onSwap("Kit item") })}
+    {compactCard("Section 3", "Experience Pass", passRecommended, explainOption(passRecommended), "Recommended", "Choose your pass", () => onSwap("Experience pass"))}
 
-    {sectionShell("Section 4", "Experience Pass", "One bookable monthly experience. Some options are inventory-gated.", <>
-      {optionRow(passRecommended, "Recommended", true)}
-      {passAlternatives.map((name) => {
-        const inventoryGated = highTierPasses.includes(name) || /clinic|LED|red-light|Biopeak/i.test(name);
-        return optionRow(name, inventoryGated ? "Inventory-gated" : "Alternative");
-      })}
-    </>, { label: "Choose this pass", variant: "hero", onClick: () => onSwap("Experience pass") })}
-
-    {sectionShell("Section 5", "Progress Passport", "Earn Milestone Bonus Credits by completing plan actions. Spend them on upgrades.", <>
-      <div className="rounded-2xl bg-secondary p-4">
-        <p className="text-xs font-bold uppercase tracking-wide text-accent">Earn with</p>
-        <ul className="mt-2 grid gap-1 text-sm leading-6 text-foreground">{mbcEarn.map((item) => <li key={item} className="flex items-start gap-2"><Check className="mt-1 size-3 shrink-0 text-accent" />{item}</li>)}</ul>
-      </div>
-      <div className="rounded-2xl bg-secondary p-4">
-        <p className="text-xs font-bold uppercase tracking-wide text-accent">Use for</p>
-        <ul className="mt-2 grid gap-1 text-sm leading-6 text-foreground">{mbcUse.map((item) => <li key={item} className="flex items-start gap-2"><Sparkles className="mt-1 size-3 shrink-0 text-accent" />{item}</li>)}</ul>
-      </div>
-    </>, { label: "View Wallet", variant: "soft", onClick: onCoach })}
-
-    <div className="rounded-[2rem] bg-secondary/60 p-5 shadow-card">
-      <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Section 6 · Optional</p>
-      <h2 className="mt-1 font-display text-2xl leading-tight">Perk Store preview</h2>
-      <p className="mt-1 text-sm leading-6 text-muted-foreground">Browse partner perks. These are optional — your plan stays the same.</p>
-      <div className="mt-4 grid gap-2">{stickyPerks.map((perk) => (
-        <div key={perk} className="rounded-2xl bg-card px-4 py-3 shadow-card">
-          <p className="text-sm font-semibold text-foreground">{perk}</p>
-          <p className="mt-1 text-xs leading-5 text-muted-foreground">{explainOption(perk)}</p>
-          <span className="mt-2 inline-flex rounded-full bg-secondary px-2 py-0.5 text-[11px] font-bold text-accent">Preview</span>
-        </div>
-      ))}</div>
-    </div>
-
-    <div className="rounded-[2rem] bg-secondary/60 p-5 shadow-card">
-      <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Section 7 · Optional</p>
-      <h2 className="mt-1 font-display text-2xl leading-tight">Pack Store preview</h2>
-      <p className="mt-1 text-sm leading-6 text-muted-foreground">Deeper bundles that unlock from progress, top-up, or coach review.</p>
-      <div className="mt-4 grid gap-2">{packs.map((name) => { const meta = packMetaFor(name); return (
-        <div key={name} className="rounded-2xl bg-card p-4 shadow-card">
-          <div className="flex items-start justify-between gap-3">
-            <p className="text-sm font-semibold text-foreground">{name}</p>
-            <span className="shrink-0 rounded-full bg-secondary px-2 py-0.5 text-[11px] font-bold text-accent">{statusChip(meta.status)}</span>
-          </div>
-          <p className="mt-2 text-xs leading-5 text-muted-foreground"><span className="font-bold text-accent">Includes:</span> {meta.includes}</p>
-          <p className="mt-1 text-xs leading-5 text-muted-foreground"><span className="font-bold text-accent">Useful when:</span> {meta.useful}</p>
-        </div>
-      ); })}</div>
-    </div>
+    {compactCard("Section 4", "Kit Builder", kitPrimary?.recommendation || activation.kit, kitPrimary?.explanation || explainOption(activation.kit), kitPrimary?.status || "Recommended", "Build your kit", () => onSwap("Kit item"))}
 
     <div className="sticky bottom-0 -mx-5 grid gap-2 border-t border-border/70 bg-shell/95 px-5 py-4 backdrop-blur-xl">
       {onBack && <Button variant="soft" size="lg" onClick={onBack}><ChevronLeft className="size-4" /> Back to Blueprint</Button>}
+      <Button variant="hero" size="xl" onClick={() => setCustomizePage("extras")}>Continue to Extras <ArrowRight className="size-4" /></Button>
+      <Button variant="soft" size="lg" onClick={onCoach}><MessageCircle className="size-4" /> Ask coach</Button>
+    </div>
+  </section>;
+
+  return <section className="space-y-5 px-5 pb-32 pt-6">
+    <div className="rounded-[2rem] bg-hero p-6 shadow-float">
+      <p className="text-sm font-bold text-accent">Step 2 of 3 · Extras & Unlocks</p>
+      <h1 className="mt-1 font-display text-4xl leading-tight">Customize Your Month</h1>
+      <p className="mt-2 text-sm leading-6 text-muted-foreground">Optional perks, packs, progress rewards, and future unlocks. Your core plan stays the same.</p>
+    </div>
+
+    {compactCard("Section 1", "Sticky Perk", stickyPerks[0], explainOption(stickyPerks[0]), "Included", "Browse perks", onCoach)}
+
+    <div className="rounded-[2rem] bg-secondary/60 p-5 shadow-card">
+      <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Section 2 · Optional</p>
+      <h2 className="mt-1 font-display text-2xl leading-tight">Perk Store</h2>
+      <p className="mt-1 text-sm leading-6 text-muted-foreground">Small extras that make your month more useful — demos, challenges, pod passes, and workshops.</p>
+      <div className="mt-3 rounded-2xl bg-card px-4 py-3 shadow-card">
+        <p className="text-sm font-semibold text-foreground">{stickyPerks[1] || stickyPerks[0]}</p>
+        <p className="mt-1 text-xs leading-5 text-muted-foreground">{explainOption(stickyPerks[1] || stickyPerks[0])}</p>
+        <span className="mt-2 inline-flex rounded-full bg-secondary px-2 py-0.5 text-[11px] font-bold text-accent">Preview</span>
+      </div>
+      <Button variant="soft" size="lg" className="mt-3 w-full" onClick={onCoach}>View Perk Store <ArrowRight className="size-4" /></Button>
+    </div>
+
+    <div className="rounded-[2rem] bg-secondary/60 p-5 shadow-card">
+      <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Section 3 · Optional</p>
+      <h2 className="mt-1 font-display text-2xl leading-tight">Pack Store</h2>
+      <p className="mt-1 text-sm leading-6 text-muted-foreground">Deeper bundles that unlock from progress, top-up, or coach review.</p>
+      <div className="mt-3 rounded-2xl bg-card p-4 shadow-card">
+        <div className="flex items-start justify-between gap-3">
+          <p className="text-sm font-semibold text-foreground">{recommendedPack}</p>
+          <span className="shrink-0 rounded-full bg-secondary px-2 py-0.5 text-[11px] font-bold text-accent">{statusChip(recommendedPackMeta.status)}</span>
+        </div>
+        <p className="mt-2 text-xs leading-5 text-muted-foreground"><span className="font-bold text-accent">Includes:</span> {recommendedPackMeta.includes}</p>
+        <p className="mt-1 text-xs leading-5 text-muted-foreground"><span className="font-bold text-accent">Useful when:</span> {recommendedPackMeta.useful}</p>
+      </div>
+      <Button variant="soft" size="lg" className="mt-3 w-full" onClick={onCoach}>View Pack Store <ArrowRight className="size-4" /></Button>
+    </div>
+
+    <div className="rounded-[2rem] bg-card p-5 shadow-card">
+      <p className="text-xs font-bold uppercase tracking-wide text-accent">Section 4</p>
+      <h2 className="mt-1 font-display text-2xl leading-tight">Progress Passport</h2>
+      <p className="mt-1 text-sm leading-6 text-muted-foreground">Earn Milestone Bonus Credits by completing plan actions. Spend them on upgrades.</p>
+      <div className="mt-3 grid grid-cols-2 gap-2">
+        <div className="rounded-2xl bg-secondary p-3">
+          <p className="text-[11px] font-bold uppercase tracking-wide text-accent">Earn with</p>
+          <p className="mt-1 text-xs leading-5 text-muted-foreground">Kit, pods, pass, labs, coaching, streaks</p>
+        </div>
+        <div className="rounded-2xl bg-secondary p-3">
+          <p className="text-[11px] font-bold uppercase tracking-wide text-accent">Use for</p>
+          <p className="mt-1 text-xs leading-5 text-muted-foreground">Packs, kit upgrades, devices, add-ons</p>
+        </div>
+      </div>
+      <Button variant="soft" size="lg" className="mt-3 w-full" onClick={onCoach}>Learn about MBC <ArrowRight className="size-4" /></Button>
+    </div>
+
+    {compactCard("Section 5", "Future Unlocks", pathway.strongestPack, `${statusChip(packMetaFor(pathway.strongestPack).status)}. ${packMetaFor(pathway.strongestPack).includes}`, "Preview", "See future unlocks", onCoach)}
+
+    <div className="sticky bottom-0 -mx-5 grid gap-2 border-t border-border/70 bg-shell/95 px-5 py-4 backdrop-blur-xl">
+      <Button variant="soft" size="lg" onClick={() => setCustomizePage("core")}><ChevronLeft className="size-4" /> Back to Core Choices</Button>
       <Button variant="hero" size="xl" onClick={onConfirm}>Confirm my month <ArrowRight className="size-4" /></Button>
       <Button variant="soft" size="lg" onClick={onCoach}><MessageCircle className="size-4" /> Ask coach</Button>
     </div>
   </section>;
 }
-
 function ProgressRing({ value }: { value: number }) {
   return <div className="grid size-20 shrink-0 place-items-center rounded-full bg-card shadow-card" style={{ background: `conic-gradient(hsl(var(--primary)) ${value}%, hsl(var(--secondary)) 0)` }}><div className="grid size-14 place-items-center rounded-full bg-card"><span className="text-sm font-bold text-accent">{value}%</span></div></div>;
 }
