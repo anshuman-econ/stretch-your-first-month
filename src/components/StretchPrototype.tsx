@@ -434,6 +434,14 @@ const passCatalog: Record<PathwayKey, string[]> = {
 };
 const highTierPasses = ["Longefit cold plunge", "sauna / contrast", "Biopeak red-light", "facility breathwork", "clinic red-light recovery", "small-group strength", "in-clinic LED recovery", "pelvic PT group", "pain-aware reformer", "in-clinic LED booth add-on", "post-facial recovery", "camera-ready skin prep", "glow / derm partner demo"];
 const stickyPerks = ["Friend Pod Pass", "Masterclass Access", "Partner Demo", "Pop-Up Event Access", "Step / Stretch Challenge", "Tonic-Bar Visit", "Broth / Nourish Circle Moment", "Recovery Facility Prompt", "Premium Workshop Invite"];
+const perkStatusMap: Record<string, string> = {
+  "Friend Pod Pass": "Included", "Masterclass Access": "Swappable", "Partner Demo": "Swappable",
+  "Pop-Up Event Access": "Inventory-gated", "Step / Stretch Challenge": "Included",
+  "Tonic-Bar Visit": "Inventory-gated", "Broth / Nourish Circle Moment": "Swappable",
+  "Recovery Facility Prompt": "Preview", "Premium Workshop Invite": "Milestone",
+};
+const featuredPerks = ["Friend Pod Pass", "Masterclass Access", "Partner Demo", "Step / Stretch Challenge"];
+const recommendedPackForPathway: Record<PathwayKey, string> = { peri: "Sleep Reset Pack", endo: "Endo Relief Burst Pack", metabo: "Camera-Ready Sprint", longevity: "Brain Sprint Pack" };
 const optionExplainers: Record<string, string> = {
   // Care / specialist
   "Peri-aware OB-GYN / women’s health review": "A women’s-health review for sleep, VMS, cycle changes, mood, and midlife symptom patterns.",
@@ -1395,7 +1403,7 @@ function ActivationPickerDrawer({ type, pathway, activation, selected, onSelect,
   const recommendedPackName = pathwayPacks[key][0];
   const recommendedPackInfo = packMetaFor(recommendedPackName);
   const packStatusLabels: Record<PackMeta["status"], string> = { preview: "Preview", "pack-only": "Pack-only", milestone: "Milestone unlock", "top-up": "Top-up" };
-  const rows = type === "mbc" ? [{ label: "Earn with", copy: "kit built, pod joined, pass booked, labs completed, coaching done, 7-day streak" }, { label: "Use for", copy: "selected packs, kit upgrades, device buy-downs, future pathway add-ons, special partner experiences" }] : type === "future" ? [{ label: `Recommended pack · ${recommendedPackName}`, copy: `${packStatusLabels[recommendedPackInfo.status]}. Includes: ${recommendedPackInfo.includes} Useful when: ${recommendedPackInfo.useful}` }, { label: "Pack Store", copy: `Pathway packs: ${pathwayPacks[key].join(", ")}. Tap “View Pack Store” for full bundles.` }, { label: `Perk Store · ${stickyPerks[0]}`, copy: `${explainOption(stickyPerks[0])} Browse more partner perks in the Perk Store.` }, { label: "Devices", copy: [pathway.futureDevice, ...futureCatalog.filter((item) => /Ring|LED Mask|CGM|red-light/i.test(item)).slice(0, 3)].join(", ") }, { label: "Riders", copy: [pathway.futureRider, ...splitBlueprintList(activation.future).filter((item) => /Rider|Shield|Rx|DermaShield|NeuroSleep/i.test(item))].join(", ") }, { label: "Adjacent pathways", copy: pathways[pathway.adjacent].title }] : [];
+  const rows = type === "mbc" ? [{ label: "Earn with", copy: "kit built, pod joined, pass booked, labs completed, coaching done, 7-day streak" }, { label: "Use for", copy: "selected packs, kit upgrades, device buy-downs, future pathway add-ons, special partner experiences" }] : type === "future" ? [{ label: `Recommended pack · ${recommendedPackName}`, copy: `${packStatusLabels[recommendedPackInfo.status]}. Includes: ${recommendedPackInfo.includes} Useful when: ${recommendedPackInfo.useful}` }, { label: "Pack Store", copy: `Packs are optional boosts for a specific need. Your core month still works without them. Pathway packs: ${pathwayPacks[key].join(", ")}.` }, { label: `Perk Store`, copy: `Small extras that make your month feel more useful — demos, challenges, pod passes, tonic moments, partner perks, and workshops. Featured: ${featuredPerks.join(", ")}.` }, { label: "Devices", copy: [pathway.futureDevice, ...futureCatalog.filter((item) => /Ring|LED Mask|CGM|red-light/i.test(item)).slice(0, 3)].join(", ") }, { label: "Riders", copy: [pathway.futureRider, ...splitBlueprintList(activation.future).filter((item) => /Rider|Shield|Rx|DermaShield|NeuroSleep/i.test(item))].join(", ") }, { label: "Adjacent pathways", copy: pathways[pathway.adjacent].title }] : [];
   const kitStatusClass = (status: KitCategory["status"]) => status === "Recommended" ? "bg-primary text-primary-foreground" : status === "Sticky perk" ? "bg-accent/15 text-accent" : status === "Locked" ? "bg-muted text-muted-foreground" : "bg-secondary text-accent";
   return <div className="absolute inset-0 z-[60] flex items-end bg-primary/25 p-3 backdrop-blur-sm" onClick={onClose}><div className="max-h-[84vh] w-full overflow-y-auto rounded-[2rem] bg-card p-6 shadow-float animate-slide-up" onClick={(event) => event.stopPropagation()}>
     <div className="mb-5 flex items-start justify-between gap-3">
@@ -1529,11 +1537,57 @@ function ConfirmScreen({ pathway, resetQuiz, onBuild, onOpenJourney }: { pathway
   return <section className="space-y-6 px-5 py-7"><SectionTitle title="Keep your first month or swap one thing." copy="Your coach can help refine it after you begin." /><SoftCard onClick={onOpenJourney} className="space-y-4 border-Recommended/40"><div className="flex items-center justify-between"><p className="font-display text-2xl">First Month</p><Star className="size-5 text-accent" /></div><p className="text-muted-foreground">{pathway.title}</p><div className="grid grid-cols-3 gap-2 text-center text-xs">{pathway.guidedDefaults.slice(0, 3).map((item) => <span key={item} className="rounded-2xl bg-secondary px-2 py-3">{item}</span>)}</div></SoftCard><Button variant="hero" size="xl" className="w-full" onClick={onBuild}>Build my month</Button><Button variant="soft" size="xl" className="w-full" onClick={resetQuiz}>Swap answers</Button></section>;
 }
 
+function PerkStoreDrawer({ onClose }: { onClose: () => void }) {
+  return <div className="absolute inset-0 z-[60] flex items-end bg-primary/25 p-3 backdrop-blur-sm" onClick={onClose}><div className="max-h-[84vh] w-full overflow-y-auto rounded-[2rem] bg-card p-6 shadow-float animate-slide-up" onClick={(event) => event.stopPropagation()}>
+    <div className="mb-5 flex items-start justify-between gap-3">
+      <div><p className="text-sm font-bold text-accent">Browse</p><h2 className="font-display text-3xl leading-tight">Perk Store</h2></div>
+      <button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent">Close</button>
+    </div>
+    <p className="text-sm leading-6 text-muted-foreground">Small extras that make your month feel more useful — demos, challenges, pod passes, tonic moments, partner perks, and workshops.</p>
+    <div className="mt-4 grid gap-2">{stickyPerks.map((perk) => {
+      const status = perkStatusMap[perk] || "Preview";
+      const statusClass = status === "Included" ? "bg-primary text-primary-foreground" : status === "Milestone" ? "bg-accent/15 text-accent" : "bg-secondary text-accent";
+      return <div key={perk} className="rounded-2xl bg-secondary p-4 shadow-card">
+        <div className="flex items-start justify-between gap-3">
+          <p className="text-sm font-semibold text-foreground">{perk}</p>
+          <span className={cn("shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold", statusClass)}>{status}</span>
+        </div>
+        <p className="mt-1 text-xs leading-5 text-muted-foreground">{explainOption(perk)}</p>
+      </div>;
+    })}</div>
+    <Button variant="soft" size="lg" className="mt-5 w-full" onClick={onClose}>Close</Button>
+  </div></div>;
+}
+
+function PackStoreDrawer({ pathway, onClose }: { pathway: Pathway; onClose: () => void }) {
+  const key = pathwayKeyFromTitle(pathway);
+  const packs = pathwayPacks[key];
+  const statusLabel: Record<PackMeta["status"], string> = { preview: "Preview", "pack-only": "Pack-only", milestone: "Milestone unlock", "top-up": "Top-up" };
+  return <div className="absolute inset-0 z-[60] flex items-end bg-primary/25 p-3 backdrop-blur-sm" onClick={onClose}><div className="max-h-[84vh] w-full overflow-y-auto rounded-[2rem] bg-card p-6 shadow-float animate-slide-up" onClick={(event) => event.stopPropagation()}>
+    <div className="mb-5 flex items-start justify-between gap-3">
+      <div><p className="text-sm font-bold text-accent">Browse</p><h2 className="font-display text-3xl leading-tight">Pack Store</h2></div>
+      <button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent">Close</button>
+    </div>
+    <p className="text-sm leading-6 text-muted-foreground">Packs are optional boosts for a specific need. Your core month still works without them.</p>
+    <div className="mt-4 grid gap-2">{packs.map((name) => { const meta = packMetaFor(name); return <div key={name} className="rounded-2xl bg-secondary p-4 shadow-card">
+      <div className="flex items-start justify-between gap-3">
+        <p className="text-sm font-semibold text-foreground">{name}</p>
+        <span className="shrink-0 rounded-full bg-card px-2 py-0.5 text-[11px] font-bold text-accent">{statusLabel[meta.status]}</span>
+      </div>
+      <p className="mt-2 text-xs leading-5 text-muted-foreground"><span className="font-bold text-accent">Includes:</span> {meta.includes}</p>
+      <p className="mt-1 text-xs leading-5 text-muted-foreground"><span className="font-bold text-accent">Useful when:</span> {meta.useful}</p>
+    </div>; })}</div>
+    <Button variant="soft" size="lg" className="mt-5 w-full" onClick={onClose}>Close</Button>
+  </div></div>;
+}
+
 function BuilderScreen({ pathway, onConfirm, onCoach, onSwap, onBack, initialPage = "core" }: { pathway: Pathway; onConfirm: () => void; onCoach: () => void; onSwap: (target?: string) => void; onBack?: () => void; initialPage?: "core" | "extras" }) {
   const [customizePage, setCustomizePage] = useState<"core" | "extras">(initialPage);
   const key = pathwayKeyFromTitle(pathway);
   const activation = activationForPathway(key);
   const swap = pathwaySwapCatalog[key];
+  const [showPerkStore, setShowPerkStore] = useState(false);
+  const [showPackStore, setShowPackStore] = useState(false);
 
   const functionalRecommended = splitBlueprintList(activation.functional)[0] || activation.functional;
   const podPrimary = splitBlueprintList(activation.pods)[0] || activation.pods;
@@ -1594,31 +1648,33 @@ function BuilderScreen({ pathway, onConfirm, onCoach, onSwap, onBack, initialPag
 
     {compactCard("Section 1", "Pick a sticky perk", "A small bonus that makes the month feel more useful, social, or motivating.", stickyPerks[0], explainOption(stickyPerks[0]), "Included", "Browse perks", onCoach)}
 
-    <div className="rounded-[2rem] bg-secondary/60 p-5 shadow-card">
-      <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Section 2 · Optional</p>
-      <h2 className="mt-1 font-display text-2xl leading-tight">Preview the Perk Store</h2>
-      <p className="mt-1 text-sm leading-6 text-muted-foreground">Small extras like masterclasses, partner demos, friend passes, tonic moments, and challenges.</p>
-      <div className="mt-3 rounded-2xl bg-card px-4 py-3 shadow-card">
-        <p className="text-sm font-semibold text-foreground">{stickyPerks[1] || stickyPerks[0]}</p>
-        <p className="mt-1 text-xs leading-5 text-muted-foreground">{explainOption(stickyPerks[1] || stickyPerks[0])}</p>
-        <span className="mt-2 inline-flex rounded-full bg-secondary px-2 py-0.5 text-[11px] font-bold text-accent">Preview</span>
-      </div>
-      <Button variant="soft" size="lg" className="mt-3 w-full" onClick={onCoach}>View Perk Store <ArrowRight className="size-4" /></Button>
+    <div className="rounded-[2rem] bg-card p-5 shadow-card">
+      <p className="text-xs font-bold uppercase tracking-wide text-accent">Section 2</p>
+      <h2 className="mt-1 font-display text-2xl leading-tight">Perk Store</h2>
+      <p className="mt-1 text-sm leading-6 text-muted-foreground">Small extras that make your month feel more useful — demos, challenges, pod passes, tonic moments, partner perks, and workshops.</p>
+      <div className="mt-3 grid gap-2">{featuredPerks.map((perk) => <div key={perk} className="rounded-2xl bg-secondary px-4 py-3">
+        <div className="flex items-start justify-between gap-3">
+          <p className="text-sm font-semibold text-foreground">{perk}</p>
+          <span className={cn("shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold", perkStatusMap[perk] === "Included" ? "bg-primary text-primary-foreground" : "bg-card text-accent")}>{perkStatusMap[perk]}</span>
+        </div>
+        <p className="mt-1 text-xs leading-5 text-muted-foreground">{explainOption(perk)}</p>
+      </div>)}</div>
+      <Button variant="soft" size="lg" className="mt-3 w-full" onClick={() => setShowPerkStore(true)}>View all perks <ArrowRight className="size-4" /></Button>
     </div>
 
-    <div className="rounded-[2rem] bg-secondary/60 p-5 shadow-card">
-      <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Section 3 · Optional</p>
-      <h2 className="mt-1 font-display text-2xl leading-tight">Preview Pack Store</h2>
-      <p className="mt-1 text-sm leading-6 text-muted-foreground">Packs are optional boosts. Your core month still works without them.</p>
-      <div className="mt-3 rounded-2xl bg-card p-4 shadow-card">
+    <div className="rounded-[2rem] bg-card p-5 shadow-card">
+      <p className="text-xs font-bold uppercase tracking-wide text-accent">Section 3</p>
+      <h2 className="mt-1 font-display text-2xl leading-tight">Pack Store</h2>
+      <p className="mt-1 text-sm leading-6 text-muted-foreground">Packs are optional boosts for a specific need. Your core month still works without them.</p>
+      {(() => { const recPack = recommendedPackForPathway[key]; const meta = packMetaFor(recPack); return <div className="mt-3 rounded-2xl bg-secondary p-4">
         <div className="flex items-start justify-between gap-3">
-          <p className="text-sm font-semibold text-foreground">{recommendedPack}</p>
-          <span className="shrink-0 rounded-full bg-secondary px-2 py-0.5 text-[11px] font-bold text-accent">{statusChip(recommendedPackMeta.status)}</span>
+          <p className="text-sm font-semibold text-foreground">{recPack}</p>
+          <span className="shrink-0 rounded-full bg-card px-2 py-0.5 text-[11px] font-bold text-accent">{statusChip(meta.status)}</span>
         </div>
-        <p className="mt-2 text-xs leading-5 text-muted-foreground"><span className="font-bold text-accent">Includes:</span> {recommendedPackMeta.includes}</p>
-        <p className="mt-1 text-xs leading-5 text-muted-foreground"><span className="font-bold text-accent">Useful when:</span> {recommendedPackMeta.useful}</p>
-      </div>
-      <Button variant="soft" size="lg" className="mt-3 w-full" onClick={onCoach}>View Pack Store <ArrowRight className="size-4" /></Button>
+        <p className="mt-2 text-xs leading-5 text-muted-foreground"><span className="font-bold text-accent">Includes:</span> {meta.includes}</p>
+        <p className="mt-1 text-xs leading-5 text-muted-foreground"><span className="font-bold text-accent">Useful when:</span> {meta.useful}</p>
+      </div>; })()}
+      <Button variant="soft" size="lg" className="mt-3 w-full" onClick={() => setShowPackStore(true)}>View pack options <ArrowRight className="size-4" /></Button>
     </div>
 
     <div className="rounded-[2rem] bg-card p-5 shadow-card">
@@ -1645,6 +1701,8 @@ function BuilderScreen({ pathway, onConfirm, onCoach, onSwap, onBack, initialPag
       <Button variant="hero" size="xl" onClick={onConfirm}>Confirm my month <ArrowRight className="size-4" /></Button>
       <Button variant="soft" size="lg" onClick={onCoach}><MessageCircle className="size-4" /> Ask coach</Button>
     </div>
+    {showPerkStore && <PerkStoreDrawer onClose={() => setShowPerkStore(false)} />}
+    {showPackStore && <PackStoreDrawer pathway={pathway} onClose={() => setShowPackStore(false)} />}
   </section>;
 }
 function ProgressRing({ value }: { value: number }) {
@@ -1819,27 +1877,39 @@ function HomeScreen({ pathway, answers, onCare, onFuture, onJourney, onStamp }: 
   const stack = [{ label: "Care", state: "Done" }, { label: "Coach", state: "Included" }, { label: "Pods", state: "Needs input" }, { label: "Pass", state: "Needs input" }, { label: "Kit", state: "Future" }, { label: "Unlocks", state: "Locked" }];
   const journey = ["Care", "Coach", "Pods", "Pass", "Kit", "Unlocks"];
   const futurePreview: Record<PathwayKey, { device: string; rider: string }> = { peri: { device: "Smart Ring", rider: "PeriShield Rx" }, endo: { device: "TVUS confirmation flow", rider: "EndoShield Rider" }, metabo: { device: "LED Mask", rider: "DermaShield+" }, longevity: { device: "Smart Ring", rider: "Longevity Lab Rider" } };
-  const recommendedPerk = stickyPerks[0];
-  const recommendedPack = pathwayPacks[key][0];
-  const recommendedPackMeta = packMetaFor(recommendedPack);
+  const recPack = recommendedPackForPathway[key];
+  const recPackMeta = packMetaFor(recPack);
   const packStatusLabel: Record<PackMeta["status"], string> = { preview: "Preview", "pack-only": "Pack-only", milestone: "Milestone unlock", "top-up": "Top-up" };
-  return <section className="space-y-5 px-5 pb-28 pt-6"><div className="rounded-[2rem] bg-shell p-4 shadow-card"><div className="mb-3 flex items-center justify-between"><p className="text-sm font-bold text-accent">Stretch Journey Bar</p><button onClick={onCare} className="rounded-full bg-secondary p-2 text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label="Open coach"><MessageCircle className="size-4" /></button></div><div className="flex items-center gap-2">{journey.map((item, index) => <button key={item} onClick={onJourney} className="min-w-0 flex-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><span className={cn("mx-auto block h-2 rounded-full", index < 2 ? "bg-primary" : index < 4 ? "bg-accent" : "bg-secondary")} /><span className="mt-2 block truncate text-[10px] font-bold text-muted-foreground">{item}</span></button>)}</div></div><div className="rounded-[2rem] bg-primary p-6 text-primary-foreground shadow-float animate-enter"><div className="mb-5 flex items-center justify-between gap-3"><div><p className="text-sm font-bold opacity-80">Today</p><h1 className="font-display text-3xl leading-tight">Today’s next 3 actions</h1></div><Sparkles className="size-6" /></div><div className="grid gap-3">{[["Build your kit", "Build kit"], ["Join your first pod", "View pods"], ["Book your experience pass", "Book pass"]].map(([label, button], index) => <div key={label} className="flex items-center justify-between gap-3 rounded-2xl bg-primary-foreground/10 p-3"><span className="flex items-center gap-3 text-sm font-semibold"><span className="grid size-7 place-items-center rounded-full bg-primary-foreground text-xs font-bold text-primary">{index + 1}</span>{label}</span><Button variant="soft" size="sm" onClick={onJourney}>{button}</Button></div>)}</div></div><button onClick={onJourney} className="w-full rounded-[2rem] bg-card p-5 text-left shadow-card transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><div className="mb-4 flex items-center justify-between"><p className="font-display text-2xl">Month progress</p><ArrowRight className="size-4 text-accent" /></div><div className="grid grid-cols-2 gap-2">{stack.map((item) => <div key={item.label} className="rounded-2xl bg-secondary p-3"><p className="text-sm font-bold">{item.label}</p><p className={cn("mt-1 text-xs font-semibold", item.state === "Done" || item.state === "Included" ? "text-primary" : item.state === "Locked" ? "text-muted-foreground" : "text-accent")}>{item.state}</p></div>)}</div></button><MbcCommandCard onStamp={onStamp} /><button onClick={onFuture} className="w-full rounded-[2rem] bg-card p-5 text-left shadow-card transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><div className="flex items-center justify-between gap-3"><div><p className="text-sm font-semibold text-muted-foreground">Next unlock</p><h2 className="mt-1 font-display text-3xl leading-tight">{nextUnlock[key]}</h2></div><Lock className="size-5 text-accent" /></div></button><div className="rounded-[2rem] bg-card p-5 shadow-card"><div className="flex items-center justify-between gap-3"><div><p className="text-sm font-semibold text-muted-foreground">Recommended now</p><h2 className="mt-1 font-display text-3xl leading-tight">{addOn[key]}</h2></div><Package className="size-5 text-accent" /></div></div>
-    <button onClick={onJourney} className="w-full rounded-[2rem] bg-card p-5 text-left shadow-card transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-      <div className="flex items-start justify-between gap-3"><div><p className="text-sm font-bold text-accent">Perk Store</p><h2 className="mt-1 font-display text-2xl leading-tight">{recommendedPerk}</h2></div><span className="shrink-0 rounded-full bg-secondary px-2 py-0.5 text-[11px] font-bold text-accent">Included</span></div>
-      <p className="mt-2 text-sm leading-6 text-muted-foreground">Small extras that make your month feel more useful — demos, challenges, pod passes, tonic moments, partner perks, and workshops.</p>
-      <p className="mt-2 text-xs leading-5 text-muted-foreground">{explainOption(recommendedPerk)}</p>
-      <p className="mt-3 inline-flex items-center gap-1 text-xs font-bold text-accent">View Perk Store <ArrowRight className="size-3" /></p>
-    </button>
-    <button onClick={onJourney} className="w-full rounded-[2rem] bg-card p-5 text-left shadow-card transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-      <div className="flex items-start justify-between gap-3"><div><p className="text-sm font-bold text-accent">Pack Store</p><h2 className="mt-1 font-display text-2xl leading-tight">{recommendedPack}</h2></div><span className="shrink-0 rounded-full bg-secondary px-2 py-0.5 text-[11px] font-bold text-accent">{packStatusLabel[recommendedPackMeta.status]}</span></div>
-      <p className="mt-2 text-sm leading-6 text-muted-foreground">Packs are short boosts for a specific need. Your core plan still works without them.</p>
-      <p className="mt-2 text-xs leading-5 text-muted-foreground"><span className="font-bold text-accent">Includes:</span> {recommendedPackMeta.includes}</p>
-      <p className="mt-1 text-xs leading-5 text-muted-foreground"><span className="font-bold text-accent">Useful when:</span> {recommendedPackMeta.useful}</p>
-      <p className="mt-3 inline-flex items-center gap-1 text-xs font-bold text-accent">View Pack Store <ArrowRight className="size-3" /></p>
-    </button>
-    <button onClick={onFuture} className="w-full rounded-[2rem] bg-secondary p-5 text-left shadow-card transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><p className="text-sm font-semibold text-accent">Future rider / device preview</p><div className="mt-3 grid grid-cols-2 gap-3"><div className="rounded-2xl bg-card p-3 shadow-card"><p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">Device</p><p className="mt-1 font-display text-lg leading-tight">{futurePreview[key].device}</p></div><div className="rounded-2xl bg-card p-3 shadow-card"><p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">Rider</p><p className="mt-1 font-display text-lg leading-tight">{futurePreview[key].rider}</p></div></div><p className="mt-3 text-xs leading-5 text-muted-foreground">Previews only. They open later through progress, eligibility, or clinician review.</p></button><div className="rounded-[2rem] bg-secondary p-5 shadow-card"><p className="font-display text-2xl">Why we recommended this</p><div className="mt-4 flex flex-wrap gap-2">{chips.map((chip) => <span key={chip} className="rounded-full bg-card px-3 py-2 text-xs font-semibold text-accent shadow-card">{chip}</span>)}</div><p className="mt-4 text-sm leading-6 text-muted-foreground">{pathway.reason}</p></div></section>;
+  const [showPerkStore, setShowPerkStore] = useState(false);
+  const [showPackStore, setShowPackStore] = useState(false);
+  return <section className="space-y-5 px-5 pb-28 pt-6"><div className="rounded-[2rem] bg-shell p-4 shadow-card"><div className="mb-3 flex items-center justify-between"><p className="text-sm font-bold text-accent">Stretch Journey Bar</p><button onClick={onCare} className="rounded-full bg-secondary p-2 text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label="Open coach"><MessageCircle className="size-4" /></button></div><div className="flex items-center gap-2">{journey.map((item, index) => <button key={item} onClick={onJourney} className="min-w-0 flex-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><span className={cn("mx-auto block h-2 rounded-full", index < 2 ? "bg-primary" : index < 4 ? "bg-accent" : "bg-secondary")} /><span className="mt-2 block truncate text-[10px] font-bold text-muted-foreground">{item}</span></button>)}</div></div><div className="rounded-[2rem] bg-primary p-6 text-primary-foreground shadow-float animate-enter"><div className="mb-5 flex items-center justify-between gap-3"><div><p className="text-sm font-bold opacity-80">Today</p><h1 className="font-display text-3xl leading-tight">Today's next 3 actions</h1></div><Sparkles className="size-6" /></div><div className="grid gap-3">{[["Build your kit", "Build kit"], ["Join your first pod", "View pods"], ["Book your experience pass", "Book pass"]].map(([label, button], index) => <div key={label} className="flex items-center justify-between gap-3 rounded-2xl bg-primary-foreground/10 p-3"><span className="flex items-center gap-3 text-sm font-semibold"><span className="grid size-7 place-items-center rounded-full bg-primary-foreground text-xs font-bold text-primary">{index + 1}</span>{label}</span><Button variant="soft" size="sm" onClick={onJourney}>{button}</Button></div>)}</div></div><button onClick={onJourney} className="w-full rounded-[2rem] bg-card p-5 text-left shadow-card transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><div className="mb-4 flex items-center justify-between"><p className="font-display text-2xl">Month progress</p><ArrowRight className="size-4 text-accent" /></div><div className="grid grid-cols-2 gap-2">{stack.map((item) => <div key={item.label} className="rounded-2xl bg-secondary p-3"><p className="text-sm font-bold">{item.label}</p><p className={cn("mt-1 text-xs font-semibold", item.state === "Done" || item.state === "Included" ? "text-primary" : item.state === "Locked" ? "text-muted-foreground" : "text-accent")}>{item.state}</p></div>)}</div></button><MbcCommandCard onStamp={onStamp} /><button onClick={onFuture} className="w-full rounded-[2rem] bg-card p-5 text-left shadow-card transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><div className="flex items-center justify-between gap-3"><div><p className="text-sm font-semibold text-muted-foreground">Next unlock</p><h2 className="mt-1 font-display text-3xl leading-tight">{nextUnlock[key]}</h2></div><Lock className="size-5 text-accent" /></div></button><div className="rounded-[2rem] bg-card p-5 shadow-card"><div className="flex items-center justify-between gap-3"><div><p className="text-sm font-semibold text-muted-foreground">Recommended now</p><h2 className="mt-1 font-display text-3xl leading-tight">{addOn[key]}</h2></div><Package className="size-5 text-accent" /></div></div>
+    <div className="rounded-[2rem] bg-card p-5 shadow-card">
+      <p className="text-sm font-bold text-accent">Perk Store</p>
+      <p className="mt-1 text-sm leading-6 text-muted-foreground">Small extras that make your month feel more useful — demos, challenges, pod passes, tonic moments, partner perks, and workshops.</p>
+      <div className="mt-3 grid gap-2">{featuredPerks.map((perk) => <div key={perk} className="flex items-center justify-between gap-3 rounded-xl bg-secondary px-3 py-2">
+        <div className="min-w-0 flex-1"><p className="text-sm font-semibold text-foreground">{perk}</p><p className="mt-0.5 text-xs text-muted-foreground">{explainOption(perk)}</p></div>
+        <span className={cn("shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold", perkStatusMap[perk] === "Included" ? "bg-primary text-primary-foreground" : "bg-card text-accent")}>{perkStatusMap[perk]}</span>
+      </div>)}</div>
+      <Button variant="soft" size="lg" className="mt-3 w-full" onClick={() => setShowPerkStore(true)}>View all perks <ArrowRight className="size-4" /></Button>
+    </div>
+    <div className="rounded-[2rem] bg-card p-5 shadow-card">
+      <p className="text-sm font-bold text-accent">Pack Store</p>
+      <p className="mt-1 text-sm leading-6 text-muted-foreground">Packs are optional boosts for a specific need. Your core month still works without them.</p>
+      <div className="mt-3 rounded-2xl bg-secondary p-4">
+        <div className="flex items-start justify-between gap-3">
+          <p className="text-sm font-semibold text-foreground">{recPack}</p>
+          <span className="shrink-0 rounded-full bg-card px-2 py-0.5 text-[11px] font-bold text-accent">{packStatusLabel[recPackMeta.status]}</span>
+        </div>
+        <p className="mt-2 text-xs leading-5 text-muted-foreground"><span className="font-bold text-accent">Includes:</span> {recPackMeta.includes}</p>
+        <p className="mt-1 text-xs leading-5 text-muted-foreground"><span className="font-bold text-accent">Useful when:</span> {recPackMeta.useful}</p>
+      </div>
+      <Button variant="soft" size="lg" className="mt-3 w-full" onClick={() => setShowPackStore(true)}>View pack options <ArrowRight className="size-4" /></Button>
+    </div>
+    <button onClick={onFuture} className="w-full rounded-[2rem] bg-secondary p-5 text-left shadow-card transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><p className="text-sm font-semibold text-accent">Future rider / device preview</p><div className="mt-3 grid grid-cols-2 gap-3"><div className="rounded-2xl bg-card p-3 shadow-card"><p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">Device</p><p className="mt-1 font-display text-lg leading-tight">{futurePreview[key].device}</p></div><div className="rounded-2xl bg-card p-3 shadow-card"><p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">Rider</p><p className="mt-1 font-display text-lg leading-tight">{futurePreview[key].rider}</p></div></div><p className="mt-3 text-xs leading-5 text-muted-foreground">Previews only. They open later through progress, eligibility, or clinician review.</p></button><div className="rounded-[2rem] bg-secondary p-5 shadow-card"><p className="font-display text-2xl">Why we recommended this</p><div className="mt-4 flex flex-wrap gap-2">{chips.map((chip) => <span key={chip} className="rounded-full bg-card px-3 py-2 text-xs font-semibold text-accent shadow-card">{chip}</span>)}</div><p className="mt-4 text-sm leading-6 text-muted-foreground">{pathway.reason}</p></div>
+    {showPerkStore && <PerkStoreDrawer onClose={() => setShowPerkStore(false)} />}
+    {showPackStore && <PackStoreDrawer pathway={pathway} onClose={() => setShowPackStore(false)} />}
+  </section>;
 }
-
 function JourneyScreen({ pathway, activeTab, setActiveTab, onAdjacent, onCoach }: { pathway: Pathway; activeTab: JourneyTab; setActiveTab: (tab: JourneyTab) => void; onAdjacent: () => void; onCoach: () => void }) {
   const tabs: JourneyTab[] = ["Experience", "Coach", "Kit", "Clinician Loop"];
   return <section className="space-y-6 px-5 py-7"><div className="rounded-[2rem] bg-primary p-6 text-primary-foreground shadow-float"><p className="text-sm opacity-80">Unlocked pathway</p><h1 className="mt-2 font-display text-4xl leading-tight">{pathway.title}</h1><p className="mt-4 leading-7 opacity-90">{pathway.monthlyPromise}</p></div><div className="grid grid-cols-3 gap-3"><PhaseCard title="Month 1" label="Foundation" items={pathway.foundation} /><PhaseCard title="Month 2" label="Deepen" items={pathway.deepen} /><PhaseCard title="Month 3" label="Sustain / Unlock" items={pathway.sustain} /></div><Roadmap roadmap={pathway.roadmap} /><div className="rounded-3xl bg-card p-2 shadow-card"><div className="grid grid-cols-4 gap-1">{tabs.map((tab) => <button key={tab} onClick={() => setActiveTab(tab)} className={cn("rounded-2xl px-2 py-3 text-[11px] font-semibold transition-smooth focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", activeTab === tab ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary hover:text-foreground")}>{tab}</button>)}</div></div><div className="rounded-3xl bg-card p-5 shadow-card"><div className="mb-4 flex items-center gap-3"><div className="rounded-full bg-secondary p-3 text-accent">{activeTab === "Clinician Loop" ? <ClipboardList className="size-5" /> : <Sparkles className="size-5" />}</div><h2 className="font-display text-2xl">{activeTab}</h2></div><div className="grid gap-3">{pathway.tabs[activeTab].map((item) => <p key={item} className="flex gap-3 text-sm leading-6 text-muted-foreground"><Check className="mt-1 size-4 shrink-0 text-accent" />{item}</p>)}</div></div>{pathway.vitality && <InfoCard title="Visible vitality" copy={`A small visible-results layer: ${pathway.vitality}`} icon={<Sparkles className="size-5" />} />}<InfoCard title="Monthly wow" copy={`${pathway.wow}. One memorable moment that makes the month feel cared for, not clinical.`} icon={<Star className="size-5" />} /><div className="grid gap-3"><PreviewRow label="Pack preview" value={`${pathway.strongestPack} — a deeper bundle if this month goes well.`} /><PreviewRow label="Device preview" value={`${pathway.futureDevice} — opens later if useful.`} /><PreviewRow label="Future add-on" value={`${pathway.futureRider} — reviewed before it becomes active.`} /><SoftCard onClick={onAdjacent}><p className="text-sm font-semibold text-accent">Adjacent pathway preview</p><p className="mt-1 font-display text-2xl">{pathways[pathway.adjacent].title}</p><p className="mt-2 text-sm text-muted-foreground">Opens related support without rebuilding your whole month.</p></SoftCard></div><Button variant="hero" size="xl" className="w-full" onClick={onCoach}>Ask coach about this pathway</Button></section>;
