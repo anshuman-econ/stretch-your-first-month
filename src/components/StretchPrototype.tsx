@@ -1260,7 +1260,7 @@ function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathw
     ] },
     { label: "What stays fixed", copy: "Your care route, lab plan, and safety checks do not change when you adjust a pod." },
     { label: "What can open later", copy: "More pods, higher-touch coaching, and mental-health deep dives can appear through packs or future eligibility." },
-    { label: "Actions", items: ["View pod agenda", "Swap one pod", "Keep current pods", "Ask coach"].map((name) => ({ name, state: "Action" })) },
+    { label: "Actions", items: ["Customize this", "Keep as is", "Ask coach"].map((name) => ({ name, state: "Action" })) },
   ];
 
   if (title === "Kit + Perks") return [
