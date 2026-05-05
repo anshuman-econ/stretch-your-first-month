@@ -1542,10 +1542,11 @@ function BuilderScreen({ pathway, onConfirm, onCoach, onSwap, onBack }: { pathwa
   const recommendedPack = packs[0];
   const recommendedPackMeta = packMetaFor(recommendedPack);
 
-  const compactCard = (eyebrow: string, title: string, recommended: string, explanation: string, status: string, cta: string, onCta: () => void) => (
+  const compactCard = (eyebrow: string, title: string, description: string, recommended: string, explanation: string, status: string, cta: string, onCta: () => void) => (
     <div className="rounded-[2rem] bg-card p-5 shadow-card">
       <p className="text-xs font-bold uppercase tracking-wide text-accent">{eyebrow}</p>
       <h2 className="mt-1 font-display text-2xl leading-tight">{title}</h2>
+      <p className="mt-1 text-sm leading-6 text-muted-foreground">{description}</p>
       <div className="mt-3 rounded-2xl bg-secondary p-4">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
