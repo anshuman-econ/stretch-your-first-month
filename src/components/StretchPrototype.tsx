@@ -1591,7 +1591,7 @@ function BuilderScreen({ pathway, onConfirm, onCoach, onSwap, onBack }: { pathwa
       <p className="mt-2 text-sm leading-6 text-muted-foreground">Optional perks, packs, progress rewards, and future unlocks. Your core plan stays the same.</p>
     </div>
 
-    {compactCard("Section 1", "Pick a sticky perk", stickyPerks[0], explainOption(stickyPerks[0]), "Included", "Browse perks", onCoach)}
+    {compactCard("Section 1", "Pick a sticky perk", "A small bonus that makes the month feel more useful, social, or motivating.", stickyPerks[0], explainOption(stickyPerks[0]), "Included", "Browse perks", onCoach)}
 
     <div className="rounded-[2rem] bg-secondary/60 p-5 shadow-card">
       <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Section 2 · Optional</p>
