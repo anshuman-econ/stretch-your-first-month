@@ -1569,13 +1569,13 @@ function BuilderScreen({ pathway, onConfirm, onCoach, onSwap, onBack }: { pathwa
       <p className="mt-2 text-sm leading-6 text-muted-foreground">These are the choices that shape your month. Everything else stays clinically guided by your blueprint.</p>
     </div>
 
-    {compactCard("Section 1", "Choose your functional support", functionalRecommended, explainOption(functionalRecommended), "Recommended", "Choose or swap", () => onSwap("Functional session"))}
+    {compactCard("Section 1", "Choose your functional support", "This is the practical session that makes the plan real in your body — nutrition, movement, recovery, LED, acupuncture, breathwork, or pelvic support depending on your pathway.", functionalRecommended, explainOption(functionalRecommended), "Recommended", "Choose or swap", () => onSwap("Functional session"))}
 
-    {compactCard("Section 2", "Choose your pod seats", podPrimary, explainOption(podPrimary), "Selected", "View pods or swap one", () => onSwap("Pods"))}
+    {compactCard("Section 2", "Choose your pod seats", "Pods are guided group sessions. Your coach uses the selected pods to shape your weekly actions.", podPrimary, explainOption(podPrimary), "Selected", "View pods or swap one", () => onSwap("Pods"))}
 
-    {compactCard("Section 3", "Choose your experience pass", passRecommended, explainOption(passRecommended), "Recommended", "Choose your pass", () => onSwap("Experience pass"))}
+    {compactCard("Section 3", "Choose your experience pass", "This is one bookable monthly experience — movement, recovery, breathwork, LED, workshop, or partner demo.", passRecommended, explainOption(passRecommended), "Recommended", "Choose your pass", () => onSwap("Experience pass"))}
 
-    {compactCard("Section 4", "Build your kit", kitPrimary?.recommendation || activation.kit, kitPrimary?.explanation || explainOption(activation.kit), kitPrimary?.status || "Recommended", "Build your kit", () => onSwap("Kit item"))}
+    {compactCard("Section 4", "Build your kit", "Your kit is the at-home support for the month. It should make the plan easier to follow between care, coaching, and pods.", kitPrimary?.recommendation || activation.kit, kitPrimary?.explanation || explainOption(activation.kit), kitPrimary?.status || "Recommended", "Build your kit", () => onSwap("Kit item"))}
 
     <div className="sticky bottom-0 -mx-5 grid gap-2 border-t border-border/70 bg-shell/95 px-5 py-4 backdrop-blur-xl">
       {onBack && <Button variant="soft" size="lg" onClick={onBack}><ChevronLeft className="size-4" /> Back to Blueprint</Button>}
