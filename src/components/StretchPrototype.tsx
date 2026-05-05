@@ -1199,7 +1199,7 @@ function ActivationDetailDrawer({ detail, onClose, onAction }: { detail: Activat
 }
 
 type BlueprintTitle = "Care + Labs" | "Coach + Pods" | "Kit + Perks" | "Experience Pass" | "Progress Passport" | "Future Unlocks";
-type BlueprintSection = { label: string; copy?: string; items?: CatalogOption[]; rows?: { label: string; copy: string }[]; groups?: { label: string; items: CatalogOption[] }[] };
+type BlueprintSection = { label: string; copy?: string; items?: CatalogOption[]; rows?: { label: string; copy: string }[]; groups?: { label: string; items: CatalogOption[] }[]; chips?: { name: string; explanation: string }[] };
 
 const splitBlueprintList = (value: string) => value.split(/, | \+ /).map((item) => item.trim()).filter(Boolean);
 const swapTargetForBlueprint = (title: BlueprintTitle) => ({ "Care + Labs": "Care route", "Coach + Pods": "Pods", "Kit + Perks": "Kit item", "Experience Pass": "Experience pass", "Progress Passport": "Progress Passport", "Future Unlocks": "Future Unlocks" }[title]);
@@ -1208,7 +1208,8 @@ function BlueprintSectionBlock({ section, selectedOption, onSelect, onAction }: 
   const renderItems = (items: CatalogOption[], prefix: string) => <div className="mt-3 grid gap-2">{items.map((item) => { const selected = selectedOption === item.name; return <button key={`${prefix}-${item.name}`} onClick={() => onSelect(item.name)} className={cn("rounded-2xl px-4 py-3 text-left shadow-card transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", selected ? "bg-primary text-primary-foreground" : "bg-card") }><span className="flex items-start justify-between gap-3"><span className="min-w-0 flex-1"><p className={cn("text-sm font-semibold", selected ? "text-primary-foreground" : "text-foreground")}>{item.name}</p><p className={cn("mt-1 text-xs leading-5", selected ? "text-primary-foreground/85" : "text-muted-foreground")}>{explainOption(item.name)}</p>{item.state && <span className={cn("mt-2 inline-flex rounded-full px-2 py-0.5 text-[11px] font-bold", selected ? "bg-primary-foreground/15 text-primary-foreground" : "bg-secondary text-accent")}>{selected ? "Selected" : item.state}</span>}</span>{selected && <Check className="mt-0.5 size-4 shrink-0" />}</span></button>; })}</div>;
   const renderActionButtons = (items: CatalogOption[]) => <div className="mt-3 grid gap-2">{items.map((item) => { const isHero = /keep|confirm|continue/i.test(item.name); return <Button key={item.name} variant={isHero ? "hero" : "soft"} size="lg" className="w-full justify-start" onClick={() => onAction?.(item.name)}>{item.name}</Button>; })}</div>;
   if (section.label === "Actions") return <div className="rounded-2xl bg-secondary p-4"><p className="text-xs font-semibold uppercase tracking-wide text-accent">{section.label}</p>{section.items && renderActionButtons(section.items)}</div>;
-  return <div className="rounded-2xl bg-secondary p-4"><p className="text-xs font-semibold uppercase tracking-wide text-accent">{section.label}</p>{section.copy && <p className="mt-2 text-sm leading-6 text-muted-foreground">{section.copy}</p>}{section.rows && <div className="mt-3 grid gap-2">{section.rows.map((row) => <div key={`${section.label}-${row.label}`} className="rounded-2xl bg-card px-4 py-3 shadow-card"><p className="text-sm font-semibold text-foreground">{row.label}</p><p className="mt-1 text-xs leading-5 text-muted-foreground">{row.copy}</p></div>)}</div>}{section.items && renderItems(section.items, section.label)}{section.groups && <div className="mt-3 grid gap-4">{section.groups.map((group) => <div key={`${section.label}-${group.label}`}><p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">{group.label}</p>{renderItems(group.items, `${section.label}-${group.label}`)}</div>)}</div>}</div>;
+  const renderChips = (chips: { name: string; explanation: string }[]) => <div className="mt-3 flex flex-wrap gap-2">{chips.map((chip) => <div key={chip.name} className="rounded-2xl bg-card px-4 py-3 shadow-card"><p className="text-sm font-semibold text-foreground">{chip.name}</p><p className="mt-1 text-xs leading-5 text-muted-foreground">{chip.explanation}</p></div>)}</div>;
+  return <div className="rounded-2xl bg-secondary p-4"><p className="text-xs font-semibold uppercase tracking-wide text-accent">{section.label}</p>{section.copy && <p className="mt-2 text-sm leading-6 text-muted-foreground">{section.copy}</p>}{section.rows && <div className="mt-3 grid gap-2">{section.rows.map((row) => <div key={`${section.label}-${row.label}`} className="rounded-2xl bg-card px-4 py-3 shadow-card"><p className="text-sm font-semibold text-foreground">{row.label}</p><p className="mt-1 text-xs leading-5 text-muted-foreground">{row.copy}</p></div>)}</div>}{section.chips && renderChips(section.chips)}{section.items && renderItems(section.items, section.label)}{section.groups && <div className="mt-3 grid gap-4">{section.groups.map((group) => <div key={`${section.label}-${group.label}`}><p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">{group.label}</p>{renderItems(group.items, `${section.label}-${group.label}`)}</div>)}</div>}</div>;
 }
 
 function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathway: Pathway): BlueprintSection[] {
@@ -1220,28 +1221,23 @@ function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathw
   const inventoryStatus = (name: string, fallback = "Selectable") => highTierPasses.includes(name) || /inventory|red-light|LED booth|Biopeak|clinic/i.test(name) ? "inventory-gated" : fallback;
   const packStatusLabel: Record<PackMeta["status"], string> = { preview: "Preview", "pack-only": "Pack-only", milestone: "Milestone unlock", "top-up": "Top-up" };
 
-  if (title === "Care + Labs") return [
-    { label: "Plain-English summary", copy: "This is the part of the plan that keeps your month safe and grounded. It combines the right expert, one practical support option, one clinical review route, and only the labs that actually matter." },
-    { label: "Your recommended setup", rows: [
-      { label: "Specialist", copy: activation.specialist },
-      { label: "Functional support", copy: activation.functional },
-      { label: "Clinical review", copy: activation.clinical },
-      { label: "Labs", copy: activation.labs },
-    ] },
-    { label: "What each part does", rows: [
-      { label: "Specialist", copy: "Reviews symptoms, risk, and safe next steps." },
-      { label: "Functional support", copy: "One practical session to make the plan real in your body." },
-      { label: "Clinical review", copy: "Checks whether recovery, body composition, or visible vitality needs more attention." },
-      { label: "Labs", copy: "Used only when they help clarify fatigue, metabolism, recovery, or risk." },
-    ] },
-    { label: "Your choices", copy: `Functional support is swappable. Care route is clinically bounded. Diagnostics are not casual swaps. ${swapCatalog.Specialist?.rule || catalog.rule}`, groups: [
-      { label: "Functional support options", items: splitBlueprintList(activation.functional).map((name, i) => ({ name, state: i === 0 ? "Recommended" : "Selectable" })) },
-      { label: "Safe care-route alternatives", items: (swapCatalog.Specialist?.options || catalog.options).filter((item) => item.state !== "Locked preview").map((item) => ({ ...item, state: item.state || "Safe alternative" })) },
-    ] },
-    { label: "What stays fixed", copy: "Your safety checks, pathway, and locked future items do not change. Diagnostics, prescriptions, and clinician-gated routes stay protected." },
-    { label: "What can open later", copy: "Advanced diagnostics, devices, packs, and riders can appear later through milestones, clinician review, or rider eligibility." },
-    { label: "Actions", items: ["Keep care route", "Choose functional support", "Swap one block", "Ask coach"].map((name) => ({ name, state: "Action" })) },
-  ];
+  if (title === "Care + Labs") {
+    const specialistAlts = (swapCatalog.Specialist?.options || catalog.options).filter((item) => item.state !== "Locked preview").slice(0, 3);
+    return [
+      { label: "Plain-English summary", copy: "This is the part of the plan that keeps your month safe and grounded. It combines the right expert route, one practical body-support option, one clinical review route, and only the labs that matter." },
+      { label: "Your recommended setup", rows: [
+        { label: `Specialist · ${activation.specialist}`, copy: "The expert route that anchors your month and keeps the next step safe." },
+        { label: `Functional support · ${activation.functional}`, copy: "One practical session such as nutrition, movement, recovery, LED, acupuncture, pelvic-floor, or breathwork support." },
+        { label: `Clinical review · ${activation.clinical}`, copy: "A focused review, LED, derm, body-composition, or recovery check depending on pathway." },
+        { label: `Labs · ${activation.labs}`, copy: "Guided diagnostics only when useful; not a casual shopping list." },
+      ] },
+      { label: "What you can change", copy: "Functional support is the main swappable part here. Specialist route is clinically bounded. Diagnostics are not casual swaps." },
+      { label: "Safe alternatives preview", copy: "These are informational only. To make a change, use Customize Your Month.", chips: specialistAlts.map((item) => ({ name: item.name, explanation: explainOption(item.name) })) },
+      { label: "What stays fixed", copy: "Your pathway, safety checks, diagnostics rules, prescriptions, riders, and high-cost procedures stay protected." },
+      { label: "What can open later", copy: "Advanced diagnostics, devices, packs, riders, and higher-cost services can appear later through milestones, clinician review, pack, or rider eligibility." },
+      { label: "Actions", items: ["Customize functional support", "Keep care route", "Ask coach"].map((name) => ({ name, state: "Action" })) },
+    ];
+  }
 
   if (title === "Coach + Pods") return [
     { label: "Plain-English summary", copy: "This is the part of the plan that turns information into action. Your pods give the guided group rhythm. Your coach turns those themes into your weekly moves." },
