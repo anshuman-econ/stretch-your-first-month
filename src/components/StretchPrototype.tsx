@@ -939,6 +939,7 @@ export default function StretchPrototype() {
   const [demoTile, setDemoTile] = useState<DemoTile | null>(null);
   const [showRebalance, setShowRebalance] = useState(false);
   const [swapTarget, setSwapTarget] = useState<string | null>(null);
+  const [builderInitialPage, setBuilderInitialPage] = useState<"core" | "extras">("core");
   const [inlineSwap, setInlineSwap] = useState<ControlledSwap | null>(null);
   const [explainerReturnStep, setExplainerReturnStep] = useState<Step>("landing");
 
