@@ -1282,7 +1282,7 @@ function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathw
     ] },
     { label: "What stays fixed", copy: "Care route, lab plan, and safety checks stay the same. Premium actives and full boxes are not freely added." },
     { label: "What can open later", copy: "Premium actives, full boxes, advanced nutrition support, devices, and rider-funded items appear later through packs, MBC, or future unlocks." },
-    { label: "Actions", items: ["Build kit", "Swap one kit item", "Choose sticky perk", "Ask coach"].map((name) => ({ name, state: "Action" })) },
+    { label: "Actions", items: ["Customize this", "Keep as is", "Ask coach"].map((name) => ({ name, state: "Action" })) },
   ];
 
   if (title === "Experience Pass") return [
