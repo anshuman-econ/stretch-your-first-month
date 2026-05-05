@@ -1581,6 +1581,7 @@ function PackStoreDrawer({ pathway, onClose }: { pathway: Pathway; onClose: () =
   </div></div>;
 }
 
+function BuilderScreen({ pathway, onConfirm, onCoach, onSwap, onBack, initialPage = "core" }: { pathway: Pathway; onConfirm: () => void; onCoach: () => void; onSwap: (target?: string) => void; onBack?: () => void; initialPage?: "core" | "extras" }) {
   const [customizePage, setCustomizePage] = useState<"core" | "extras">(initialPage);
   const key = pathwayKeyFromTitle(pathway);
   const activation = activationForPathway(key);
