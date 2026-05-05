@@ -1238,7 +1238,6 @@ function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathw
       { label: "Actions", items: ["Customize functional support", "Keep care route", "Ask coach"].map((name) => ({ name, state: "Action" })) },
     ];
   }
-  ];
 
   if (title === "Coach + Pods") return [
     { label: "Plain-English summary", copy: "This is the part of the plan that turns information into action. Your pods give the guided group rhythm. Your coach turns those themes into your weekly moves." },
