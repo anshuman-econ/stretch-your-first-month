@@ -1199,7 +1199,7 @@ function ActivationDetailDrawer({ detail, onClose, onAction }: { detail: Activat
 }
 
 type BlueprintTitle = "Care + Labs" | "Coach + Pods" | "Kit + Perks" | "Experience Pass" | "Progress Passport" | "Future Unlocks";
-type BlueprintSection = { label: string; copy?: string; items?: CatalogOption[]; rows?: { label: string; copy: string }[]; groups?: { label: string; items: CatalogOption[] }[] };
+type BlueprintSection = { label: string; copy?: string; items?: CatalogOption[]; rows?: { label: string; copy: string }[]; groups?: { label: string; items: CatalogOption[] }[]; chips?: { name: string; explanation: string }[] };
 
 const splitBlueprintList = (value: string) => value.split(/, | \+ /).map((item) => item.trim()).filter(Boolean);
 const swapTargetForBlueprint = (title: BlueprintTitle) => ({ "Care + Labs": "Care route", "Coach + Pods": "Pods", "Kit + Perks": "Kit item", "Experience Pass": "Experience pass", "Progress Passport": "Progress Passport", "Future Unlocks": "Future Unlocks" }[title]);
