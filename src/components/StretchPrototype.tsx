@@ -1586,6 +1586,8 @@ function BuilderScreen({ pathway, onConfirm, onCoach, onSwap, onBack, initialPag
   const key = pathwayKeyFromTitle(pathway);
   const activation = activationForPathway(key);
   const swap = pathwaySwapCatalog[key];
+  const [showPerkStore, setShowPerkStore] = useState(false);
+  const [showPackStore, setShowPackStore] = useState(false);
 
   const functionalRecommended = splitBlueprintList(activation.functional)[0] || activation.functional;
   const podPrimary = splitBlueprintList(activation.pods)[0] || activation.pods;
