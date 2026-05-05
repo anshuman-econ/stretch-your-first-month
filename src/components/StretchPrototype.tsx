@@ -434,6 +434,14 @@ const passCatalog: Record<PathwayKey, string[]> = {
 };
 const highTierPasses = ["Longefit cold plunge", "sauna / contrast", "Biopeak red-light", "facility breathwork", "clinic red-light recovery", "small-group strength", "in-clinic LED recovery", "pelvic PT group", "pain-aware reformer", "in-clinic LED booth add-on", "post-facial recovery", "camera-ready skin prep", "glow / derm partner demo"];
 const stickyPerks = ["Friend Pod Pass", "Masterclass Access", "Partner Demo", "Pop-Up Event Access", "Step / Stretch Challenge", "Tonic-Bar Visit", "Broth / Nourish Circle Moment", "Recovery Facility Prompt", "Premium Workshop Invite"];
+const perkStatusMap: Record<string, string> = {
+  "Friend Pod Pass": "Included", "Masterclass Access": "Swappable", "Partner Demo": "Swappable",
+  "Pop-Up Event Access": "Inventory-gated", "Step / Stretch Challenge": "Included",
+  "Tonic-Bar Visit": "Inventory-gated", "Broth / Nourish Circle Moment": "Swappable",
+  "Recovery Facility Prompt": "Preview", "Premium Workshop Invite": "Milestone",
+};
+const featuredPerks = ["Friend Pod Pass", "Masterclass Access", "Partner Demo", "Step / Stretch Challenge"];
+const recommendedPackForPathway: Record<PathwayKey, string> = { peri: "Sleep Reset Pack", endo: "Endo Relief Burst Pack", metabo: "Camera-Ready Sprint", longevity: "Brain Sprint Pack" };
 const optionExplainers: Record<string, string> = {
   // Care / specialist
   "Peri-aware OB-GYN / women’s health review": "A women’s-health review for sleep, VMS, cycle changes, mood, and midlife symptom patterns.",
