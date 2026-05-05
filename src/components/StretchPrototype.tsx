@@ -1637,7 +1637,7 @@ function BuilderScreen({ pathway, onConfirm, onCoach, onSwap, onBack }: { pathwa
       <Button variant="soft" size="lg" className="mt-3 w-full" onClick={onCoach}>Learn about MBC <ArrowRight className="size-4" /></Button>
     </div>
 
-    {compactCard("Section 5", "What can open later", pathway.strongestPack, `${statusChip(packMetaFor(pathway.strongestPack).status)}. ${packMetaFor(pathway.strongestPack).includes}`, "Preview", "See future unlocks", onCoach)}
+    {compactCard("Section 5", "What can open later", "Devices, riders, advanced tests, and adjacent pathways appear only when your pattern and eligibility support them.", pathway.strongestPack, `${statusChip(packMetaFor(pathway.strongestPack).status)}. ${packMetaFor(pathway.strongestPack).includes}`, "Preview", "See future unlocks", onCoach)}
 
     <div className="sticky bottom-0 -mx-5 grid gap-2 border-t border-border/70 bg-shell/95 px-5 py-4 backdrop-blur-xl">
       <Button variant="soft" size="lg" onClick={() => setCustomizePage("core")}><ChevronLeft className="size-4" /> Back to Core Choices</Button>
