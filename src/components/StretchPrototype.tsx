@@ -1221,27 +1221,23 @@ function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathw
   const inventoryStatus = (name: string, fallback = "Selectable") => highTierPasses.includes(name) || /inventory|red-light|LED booth|Biopeak|clinic/i.test(name) ? "inventory-gated" : fallback;
   const packStatusLabel: Record<PackMeta["status"], string> = { preview: "Preview", "pack-only": "Pack-only", milestone: "Milestone unlock", "top-up": "Top-up" };
 
-  if (title === "Care + Labs") return [
-    { label: "Plain-English summary", copy: "This is the part of the plan that keeps your month safe and grounded. It combines the right expert, one practical support option, one clinical review route, and only the labs that actually matter." },
-    { label: "Your recommended setup", rows: [
-      { label: "Specialist", copy: activation.specialist },
-      { label: "Functional support", copy: activation.functional },
-      { label: "Clinical review", copy: activation.clinical },
-      { label: "Labs", copy: activation.labs },
-    ] },
-    { label: "What each part does", rows: [
-      { label: "Specialist", copy: "Reviews symptoms, risk, and safe next steps." },
-      { label: "Functional support", copy: "One practical session to make the plan real in your body." },
-      { label: "Clinical review", copy: "Checks whether recovery, body composition, or visible vitality needs more attention." },
-      { label: "Labs", copy: "Used only when they help clarify fatigue, metabolism, recovery, or risk." },
-    ] },
-    { label: "Your choices", copy: `Functional support is swappable. Care route is clinically bounded. Diagnostics are not casual swaps. ${swapCatalog.Specialist?.rule || catalog.rule}`, groups: [
-      { label: "Functional support options", items: splitBlueprintList(activation.functional).map((name, i) => ({ name, state: i === 0 ? "Recommended" : "Selectable" })) },
-      { label: "Safe care-route alternatives", items: (swapCatalog.Specialist?.options || catalog.options).filter((item) => item.state !== "Locked preview").map((item) => ({ ...item, state: item.state || "Safe alternative" })) },
-    ] },
-    { label: "What stays fixed", copy: "Your safety checks, pathway, and locked future items do not change. Diagnostics, prescriptions, and clinician-gated routes stay protected." },
-    { label: "What can open later", copy: "Advanced diagnostics, devices, packs, and riders can appear later through milestones, clinician review, or rider eligibility." },
-    { label: "Actions", items: ["Keep care route", "Choose functional support", "Swap one block", "Ask coach"].map((name) => ({ name, state: "Action" })) },
+  if (title === "Care + Labs") {
+    const specialistAlts = (swapCatalog.Specialist?.options || catalog.options).filter((item) => item.state !== "Locked preview").slice(0, 3);
+    return [
+      { label: "Plain-English summary", copy: "This is the part of the plan that keeps your month safe and grounded. It combines the right expert route, one practical body-support option, one clinical review route, and only the labs that matter." },
+      { label: "Your recommended setup", rows: [
+        { label: `Specialist · ${activation.specialist}`, copy: "The expert route that anchors your month and keeps the next step safe." },
+        { label: `Functional support · ${activation.functional}`, copy: "One practical session such as nutrition, movement, recovery, LED, acupuncture, pelvic-floor, or breathwork support." },
+        { label: `Clinical review · ${activation.clinical}`, copy: "A focused review, LED, derm, body-composition, or recovery check depending on pathway." },
+        { label: `Labs · ${activation.labs}`, copy: "Guided diagnostics only when useful; not a casual shopping list." },
+      ] },
+      { label: "What you can change", copy: "Functional support is the main swappable part here. Specialist route is clinically bounded. Diagnostics are not casual swaps." },
+      { label: "Safe alternatives preview", copy: "These are informational only. To make a change, use Customize Your Month.", chips: specialistAlts.map((item) => ({ name: item.name, explanation: explainOption(item.name) })) },
+      { label: "What stays fixed", copy: "Your pathway, safety checks, diagnostics rules, prescriptions, riders, and high-cost procedures stay protected." },
+      { label: "What can open later", copy: "Advanced diagnostics, devices, packs, riders, and higher-cost services can appear later through milestones, clinician review, pack, or rider eligibility." },
+      { label: "Actions", items: ["Customize functional support", "Keep care route", "Ask coach"].map((name) => ({ name, state: "Action" })) },
+    ];
+  }
   ];
 
   if (title === "Coach + Pods") return [
