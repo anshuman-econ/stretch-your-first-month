@@ -1696,7 +1696,7 @@ function WeekScreen({ onHome }: { onHome: () => void }) {
 function HomeScreen({ pathway, answers, onCare, onFuture, onJourney, onStamp }: { pathway: Pathway; answers: string[]; onCare: () => void; onFuture: () => void; onJourney: () => void; onStamp: (stamp: PassportStamp) => void }) {
   const chips = (answers.length ? answers : ["poor sleep", "fatigue", "brain fog"]).slice(0, 4);
   const key = pathwayKeyFromTitle(pathway);
-  const nextUnlock: Record<PathwayKey, string> = { peri: "Smart Ring", endo: "PeriShield", metabo: "DermaShield+", longevity: "Longevity Lab Rider" };
+  const nextUnlock: Record<PathwayKey, string> = { peri: "Smart Ring", endo: "EndoShield", metabo: "DermaShield+", longevity: "Longevity Lab Rider" };
   const addOn: Record<PathwayKey, string> = { peri: "Sleep Reset Pack", endo: "Endo Relief Burst Pack", metabo: "Derma Actives Pack", longevity: "Brain Sprint Pack" };
   const stack = [{ label: "Care", state: "Done" }, { label: "Coach", state: "Included" }, { label: "Pods", state: "Needs input" }, { label: "Pass", state: "Needs input" }, { label: "Kit", state: "Future" }, { label: "Unlocks", state: "Locked" }];
   const journey = ["Care", "Coach", "Pods", "Pass", "Kit", "Unlocks"];
