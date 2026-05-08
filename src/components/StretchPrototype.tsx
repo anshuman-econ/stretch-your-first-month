@@ -1346,14 +1346,16 @@ function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathw
 
 function BlueprintDrawer({ title, block, pathway, selectedOption, onSelect, onClose, onCustomize, onCoach }: { title: BlueprintTitle; block: MonthBlock; pathway: Pathway; selectedOption?: string; onSelect: (name: string) => void; onClose: () => void; onCustomize: (title: BlueprintTitle) => void; onCoach: () => void }) {
   const sections = blueprintDrawerSections(title, block, pathway);
-  const handleAction = (action: string) => {
-    const lower = action.toLowerCase();
-    if (/keep/i.test(lower)) { onClose(); return; }
-    if (/customize/i.test(lower)) { onCustomize(title); return; }
-    if (/ask coach/i.test(lower)) { onCoach(); return; }
-    onClose();
-  };
-  return <div className="absolute inset-0 z-50 flex items-end bg-primary/25 p-3 backdrop-blur-sm" onClick={onClose}><div className="max-h-[84vh] w-full overflow-y-auto rounded-[2rem] bg-card p-6 shadow-float animate-slide-up" onClick={(event) => event.stopPropagation()}><div className="mb-5 flex items-start justify-between gap-3"><div className="flex items-start gap-3"><div className="rounded-full bg-secondary p-3 text-accent">{iconForBlock(title)}</div><div><p className="text-sm font-bold text-accent">Blueprint detail</p><h2 className="font-display text-3xl leading-tight">{title}</h2>{selectedOption && <p className="mt-1 text-xs font-bold text-accent">Selected: {selectedOption}</p>}</div></div><button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Close</button></div><div className="grid gap-3">{sections.map((section) => <BlueprintSectionBlock key={section.label} section={section} selectedOption={selectedOption} onSelect={onSelect} onAction={handleAction} />)}</div><div className="mt-5 grid gap-3"><Button variant="hero" size="xl" onClick={() => onCustomize(title)}>Customize this</Button><Button variant="soft" size="xl" onClick={onClose}>Keep as is</Button><Button variant="soft" size="xl" onClick={onCoach}>Ask coach</Button></div></div></div>;
+  const contextActions: { label: string; variant: "hero" | "soft"; action: () => void }[] = (() => {
+    const base = [{ label: "Keep as is", variant: "soft" as const, action: onClose }, { label: "Ask coach", variant: "soft" as const, action: onCoach }];
+    if (title === "Care + Labs") return [{ label: "Choose functional support", variant: "hero" as const, action: () => onCustomize(title) }, ...base];
+    if (title === "Coach + Pods") return [{ label: "Customize this", variant: "hero" as const, action: () => onCustomize(title) }, ...base];
+    if (title === "Kit + Perks") return [{ label: "Build kit", variant: "hero" as const, action: () => onCustomize(title) }, ...base];
+    if (title === "Experience Pass") return [{ label: "Choose pass", variant: "hero" as const, action: () => onCustomize(title) }, ...base];
+    if (title === "Progress Passport") return [{ label: "Learn about MBC", variant: "hero" as const, action: () => onCustomize(title) }, ...base];
+    return [{ label: "See future unlocks", variant: "hero" as const, action: () => onCustomize(title) }, ...base];
+  })();
+  return <div className="absolute inset-0 z-50 flex items-end bg-primary/25 p-3 backdrop-blur-sm" onClick={onClose}><div className="max-h-[84vh] w-full overflow-y-auto rounded-[2rem] bg-card p-6 shadow-float animate-slide-up" onClick={(event) => event.stopPropagation()}><div className="mb-5 flex items-start justify-between gap-3"><div className="flex items-start gap-3"><div className="rounded-full bg-secondary p-3 text-accent">{iconForBlock(title)}</div><div><p className="text-sm font-bold text-accent">Blueprint detail</p><h2 className="font-display text-3xl leading-tight">{title}</h2>{selectedOption && <p className="mt-1 text-xs font-bold text-accent">Selected: {selectedOption}</p>}</div></div><button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Close</button></div><div className="grid gap-3">{sections.map((section) => <BlueprintSectionBlock key={section.label} section={section} selectedOption={selectedOption} onSelect={onSelect} />)}</div><div className="mt-5 grid gap-3">{contextActions.map((btn) => <Button key={btn.label} variant={btn.variant} size="xl" onClick={btn.action}>{btn.label}</Button>)}</div></div></div>;
 }
 
 function BuiltScreen({ pathway, resetQuiz, onCustomize, onKeep, onCoach }: { pathway: Pathway; resetQuiz: () => void; onCustomize: (page?: "core" | "extras") => void; onKeep: () => void; onCoach: () => void }) {
