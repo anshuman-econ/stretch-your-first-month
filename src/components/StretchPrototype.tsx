@@ -28,8 +28,6 @@ type Step =
   | "quiz"
   | "built"
   | "swap"
-  | "unlocks"
-  | "confirm"
   | "builder"
   | "week"
   | "home"
