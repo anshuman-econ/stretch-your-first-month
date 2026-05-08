@@ -1537,6 +1537,7 @@ function BuilderScreen({ pathway, onConfirm, onCoach, onSwap, onBack, initialPag
     {showPackStore && <PackStoreDrawer pathway={pathway} onClose={() => setShowPackStore(false)} />}
   </section>;
 }
+function ProgressRing({ value }: { value: number }) {
   return <div className="grid size-20 shrink-0 place-items-center rounded-full bg-card shadow-card" style={{ background: `conic-gradient(hsl(var(--primary)) ${value}%, hsl(var(--secondary)) 0)` }}><div className="grid size-14 place-items-center rounded-full bg-card"><span className="text-sm font-bold text-accent">{value}%</span></div></div>;
 }
 
