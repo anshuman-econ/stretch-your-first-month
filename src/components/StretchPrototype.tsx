@@ -1244,7 +1244,6 @@ function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathw
       { label: "Safe alternatives preview", copy: "These are informational only. To make a change, use Customize Your Month.", chips: specialistAlts.map((item) => ({ name: item.name, explanation: explainOption(item.name) })) },
       { label: "What stays fixed", copy: "Your pathway, safety checks, diagnostics rules, prescriptions, riders, and high-cost procedures stay protected." },
       { label: "What can open later", copy: "Advanced diagnostics, devices, packs, riders, and higher-cost services can appear later through milestones, clinician review, pack, or rider eligibility." },
-      { label: "Actions", items: ["Customize this", "Keep as is", "Ask coach"].map((name) => ({ name, state: "Action" })) },
     ];
   }
 
@@ -1268,7 +1267,6 @@ function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathw
     ] },
     { label: "What stays fixed", copy: "Your care route, lab plan, and safety checks do not change when you adjust a pod." },
     { label: "What can open later", copy: "More pods, higher-touch coaching, and mental-health deep dives can appear through packs or future eligibility." },
-    { label: "Actions", items: ["Customize this", "Keep as is", "Ask coach"].map((name) => ({ name, state: "Action" })) },
   ];
 
   if (title === "Kit + Perks") return [
@@ -1290,7 +1288,6 @@ function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathw
     ] },
     { label: "What stays fixed", copy: "Care route, lab plan, and safety checks stay the same. Premium actives and full boxes are not freely added." },
     { label: "What can open later", copy: "Premium actives, full boxes, advanced nutrition support, devices, and rider-funded items appear later through packs, MBC, or future unlocks." },
-    { label: "Actions", items: ["Customize this", "Keep as is", "Ask coach"].map((name) => ({ name, state: "Action" })) },
   ];
 
   if (title === "Experience Pass") return [
@@ -1304,7 +1301,6 @@ function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathw
     { label: "Your choices", copy: `You can pick one monthly pass. ${catalog.rule}`, items: catalog.options.map((item) => ({ ...item, state: item.state?.toLowerCase().includes("inventory") ? "inventory-gated" : inventoryStatus(item.name, item.state || "Selectable") })) },
     { label: "What stays fixed", copy: "Care, labs, pods, and pathway identity stay the same when you change passes." },
     { label: "What can open later", copy: "Tier-high experiences, procedures, devices, and repeated clinic sessions may require pack, milestone, or rider unlock." },
-    { label: "Actions", items: ["Customize this", "Keep as is", "Ask coach"].map((name) => ({ name, state: "Action" })) },
   ];
 
   if (title === "Progress Passport") return [
@@ -1321,7 +1317,6 @@ function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathw
     { label: "Your choices", copy: "This is not a swap block — it is a progress tracker. You can choose how you spend earned MBC later." },
     { label: "What stays fixed", copy: "Earned MBC cannot be removed by changes to other parts of the plan." },
     { label: "What can open later", copy: "MBC supports selected packs, kit upgrades, device buy-downs, future pathway add-ons, and partner experiences." },
-    { label: "Actions", items: ["Customize this", "Keep as is", "Ask coach"].map((name) => ({ name, state: "Action" })) },
   ];
 
   // Future Unlocks
@@ -1345,7 +1340,7 @@ function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathw
     ] },
     { label: "What stays fixed", copy: "Your day-one plan, safety checks, and pathway identity stay the same whether or not future items open." },
     { label: "What can open later", copy: "Packs, devices, riders, advanced labs, and adjacent pathways are locked / preview / eligible / active depending on progress, eligibility, or clinician review." },
-    { label: "Actions", items: ["Customize this", "Keep as is", "Ask coach"].map((name) => ({ name, state: "Action" })) },
+    
   ];
 }
 
