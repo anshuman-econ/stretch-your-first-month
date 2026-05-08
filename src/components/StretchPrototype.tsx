@@ -1233,7 +1233,7 @@ function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathw
   if (title === "Care + Labs") {
     const specialistAlts = (swapCatalog.Specialist?.options || catalog.options).filter((item) => item.state !== "Locked preview").slice(0, 3);
     return [
-      { label: "Plain-English summary", copy: "This is the part of the plan that keeps your month safe and grounded. It combines the right expert route, one practical body-support option, one clinical review route, and only the labs that matter." },
+      { label: "Summary", copy: "This is the part of the plan that keeps your month safe and grounded. It combines the right expert route, one practical body-support option, one clinical review route, and only the labs that matter." },
       { label: "Your recommended setup", rows: [
         { label: `Specialist · ${activation.specialist}`, copy: "The expert route that anchors your month and keeps the next step safe." },
         { label: `Functional support · ${activation.functional}`, copy: "One practical session such as nutrition, movement, recovery, LED, acupuncture, pelvic-floor, or breathwork support." },
@@ -1249,7 +1249,7 @@ function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathw
   }
 
   if (title === "Coach + Pods") return [
-    { label: "Plain-English summary", copy: "This is the part of the plan that turns information into action. Your pods give the guided group rhythm. Your coach turns those themes into your weekly moves." },
+    { label: "Summary", copy: "This is the part of the plan that turns information into action. Your pods give the guided group rhythm. Your coach turns those themes into your weekly moves." },
     { label: "Your recommended setup", rows: [
       { label: "Pods", copy: activation.pods },
       { label: "Coaching touch 1", copy: activation.coach1 },
@@ -1272,7 +1272,7 @@ function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathw
   ];
 
   if (title === "Kit + Perks") return [
-    { label: "Plain-English summary", copy: "This is your at-home support for the month. Practical items, supplements, pantry tools, visible-vitality support, and one sticky perk to make follow-through easier." },
+    { label: "Summary", copy: "This is your at-home support for the month. Practical items, supplements, pantry tools, visible-vitality support, and one sticky perk to make follow-through easier." },
     { label: "Your recommended setup", rows: [
       { label: "Recommended kit", copy: activation.kit },
       { label: "Pathway kit detail", copy: kitCatalog[key].join(", ") },
@@ -1294,7 +1294,7 @@ function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathw
   ];
 
   if (title === "Experience Pass") return [
-    { label: "Plain-English summary", copy: "This is your one bookable monthly experience — movement, recovery, breathwork, LED, workshop, or partner demo. It turns the plan into a real-world action." },
+    { label: "Summary", copy: "This is your one bookable monthly experience — movement, recovery, breathwork, LED, workshop, or partner demo. It turns the plan into a real-world action." },
     { label: "Your recommended setup", items: splitBlueprintList(activation.passes).slice(0, 1).map((name) => ({ name, state: "Recommended" })) },
     { label: "What each part does", rows: [
       { label: "Recommended pass", copy: "The default experience matched to your pathway and this month." },
@@ -1308,7 +1308,7 @@ function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathw
   ];
 
   if (title === "Progress Passport") return [
-    { label: "Plain-English summary", copy: "This is how the plan tracks whether you actually used it. Completing actions earns Milestone Bonus Credits, which decide what opens next." },
+    { label: "Summary", copy: "This is how the plan tracks whether you actually used it. Completing actions earns Milestone Bonus Credits, which decide what opens next." },
     { label: "Your recommended setup", rows: [
       { label: "Tracker", copy: "Milestone Bonus Credits (MBC) tied to plan completion." },
       { label: "First milestones", copy: "Build kit, join pod, book pass, complete lab, finish coaching, 7-day streak." },
@@ -1326,7 +1326,7 @@ function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathw
 
   // Future Unlocks
   return [
-    { label: "Plain-English summary", copy: "These are the parts of Stretch that can open later — packs, devices, riders, and adjacent pathways. They are previews, not active day-one benefits." },
+    { label: "Summary", copy: "These are the parts of Stretch that can open later — packs, devices, riders, and adjacent pathways. They are previews, not active day-one benefits." },
     { label: "Your recommended setup", rows: [
       { label: "Strongest pack", copy: `${pathway.strongestPack} — ${packStatusLabel[packMetaFor(pathway.strongestPack).status]}` },
       { label: "Future device", copy: pathway.futureDevice },
