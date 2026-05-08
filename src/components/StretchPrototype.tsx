@@ -1079,6 +1079,7 @@ function ExplainerScreen({ onContinue, onClose }: { onContinue: () => void; onCl
   const openMbc = () => setDetail({ title: "Progress should unlock more care.", status: "Milestone Bonus Credits", copy: "Milestone Bonus Credits are Stretch-funded credits you earn when you complete the actions that make your plan work — like joining a pod, building your kit, finishing labs, booking your pass, or keeping a 7-day streak.", examples: ["build kit + join pod + book pass", "pack discount", "kit upgrade", "device buy-down later"] });
 
   return <section className="absolute inset-0 z-50 flex flex-col bg-shell p-4 pb-6">
+    <img src={botanicalBg} alt="" className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-[0.10]" loading="lazy" width={1024} height={1024} />
     <div className="mb-4 flex items-center justify-between gap-3">
       <div><p className="text-sm font-bold text-accent">Member explainer</p><h1 className="font-display text-3xl leading-tight">What’s Stretch?</h1></div>
       <button onClick={onClose} className="rounded-full bg-secondary px-4 py-2 text-sm font-bold text-accent shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Close</button>
