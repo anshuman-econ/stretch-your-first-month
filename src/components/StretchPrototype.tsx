@@ -1423,7 +1423,7 @@ function BuilderScreen({ pathway, onConfirm, onCoach, onSwap, onBack, initialPag
   const recommendedPackMeta = packMetaFor(recommendedPack);
   const statusChip = (status: PackMeta["status"]) => ({ preview: "Preview", "pack-only": "Pack-only", milestone: "Milestone unlock", "top-up": "Top-up" }[status]);
 
-  const sectionCard = (eyebrow: string, title: string, description: string, recommended: string, recommendedExplanation: string, status: string, alternatives: { name: string; state: string }[], cta: string, onCta: () => void) => (
+  const sectionCard = (eyebrow: string, title: string, description: string, recommended: string, recommendedExplanation: string, status: string, alternatives: { name: string; state?: string }[], cta: string, onCta: () => void) => (
     <div className="rounded-[2rem] bg-card p-5 shadow-card">
       <p className="text-xs font-bold uppercase tracking-wide text-accent">{eyebrow}</p>
       <h2 className="mt-1 font-display text-2xl leading-tight">{title}</h2>
