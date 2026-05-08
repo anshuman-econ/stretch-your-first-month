@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import heroImage from "@/assets/stretch-wellness-hero.jpg";
+import botanicalBg from "@/assets/botanical-watercolor-bg.jpg";
 import { cn } from "@/lib/utils";
 
 type Step =
