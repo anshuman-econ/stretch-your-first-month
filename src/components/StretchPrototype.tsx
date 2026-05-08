@@ -28,8 +28,6 @@ type Step =
   | "quiz"
   | "built"
   | "swap"
-  | "unlocks"
-  | "confirm"
   | "builder"
   | "week"
   | "home"
@@ -1023,8 +1021,6 @@ export default function StretchPrototype() {
           {step === "quiz" && <QuizScreen quizIndex={quizIndex} chooseAnswer={chooseAnswer} onExplain={() => openExplainer("quiz")} />}
           {step === "built" && <BuiltScreen pathway={pathway} resetQuiz={resetQuiz} onCustomize={(page) => { setBuilderInitialPage(page || "core"); setStep("builder"); }} onKeep={() => setStep("home")} onCoach={() => setShowRebalance(true)} />}
           {step === "swap" && <SwapScreen pathway={pathway} reason={answers.slice(0, 3).join(", ") || goal || pathway.reason} initialTarget={swapTarget} onBack={() => setStep("builder")} onCoach={() => setShowRebalance(true)} />}
-          {step === "unlocks" && <UnlocksScreen pathway={pathway} answers={answers} onBuild={() => setStep("builder")} onKeep={() => setStep("confirm")} onSwap={() => openControlledSwap()} onCoach={() => setShowRebalance(true)} />}
-          {step === "confirm" && <ConfirmScreen pathway={pathway} resetQuiz={resetQuiz} onBuild={() => setStep("builder")} onOpenJourney={() => openJourney(pathwayKey)} />}
           {step === "builder" && <BuilderScreen pathway={pathway} onConfirm={() => setStep("home")} onCoach={() => setShowRebalance(true)} onSwap={(target?: string) => openControlledSwap(target)} onBack={() => setStep("built")} initialPage={builderInitialPage} />}
           {step === "week" && <WeekScreen onHome={() => setStep("home")} />}
           {step === "home" && <HomeScreen pathway={pathway} answers={answers} onCare={() => setStep("care")} onFuture={() => setStep("future")} onJourney={() => setStep("builder")} onStamp={setSelectedStamp} />}
@@ -1038,7 +1034,7 @@ export default function StretchPrototype() {
         {(["home", "wallet", "future", "pathways", "journey", "care"] as Step[]).includes(step) && <nav className="absolute bottom-0 left-0 right-0 z-30 grid grid-cols-5 border-t border-border/80 bg-shell/95 px-2 py-2 backdrop-blur-xl">
           <NavItem icon={<Home className="size-5" />} label="Home" active={step === "home"} onClick={() => setStep("home")} />
           <NavItem icon={<Leaf className="size-5" />} label="Pathways" active={step === "pathways" || step === "journey"} onClick={() => setStep("pathways")} />
-          <NavItem icon={<CalendarDays className="size-5" />} label="Plan" active={["explainer", "built", "builder", "confirm", "week", "unlocks"].includes(step)} onClick={() => setStep(answers.length ? "built" : "goal")} />
+          <NavItem icon={<CalendarDays className="size-5" />} label="Plan" active={["explainer", "built", "builder", "week"].includes(step)} onClick={() => setStep(answers.length ? "built" : "goal")} />
           <NavItem icon={<MessageCircle className="size-5" />} label="Care" active={step === "care"} onClick={() => setStep("care")} />
           <NavItem icon={<Wallet className="size-5" />} label="Wallet" active={step === "wallet"} onClick={() => setStep("wallet")} />
         </nav>}
@@ -1188,24 +1184,8 @@ const activationForPathway = (key: PathwayKey): ActivationCopy => ({
   longevity: { specialist: "longevity-oriented IM review", functional: "strength + VO2 prep, RDN, breathwork reset, mobility, Biopeak-style recovery / red-light", clinical: "recovery review, body-composition review, or clinic LED / red-light route", labs: "rotating bio-panel: HbA1c / lipids / ApoB, then hs-CRP / Vitamin D / ferritin, then TSH / FT4 / Lp(a)", pods: "Brain & Focus Pod + Executive Performance & Travel Pod", podCovers: "Brain & Focus covers deep work, caffeine, meal timing, and cognitive fatigue. Executive Performance & Travel covers calendar load, jet lag, hydration, and workday recovery.", coach1: "focus / workday / caffeine / meal timing setup", coach2: "fatigue pattern review", mental: "Mood Check + Micro-CBT if stress or sleep-linked brain fog", kit: "foundational support, pantry / snack tool, powder pick, nootropic pick, pulse stack, visible vitality, sticky perk", passes: "breathwork reset, Biopeak intro talk, movement-compliance, red-light", future: "Brain Sprint, Nootropic Builder, Executive Jet Lag, Smart Ring, Longevity Lab Rider, NeuroSleep Rider" },
 }[key]);
 
-function ActivationPanel({ eyebrow, title, copy, children }: { eyebrow: string; title: string; copy: string; children: React.ReactNode }) {
-  return <section className="rounded-[2rem] bg-card p-5 shadow-float animate-enter"><p className="text-xs font-bold uppercase tracking-wide text-accent">{eyebrow}</p><h2 className="mt-1 font-display text-3xl leading-tight">{title}</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">{copy}</p><div className="mt-5">{children}</div></section>;
-}
 
-function ActivationButtons({ primary, secondary, onContinue, onPrimary, onSecondary }: { primary: string; secondary: string; onContinue: () => void; onPrimary?: () => void; onSecondary: () => void }) {
-  return <div className="mt-4 grid gap-3"><Button variant="soft" size="lg" onClick={onPrimary}>{primary}</Button><Button variant="soft" size="lg" onClick={onSecondary}>{secondary}</Button><Button variant="hero" size="xl" onClick={onContinue}>Continue <ArrowRight className="size-4" /></Button></div>;
-}
 
-type ActivationAction = "choose-functional" | "view-pod-agenda" | "swap-pod" | "build-kit" | "choose-pass" | "learn-mbc" | "see-future-unlocks" | "view-wallet" | "ask-coach";
-type ActivationDetail = { title: string; eyebrow: string; copy: string; rows?: { label: string; copy: string }[]; chips?: string[]; action?: string; actionType?: ActivationAction };
-
-function ActivationInfoCard({ label, copy, onOpen }: { label: string; copy: string; onOpen: () => void }) {
-  return <button onClick={onOpen} className="group w-full rounded-2xl bg-secondary p-4 text-left shadow-card transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><div className="flex items-start justify-between gap-3"><div><p className="text-xs font-semibold uppercase tracking-wide text-accent">{label}</p><p className="mt-2 text-sm leading-6 text-muted-foreground">{copy}</p></div><ArrowRight className="mt-1 size-4 shrink-0 text-accent transition-smooth group-hover:translate-x-0.5" /></div></button>;
-}
-
-function ActivationDetailDrawer({ detail, onClose, onAction }: { detail: ActivationDetail; onClose: () => void; onAction: (action: ActivationAction) => void }) {
-  return <div className="absolute inset-0 z-50 flex items-end bg-primary/25 p-3 backdrop-blur-sm" onClick={onClose}><div className="max-h-[84vh] w-full overflow-y-auto rounded-[2rem] bg-card p-6 shadow-float animate-slide-up" onClick={(event) => event.stopPropagation()}><div className="mb-5 flex items-start justify-between gap-3"><div><p className="text-sm font-bold text-accent">{detail.eyebrow}</p><h2 className="font-display text-3xl leading-tight">{detail.title}</h2></div><button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Close</button></div><p className="text-sm leading-6 text-muted-foreground">{detail.copy}</p>{detail.rows && <div className="mt-4 grid gap-3">{detail.rows.map((row) => <InfoBlock key={row.label} label={row.label} copy={row.copy} />)}</div>}{detail.chips && <div className="mt-4 flex flex-wrap gap-2">{detail.chips.map((chip) => <span key={chip} className="rounded-full bg-secondary px-3 py-2 text-xs font-bold text-accent shadow-card">{chip}</span>)}</div>}{detail.action && detail.actionType && <Button variant="hero" size="lg" className="mt-5 w-full" onClick={() => onAction(detail.actionType!)}>{detail.action}</Button>}{detail.action && !detail.actionType && <Button variant="hero" size="lg" className="mt-5 w-full" onClick={onClose}>{detail.action}</Button>}</div></div>;
-}
 
 type BlueprintTitle = "Care + Labs" | "Coach + Pods" | "Kit + Perks" | "Experience Pass" | "Progress Passport" | "Future Unlocks";
 type BlueprintSection = { label: string; copy?: string; items?: CatalogOption[]; rows?: { label: string; copy: string }[]; groups?: { label: string; items: CatalogOption[] }[]; chips?: { name: string; explanation: string }[] };
@@ -1213,10 +1193,8 @@ type BlueprintSection = { label: string; copy?: string; items?: CatalogOption[];
 const splitBlueprintList = (value: string) => value.split(/, | \+ /).map((item) => item.trim()).filter(Boolean);
 const swapTargetForBlueprint = (title: BlueprintTitle) => ({ "Care + Labs": "Care route", "Coach + Pods": "Pods", "Kit + Perks": "Kit item", "Experience Pass": "Experience pass", "Progress Passport": "Progress Passport", "Future Unlocks": "Future Unlocks" }[title]);
 
-function BlueprintSectionBlock({ section, selectedOption, onSelect, onAction }: { section: BlueprintSection; selectedOption?: string; onSelect: (name: string) => void; onAction?: (action: string) => void }) {
+function BlueprintSectionBlock({ section, selectedOption, onSelect }: { section: BlueprintSection; selectedOption?: string; onSelect: (name: string) => void }) {
   const renderItems = (items: CatalogOption[], prefix: string) => <div className="mt-3 grid gap-2">{items.map((item) => { const selected = selectedOption === item.name; return <button key={`${prefix}-${item.name}`} onClick={() => onSelect(item.name)} className={cn("rounded-2xl px-4 py-3 text-left shadow-card transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", selected ? "bg-primary text-primary-foreground" : "bg-card") }><span className="flex items-start justify-between gap-3"><span className="min-w-0 flex-1"><p className={cn("text-sm font-semibold", selected ? "text-primary-foreground" : "text-foreground")}>{item.name}</p><p className={cn("mt-1 text-xs leading-5", selected ? "text-primary-foreground/85" : "text-muted-foreground")}>{explainOption(item.name)}</p>{item.state && <span className={cn("mt-2 inline-flex rounded-full px-2 py-0.5 text-[11px] font-bold", selected ? "bg-primary-foreground/15 text-primary-foreground" : "bg-secondary text-accent")}>{selected ? "Selected" : item.state}</span>}</span>{selected && <Check className="mt-0.5 size-4 shrink-0" />}</span></button>; })}</div>;
-  const renderActionButtons = (items: CatalogOption[]) => <div className="mt-3 grid gap-2">{items.map((item) => { const isHero = /keep|confirm|continue/i.test(item.name); return <Button key={item.name} variant={isHero ? "hero" : "soft"} size="lg" className="w-full justify-start" onClick={() => onAction?.(item.name)}>{item.name}</Button>; })}</div>;
-  if (section.label === "Actions") return <div className="rounded-2xl bg-secondary p-4"><p className="text-xs font-semibold uppercase tracking-wide text-accent">{section.label}</p>{section.items && renderActionButtons(section.items)}</div>;
   const renderChips = (chips: { name: string; explanation: string }[]) => <div className="mt-3 flex flex-wrap gap-2">{chips.map((chip) => <div key={chip.name} className="rounded-2xl bg-card px-4 py-3 shadow-card"><p className="text-sm font-semibold text-foreground">{chip.name}</p><p className="mt-1 text-xs leading-5 text-muted-foreground">{chip.explanation}</p></div>)}</div>;
   return <div className="rounded-2xl bg-secondary p-4"><p className="text-xs font-semibold uppercase tracking-wide text-accent">{section.label}</p>{section.copy && <p className="mt-2 text-sm leading-6 text-muted-foreground">{section.copy}</p>}{section.rows && <div className="mt-3 grid gap-2">{section.rows.map((row) => <div key={`${section.label}-${row.label}`} className="rounded-2xl bg-card px-4 py-3 shadow-card"><p className="text-sm font-semibold text-foreground">{row.label}</p><p className="mt-1 text-xs leading-5 text-muted-foreground">{row.copy}</p></div>)}</div>}{section.chips && renderChips(section.chips)}{section.items && renderItems(section.items, section.label)}{section.groups && <div className="mt-3 grid gap-4">{section.groups.map((group) => <div key={`${section.label}-${group.label}`}><p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">{group.label}</p>{renderItems(group.items, `${section.label}-${group.label}`)}</div>)}</div>}</div>;
 }
@@ -1244,7 +1222,6 @@ function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathw
       { label: "Safe alternatives preview", copy: "These are informational only. To make a change, use Customize Your Month.", chips: specialistAlts.map((item) => ({ name: item.name, explanation: explainOption(item.name) })) },
       { label: "What stays fixed", copy: "Your pathway, safety checks, diagnostics rules, prescriptions, riders, and high-cost procedures stay protected." },
       { label: "What can open later", copy: "Advanced diagnostics, devices, packs, riders, and higher-cost services can appear later through milestones, clinician review, pack, or rider eligibility." },
-      { label: "Actions", items: ["Customize this", "Keep as is", "Ask coach"].map((name) => ({ name, state: "Action" })) },
     ];
   }
 
@@ -1268,7 +1245,6 @@ function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathw
     ] },
     { label: "What stays fixed", copy: "Your care route, lab plan, and safety checks do not change when you adjust a pod." },
     { label: "What can open later", copy: "More pods, higher-touch coaching, and mental-health deep dives can appear through packs or future eligibility." },
-    { label: "Actions", items: ["Customize this", "Keep as is", "Ask coach"].map((name) => ({ name, state: "Action" })) },
   ];
 
   if (title === "Kit + Perks") return [
@@ -1290,7 +1266,6 @@ function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathw
     ] },
     { label: "What stays fixed", copy: "Care route, lab plan, and safety checks stay the same. Premium actives and full boxes are not freely added." },
     { label: "What can open later", copy: "Premium actives, full boxes, advanced nutrition support, devices, and rider-funded items appear later through packs, MBC, or future unlocks." },
-    { label: "Actions", items: ["Customize this", "Keep as is", "Ask coach"].map((name) => ({ name, state: "Action" })) },
   ];
 
   if (title === "Experience Pass") return [
@@ -1304,7 +1279,6 @@ function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathw
     { label: "Your choices", copy: `You can pick one monthly pass. ${catalog.rule}`, items: catalog.options.map((item) => ({ ...item, state: item.state?.toLowerCase().includes("inventory") ? "inventory-gated" : inventoryStatus(item.name, item.state || "Selectable") })) },
     { label: "What stays fixed", copy: "Care, labs, pods, and pathway identity stay the same when you change passes." },
     { label: "What can open later", copy: "Tier-high experiences, procedures, devices, and repeated clinic sessions may require pack, milestone, or rider unlock." },
-    { label: "Actions", items: ["Customize this", "Keep as is", "Ask coach"].map((name) => ({ name, state: "Action" })) },
   ];
 
   if (title === "Progress Passport") return [
@@ -1321,7 +1295,6 @@ function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathw
     { label: "Your choices", copy: "This is not a swap block — it is a progress tracker. You can choose how you spend earned MBC later." },
     { label: "What stays fixed", copy: "Earned MBC cannot be removed by changes to other parts of the plan." },
     { label: "What can open later", copy: "MBC supports selected packs, kit upgrades, device buy-downs, future pathway add-ons, and partner experiences." },
-    { label: "Actions", items: ["Customize this", "Keep as is", "Ask coach"].map((name) => ({ name, state: "Action" })) },
   ];
 
   // Future Unlocks
@@ -1345,20 +1318,22 @@ function blueprintDrawerSections(title: BlueprintTitle, block: MonthBlock, pathw
     ] },
     { label: "What stays fixed", copy: "Your day-one plan, safety checks, and pathway identity stay the same whether or not future items open." },
     { label: "What can open later", copy: "Packs, devices, riders, advanced labs, and adjacent pathways are locked / preview / eligible / active depending on progress, eligibility, or clinician review." },
-    { label: "Actions", items: ["Customize this", "Keep as is", "Ask coach"].map((name) => ({ name, state: "Action" })) },
+    
   ];
 }
 
 function BlueprintDrawer({ title, block, pathway, selectedOption, onSelect, onClose, onCustomize, onCoach }: { title: BlueprintTitle; block: MonthBlock; pathway: Pathway; selectedOption?: string; onSelect: (name: string) => void; onClose: () => void; onCustomize: (title: BlueprintTitle) => void; onCoach: () => void }) {
   const sections = blueprintDrawerSections(title, block, pathway);
-  const handleAction = (action: string) => {
-    const lower = action.toLowerCase();
-    if (/keep/i.test(lower)) { onClose(); return; }
-    if (/customize/i.test(lower)) { onCustomize(title); return; }
-    if (/ask coach/i.test(lower)) { onCoach(); return; }
-    onClose();
-  };
-  return <div className="absolute inset-0 z-50 flex items-end bg-primary/25 p-3 backdrop-blur-sm" onClick={onClose}><div className="max-h-[84vh] w-full overflow-y-auto rounded-[2rem] bg-card p-6 shadow-float animate-slide-up" onClick={(event) => event.stopPropagation()}><div className="mb-5 flex items-start justify-between gap-3"><div className="flex items-start gap-3"><div className="rounded-full bg-secondary p-3 text-accent">{iconForBlock(title)}</div><div><p className="text-sm font-bold text-accent">Blueprint detail</p><h2 className="font-display text-3xl leading-tight">{title}</h2>{selectedOption && <p className="mt-1 text-xs font-bold text-accent">Selected: {selectedOption}</p>}</div></div><button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Close</button></div><div className="grid gap-3">{sections.map((section) => <BlueprintSectionBlock key={section.label} section={section} selectedOption={selectedOption} onSelect={onSelect} onAction={handleAction} />)}</div><div className="mt-5 grid gap-3"><Button variant="hero" size="xl" onClick={() => onCustomize(title)}>Customize this</Button><Button variant="soft" size="xl" onClick={onClose}>Keep as is</Button><Button variant="soft" size="xl" onClick={onCoach}>Ask coach</Button></div></div></div>;
+  const contextActions: { label: string; variant: "hero" | "soft"; action: () => void }[] = (() => {
+    const base = [{ label: "Keep as is", variant: "soft" as const, action: onClose }, { label: "Ask coach", variant: "soft" as const, action: onCoach }];
+    if (title === "Care + Labs") return [{ label: "Choose functional support", variant: "hero" as const, action: () => onCustomize(title) }, ...base];
+    if (title === "Coach + Pods") return [{ label: "Customize this", variant: "hero" as const, action: () => onCustomize(title) }, ...base];
+    if (title === "Kit + Perks") return [{ label: "Build kit", variant: "hero" as const, action: () => onCustomize(title) }, ...base];
+    if (title === "Experience Pass") return [{ label: "Choose pass", variant: "hero" as const, action: () => onCustomize(title) }, ...base];
+    if (title === "Progress Passport") return [{ label: "Learn about MBC", variant: "hero" as const, action: () => onCustomize(title) }, ...base];
+    return [{ label: "See future unlocks", variant: "hero" as const, action: () => onCustomize(title) }, ...base];
+  })();
+  return <div className="absolute inset-0 z-50 flex items-end bg-primary/25 p-3 backdrop-blur-sm" onClick={onClose}><div className="max-h-[84vh] w-full overflow-y-auto rounded-[2rem] bg-card p-6 shadow-float animate-slide-up" onClick={(event) => event.stopPropagation()}><div className="mb-5 flex items-start justify-between gap-3"><div className="flex items-start gap-3"><div className="rounded-full bg-secondary p-3 text-accent">{iconForBlock(title)}</div><div><p className="text-sm font-bold text-accent">Blueprint detail</p><h2 className="font-display text-3xl leading-tight">{title}</h2>{selectedOption && <p className="mt-1 text-xs font-bold text-accent">Selected: {selectedOption}</p>}</div></div><button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Close</button></div><div className="grid gap-3">{sections.map((section) => <BlueprintSectionBlock key={section.label} section={section} selectedOption={selectedOption} onSelect={onSelect} />)}</div><div className="mt-5 grid gap-3">{contextActions.map((btn) => <Button key={btn.label} variant={btn.variant} size="xl" onClick={btn.action}>{btn.label}</Button>)}</div></div></div>;
 }
 
 function BuiltScreen({ pathway, resetQuiz, onCustomize, onKeep, onCoach }: { pathway: Pathway; resetQuiz: () => void; onCustomize: (page?: "core" | "extras") => void; onKeep: () => void; onCoach: () => void }) {
@@ -1383,159 +1358,8 @@ function BuiltScreen({ pathway, resetQuiz, onCustomize, onKeep, onCoach }: { pat
   return <section className="space-y-5 px-5 py-7"><div className="rounded-[2rem] bg-hero p-6 shadow-float"><Sparkles className="mb-5 size-8 text-accent" /><SectionTitle title="Stretch built your first-month blueprint." copy="Based on your answers, we built a guided month with care, coaching, pods, kit, pass, progress rewards, and future unlocks — all matched to what you want to feel better in 30 days." /></div><div className="rounded-[2rem] bg-card p-5 shadow-card"><p className="text-sm font-semibold text-accent">Recommended pathway</p><h2 className="mt-1 font-display text-3xl leading-tight">{pathway.title}</h2><InfoBlock label="Why" copy={pathway.reason} /></div><div className="grid gap-3">{blueprint.map((card, index) => <button key={card.title} onClick={() => setDrawerCard({ title: card.title, block: card.block })} className="group w-full rounded-[2rem] bg-card p-5 text-left shadow-card transition-smooth hover:-translate-y-0.5 hover:shadow-float focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><div className="flex items-start gap-4"><div className="grid size-12 shrink-0 place-items-center rounded-2xl bg-secondary text-accent shadow-card">{iconForBlock(card.title)}</div><div className="min-w-0 flex-1"><div className="flex items-center justify-between gap-3"><p className="text-xs font-bold uppercase tracking-wide text-accent">Blueprint {index + 1}</p><ArrowRight className="size-4 text-accent transition-smooth group-hover:translate-x-0.5" /></div><h2 className="mt-1 font-display text-2xl leading-tight">{card.title}</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">{blueprintSelections[card.title] || card.subtitle}</p></div></div></button>)}</div><div className="grid gap-3"><Button variant="hero" size="xl" onClick={() => onCustomize()}>Customize my month <ArrowRight className="size-4" /></Button><Button variant="soft" size="xl" onClick={onKeep}>Keep recommended</Button><Button variant="soft" size="lg" onClick={resetQuiz}>Change answers</Button></div>{drawerCard && <BlueprintDrawer title={drawerCard.title} block={drawerCard.block} pathway={pathway} selectedOption={blueprintSelections[drawerCard.title]} onSelect={(name) => setBlueprintSelections((current) => ({ ...current, [drawerCard.title]: name }))} onClose={() => setDrawerCard(null)} onCustomize={handleCustomizeFromDrawer} onCoach={onCoach} />}</section>;
 }
 
-type ActivationPicker = "functional" | "pods" | "kit" | "pass" | "mbc" | "future";
 
-function ActivationPickerDrawer({ type, pathway, activation, selected, onSelect, onClose, onSwap, onCoach }: { type: ActivationPicker; pathway: Pathway; activation: ActivationCopy; selected?: string; onSelect: (value: string) => void; onClose: () => void; onSwap: () => void; onCoach: () => void }) {
-  const key = pathwayKeyFromTitle(pathway);
-  const podNames = splitBlueprintList(activation.pods);
-  const podAlternatives = podCatalog.filter((pod) => !podNames.includes(pod)).slice(0, 4);
-  const kitCategories = kitCategoriesFor(key);
-  const selectable = type === "functional" ? splitBlueprintList(activation.functional) : type === "pass" ? splitBlueprintList(activation.passes) : [];
-  const title = { functional: "Choose functional support", pods: "Your pod seats", kit: "Your kit", pass: "Choose your experience pass", mbc: "Milestone Bonus Credits", future: "Future unlocks" }[type];
-  const copy = {
-    functional: "Choose one practical support option from the functional care layer matched to this pathway.",
-    pods: "Pods are guided group sessions. Your coach uses them to shape your weekly actions.",
-    kit: "Your kit is the at-home support for the month.",
-    pass: "Choose one monthly experience pass from the pathway-specific options.",
-    mbc: "MBC are Stretch-funded credits earned by completing plan actions.",
-    future: "These are previews, not active day-one benefits.",
-  }[type];
-  const recommendedPackName = pathwayPacks[key][0];
-  const recommendedPackInfo = packMetaFor(recommendedPackName);
-  const packStatusLabels: Record<PackMeta["status"], string> = { preview: "Preview", "pack-only": "Pack-only", milestone: "Milestone unlock", "top-up": "Top-up" };
-  const rows = type === "mbc" ? [{ label: "Earn with", copy: "kit built, pod joined, pass booked, labs completed, coaching done, 7-day streak" }, { label: "Use for", copy: "selected packs, kit upgrades, device buy-downs, future pathway add-ons, special partner experiences" }] : type === "future" ? [{ label: `Recommended pack · ${recommendedPackName}`, copy: `${packStatusLabels[recommendedPackInfo.status]}. Includes: ${recommendedPackInfo.includes} Useful when: ${recommendedPackInfo.useful}` }, { label: "Pack Store", copy: `Packs are optional boosts for a specific need. Your core month still works without them. Pathway packs: ${pathwayPacks[key].join(", ")}.` }, { label: `Perk Store`, copy: `Small extras that make your month feel more useful — demos, challenges, pod passes, tonic moments, partner perks, and workshops. Featured: ${featuredPerks.join(", ")}.` }, { label: "Devices", copy: [pathway.futureDevice, ...futureCatalog.filter((item) => /Ring|LED Mask|CGM|red-light/i.test(item)).slice(0, 3)].join(", ") }, { label: "Riders", copy: [pathway.futureRider, ...splitBlueprintList(activation.future).filter((item) => /Rider|Shield|Rx|DermaShield|NeuroSleep/i.test(item))].join(", ") }, { label: "Adjacent pathways", copy: pathways[pathway.adjacent].title }] : [];
-  const kitStatusClass = (status: KitCategory["status"]) => status === "Recommended" ? "bg-primary text-primary-foreground" : status === "Sticky perk" ? "bg-accent/15 text-accent" : status === "Locked" ? "bg-muted text-muted-foreground" : "bg-secondary text-accent";
-  return <div className="absolute inset-0 z-[60] flex items-end bg-primary/25 p-3 backdrop-blur-sm" onClick={onClose}><div className="max-h-[84vh] w-full overflow-y-auto rounded-[2rem] bg-card p-6 shadow-float animate-slide-up" onClick={(event) => event.stopPropagation()}>
-    <div className="mb-5 flex items-start justify-between gap-3">
-      <div>
-        <p className="text-sm font-bold text-accent">Activation picker</p>
-        <h2 className="font-display text-3xl leading-tight">{title}</h2>
-      </div>
-      <button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Close</button>
-    </div>
-    <p className="text-sm leading-6 text-muted-foreground">{copy}</p>
 
-    {type === "pods" && <div className="mt-4 grid gap-3">
-      {podNames.map((pod) => { const d = podDetails[pod]; return (
-        <div key={pod} className="rounded-2xl bg-secondary p-4 shadow-card">
-          <div className="flex items-start justify-between gap-3">
-            <p className="text-sm font-semibold text-foreground">{pod}</p>
-            <span className="shrink-0 rounded-full bg-primary px-2 py-0.5 text-[11px] font-bold text-primary-foreground">Selected pod</span>
-          </div>
-          {d ? <div className="mt-2 grid gap-1 text-xs leading-5 text-muted-foreground">
-            <p><span className="font-bold text-accent">Covers:</span> {d.covers}</p>
-            <p><span className="font-bold text-accent">You leave with:</span> {d.leaveWith}</p>
-            <p><span className="font-bold text-accent">Coach uses it for:</span> {d.coachUse}</p>
-          </div> : <p className="mt-2 text-xs leading-5 text-muted-foreground">{podAgendas[pod] || activation.podCovers}</p>}
-        </div>
-      ); })}
-      {podAlternatives.length > 0 && <div className="rounded-2xl bg-card p-4 shadow-card">
-        <p className="text-xs font-bold uppercase tracking-wide text-accent">Alternative pods</p>
-        <div className="mt-2 grid gap-2">{podAlternatives.map((pod) => (
-          <div key={pod} className="rounded-xl bg-secondary px-3 py-2">
-            <p className="text-sm font-semibold text-foreground">{pod}</p>
-            <p className="mt-0.5 text-xs leading-5 text-muted-foreground">{podDetails[pod]?.covers || podAgendas[pod] || "Alternative pod option."}</p>
-          </div>
-        ))}</div>
-      </div>}
-    </div>}
-
-    {type === "kit" && <div className="mt-4 grid gap-3">
-      {kitCategories.map((cat) => (
-        <div key={cat.label} className="rounded-2xl bg-secondary p-4 shadow-card">
-          <div className="flex items-start justify-between gap-3">
-            <p className="text-xs font-bold uppercase tracking-wide text-accent">{cat.label}</p>
-            <span className={cn("shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold", kitStatusClass(cat.status))}>{cat.status}</span>
-          </div>
-          <p className="mt-1 text-sm font-semibold text-foreground">{cat.recommendation}</p>
-          <p className="mt-1 text-xs leading-5 text-muted-foreground">{cat.explanation}</p>
-        </div>
-      ))}
-    </div>}
-
-    {rows.length > 0 && <div className="mt-4 grid gap-3">{rows.map((item) => <InfoBlock key={item.label} label={item.label} copy={item.copy} />)}</div>}
-    {selectable.length > 0 && <div className="mt-4 grid gap-2">{selectable.map((item, index) => { const isSelected = selected === item; const status = isSelected ? "Selected" : index === 0 ? "Recommended" : "Selectable"; return <button key={item} onClick={() => onSelect(item)} className={cn("rounded-2xl px-4 py-3 text-left shadow-card transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", isSelected ? "bg-primary text-primary-foreground" : "bg-secondary")}><span className="flex items-start justify-between gap-3"><span className="min-w-0 flex-1"><p className="text-sm font-semibold">{item}</p><p className={cn("mt-1 text-xs leading-5", isSelected ? "text-primary-foreground/85" : "text-muted-foreground")}>{explainOption(item)}</p><span className={cn("mt-2 inline-flex rounded-full px-2 py-0.5 text-[11px] font-bold", isSelected ? "bg-primary-foreground/15 text-primary-foreground" : "bg-card text-accent")}>{status}</span></span>{isSelected && <Check className="mt-0.5 size-4 shrink-0" />}</span></button>; })}</div>}
-    <div className="mt-5 grid gap-3">{type === "functional" && <><Button variant="soft" size="lg" onClick={onClose}>Keep recommended</Button><Button variant="hero" size="lg" onClick={onClose}>Choose this</Button><Button variant="soft" size="lg" onClick={onCoach}>Ask coach</Button></>}{type === "pods" && <><Button variant="soft" size="lg" onClick={onClose}>Keep current pods</Button><Button variant="hero" size="lg" onClick={onSwap}>Swap one pod</Button><Button variant="soft" size="lg" onClick={onCoach}>Ask coach</Button></>}{type === "kit" && <><Button variant="soft" size="lg" onClick={onClose}>Keep recommended kit</Button><Button variant="hero" size="lg" onClick={onSwap}>Swap one item</Button><Button variant="soft" size="lg" onClick={onCoach}>Ask coach</Button></>}{type === "pass" && <><Button variant="hero" size="lg" onClick={onClose}>Choose this pass</Button><Button variant="soft" size="lg" onClick={onClose}>Keep recommended</Button><Button variant="soft" size="lg" onClick={onCoach}>Ask coach</Button></>}{type === "mbc" && <><Button variant="hero" size="lg" onClick={onClose}>View Wallet</Button><Button variant="soft" size="lg" onClick={onClose}>Continue</Button></>}{type === "future" && <><Button variant="hero" size="lg" onClick={onClose}>Mark interest</Button><Button variant="soft" size="lg" onClick={onClose}>Not now</Button></>}</div>
-  </div></div>;
-}
-
-function UnlocksScreen({ pathway, onBuild, onKeep, onSwap, onCoach }: { pathway: Pathway; answers: string[]; onBuild: () => void; onKeep: () => void; onSwap: () => void; onCoach: () => void }) {
-  const [active, setActive] = useState("Stack");
-  const [detail, setDetail] = useState<ActivationDetail | null>(null);
-  const [activePicker, setActivePicker] = useState<null | ActivationPicker>(null);
-  const [chosenFunctional, setChosenFunctional] = useState<string | undefined>();
-  const [chosenKit, setChosenKit] = useState<string | undefined>();
-  const [chosenPass, setChosenPass] = useState<string | undefined>();
-  const [chosenPod, setChosenPod] = useState<string | undefined>();
-  const key = pathwayKeyFromTitle(pathway);
-  const d = pathwayDefaults[key];
-  const sectionTabs = ["Stack", "Care", "Coach", "Kit", "Pass + Unlocks"];
-  const activation = activationForPathway(key);
-  const podNames = splitBlueprintList(activation.pods);
-  const row = (label: string, copy: string) => ({ label, copy });
-  const simple = (title: string, eyebrow: string, copy: string, chips?: string[], action = "Keep recommended", actionType?: ActivationAction) => setDetail({ title, eyebrow, copy, chips, action, actionType });
-  const handleAction = (action: ActivationAction) => {
-    setDetail(null);
-    if (action === "choose-functional") setActivePicker("functional");
-    if (action === "view-pod-agenda") setActivePicker("pods");
-    if (action === "swap-pod") onSwap();
-    if (action === "build-kit") setActivePicker("kit");
-    if (action === "choose-pass") setActivePicker("pass");
-    if (action === "learn-mbc" || action === "view-wallet") setActivePicker("mbc");
-    if (action === "see-future-unlocks") setActivePicker("future");
-    if (action === "ask-coach") onCoach();
-  };
-  const chooseFunctional = () => setDetail({ title: "Functional support options", eyebrow: "Care", copy: "Functional support is the practical care layer — nutrition, movement, recovery, LED, acupuncture, pelvic floor, breathwork, or body support depending the pathway.", rows: [row("Recommended for this pathway", activation.functional), row("Pathway default", d["Functional Care"])], action: "Choose functional support", actionType: "choose-functional" });
-  const chooseKit = () => setDetail({ title: "Build kit", eyebrow: "Kit", copy: "The kit gives you practical at-home support between care, coaching, and pods.", rows: [row("Recommended kit", activation.kit), row("Catalog detail", kitCatalog[key].join(", "))], action: "Build kit", actionType: "build-kit" });
-  const choosePass = () => setDetail({ title: "Choose pass", eyebrow: "Pass + Unlocks", copy: "Your monthly pass gives the month one real-world action — movement, recovery, breathwork, LED, workshop, or partner demo.", rows: [row("Recommended pass set", activation.passes)], action: "Choose pass", actionType: "choose-pass" });
-  const podAgenda = (title = "Pod agenda") => setDetail({ title, eyebrow: "Coach", copy: "Each pod includes a focused agenda and output tied to this pathway.", rows: podNames.map((pod) => row(pod, podAgendas[pod] || activation.podCovers)), action: "View pod agenda", actionType: "view-pod-agenda" });
-  const mbcDetail = () => setDetail({ title: "Milestone Bonus Credits", eyebrow: "Pass + Unlocks", copy: "MBC are Stretch-funded credits earned by completing plan actions.", rows: [row("Earn with", "kit built, pod joined, pass booked, labs completed, coaching done, 7-day streak"), row("Use for", "selected packs, kit upgrades, device buy-downs, future pathway add-ons, special partner experiences")], action: "View Wallet", actionType: "view-wallet" });
-  const futureDetail = () => setDetail({ title: "Future unlocks", eyebrow: "Pass + Unlocks", copy: "Future unlocks are previews, not active day-one benefits. They can open through progress, eligibility, or clinician review.", rows: [row("Packs", packsCatalog[key].join(", ")), row("Devices", [pathway.futureDevice, ...futureCatalog.filter((item) => /Ring|LED Mask|CGM|red-light/i.test(item)).slice(0, 3)].join(", ")), row("Riders", [pathway.futureRider, ...splitBlueprintList(activation.future).filter((item) => /Rider|Shield|Rx|DermaShield|NeuroSleep/i.test(item))].join(", ")), row("Adjacent pathways", pathways[pathway.adjacent].title)], action: "See future unlocks", actionType: "see-future-unlocks" });
-  const stackCards = [
-    { label: "Pathway", copy: pathway.title, open: () => setDetail({ title: "Pathway", eyebrow: "Stack", copy: pathway.monthlyPromise, rows: [row("Selected route", pathway.title), row("Best for", pathway.bestFor), row("First unlock", pathway.firstUnlock)], action: "Ask coach", actionType: "ask-coach" }) },
-    { label: "Why selected", copy: pathway.reason, open: () => setDetail({ title: "Why selected", eyebrow: "Stack", copy: pathway.reason, rows: [row("Quiz signal", pathway.reason), row("Monthly promise", pathway.monthlyPromise), row("Why it matters", pathway.why)], action: "Ask coach", actionType: "ask-coach" }) },
-    { label: "Care route", copy: activation.specialist, open: () => setDetail({ title: "Care route", eyebrow: "Stack", copy: "This is the expert route that anchors the month and keeps the plan safe.", rows: [row("Specialist", activation.specialist), row("Functional support", activation.functional), row("Clinical / LED / review", activation.clinical), row("Labs", activation.labs)], action: "Choose functional support", actionType: "choose-functional" }) },
-    { label: "Coach + pods", copy: chosenPod || activation.pods, open: () => setDetail({ title: "Coach + pods", eyebrow: "Stack", copy: "Pods give the guided group rhythm; coaching turns that rhythm into weekly action.", rows: [row("Coaching touch 1", activation.coach1), row("Coaching touch 2", activation.coach2), row("Pods", activation.pods), row("Pod covers", activation.podCovers)], action: "View pod agenda", actionType: "view-pod-agenda" }) },
-    { label: "Kit", copy: chosenKit || activation.kit, open: chooseKit },
-    { label: "Pass", copy: chosenPass || activation.passes, open: choosePass },
-    { label: "Progress", copy: "Milestone Bonus Credits", open: mbcDetail },
-    { label: "Future unlocks", copy: activation.future, open: futureDetail },
-  ];
-  const careCards = [
-    { label: "Specialist route", copy: activation.specialist, open: () => setDetail({ title: "Specialist route", eyebrow: "Care", copy: "This is the expert route that anchors the month and keeps the plan safe.", rows: [row("Route", activation.specialist), row("Pathway default", d.Specialist), row("Why", pathway.reason)], action: "Ask coach", actionType: "ask-coach" }) },
-    { label: "Functional support options", copy: chosenFunctional || activation.functional, open: chooseFunctional },
-    { label: "Clinical / LED / review route", copy: activation.clinical, open: () => setDetail({ title: "Clinical / LED / review route", eyebrow: "Care", copy: "This is the check, review, LED, or clinical loop that determines whether the month stays simple or needs escalation.", rows: [row("Unlocked route", activation.clinical), row("Pathway default", d["Clinical / LED / Review"])], action: "Ask coach", actionType: "ask-coach" }) },
-    { label: "Diagnostics / labs", copy: activation.labs, open: () => setDetail({ title: "Diagnostics / labs", eyebrow: "Care", copy: "Labs are not a casual marketplace item. They appear when useful to clarify fatigue, hormones, inflammation, metabolism, recovery, or symptom patterns.", rows: diagnosticsCatalog[key].map((item, index) => row(index === 0 ? "Included / current" : item.split(":")[0], item)), action: "Ask coach", actionType: "ask-coach" }) },
-  ];
-  const coachCards = [
-    { label: "Selected pods", copy: chosenPod || activation.pods, open: () => podAgenda("Selected pods") },
-    { label: "What each pod covers", copy: activation.podCovers, open: () => setDetail({ title: "What each pod covers", eyebrow: "Coach", copy: "Pod-specific agendas define the work, expected output, and why the pod belongs in this month.", rows: podNames.map((pod) => row(pod, podAgendas[pod] || activation.podCovers)), action: "View pod agenda", actionType: "view-pod-agenda" }) },
-    { label: "Coaching touch 1", copy: activation.coach1, open: () => simple("Coaching touch 1", "Coach", "This touch sets up the first week and converts the pod theme into an action plan.", [activation.coach1], "Ask coach", "ask-coach") },
-    { label: "Coaching touch 2", copy: activation.coach2, open: () => simple("Coaching touch 2", "Coach", "This touch reviews whether the plan is usable and adjusts it.", [activation.coach2], "Ask coach", "ask-coach") },
-    { label: "Mental / behavioral support", copy: activation.mental, open: () => simple("Mental / behavioral support", "Coach", "This helps with stress, mood, pain, adherence, body image, or brain fog when those factors make the month harder to complete.", splitBlueprintList(activation.mental), "Ask coach", "ask-coach") },
-  ];
-  const kitCards = [
-    { label: "Recommended kit", copy: chosenKit || activation.kit, open: chooseKit },
-    { label: "What can be swapped", copy: kitCatalog[key][1] || kitCatalog[key][0], open: () => setDetail({ title: "What can be swapped", eyebrow: "Kit", copy: "One eligible kit swap is allowed. The item can change, but the pathway goal and at-home support purpose stay the same.", rows: [row("Eligible swap", kitCatalog[key][1] || kitCatalog[key][0]), row("What stays the same", activation.kit)], action: "Build kit", actionType: "build-kit" }) },
-    { label: "Sticky perk option", copy: stickyPerks.slice(0, 4).join(", "), open: () => simple("Sticky perk option", "Kit", "Sticky perks are small experiential benefits that make the month feel useful and rewarding.", stickyPerks, "Build kit", "build-kit") },
-    { label: "Pack-only upgrades", copy: packsCatalog[key].slice(0, 3).join(", "), open: () => setDetail({ title: "Pack-only upgrades", eyebrow: "Kit", copy: "Packs are boosts, not required for the plan to be useful.", rows: packsCatalog[key].map((pack, index) => row(index === 0 ? "Strongest pack" : "Pack preview", pack)), action: "See future unlocks", actionType: "see-future-unlocks" }) },
-  ];
-  const passCards = [
-    { label: "Experience pass", copy: chosenPass || activation.passes, open: choosePass },
-    { label: "Choose pass", copy: "Open selectable pass options", open: () => setActivePicker("pass") },
-    { label: "Milestone Bonus Credits", copy: "Stretch-funded credits earned by completing plan actions", open: mbcDetail },
-    { label: "Future unlocks", copy: activation.future, open: futureDetail },
-  ];
-  const pickerSelected = activePicker === "functional" ? chosenFunctional : activePicker === "kit" ? chosenKit : activePicker === "pass" ? chosenPass : activePicker === "pods" ? chosenPod : undefined;
-  const pickerSelect = (value: string) => { if (activePicker === "functional") setChosenFunctional(value); if (activePicker === "kit") setChosenKit(value); if (activePicker === "pass") setChosenPass(value); if (activePicker === "pods") setChosenPod(value); };
-  const renderTab = (eyebrow: string, title: string, copy: string, cards: typeof stackCards, primary: string, onPrimary: () => void, secondary: string, onSecondary: () => void, note?: string) => <ActivationPanel eyebrow={eyebrow} title={title} copy={copy}><div className="grid gap-3">{cards.map((card) => <ActivationInfoCard key={card.label} label={card.label} copy={card.copy} onOpen={card.open} />)}</div><div className="mt-4 grid gap-3"><Button variant="hero" size="xl" onClick={onPrimary}>{primary}</Button><Button variant="soft" size="lg" onClick={onSecondary}>{secondary}</Button></div>{note && <p className="mt-4 rounded-2xl bg-secondary p-3 text-xs font-bold leading-5 text-accent shadow-card">What opens next: {note}</p>}</ActivationPanel>;
-
-  return <section className="relative space-y-5 px-5 py-7"><div className="space-y-2"><p className="text-sm font-bold text-accent">Activation Review</p><h1 className="font-display text-4xl leading-tight">Your Stretch month is ready.</h1><p className="text-base leading-7 text-muted-foreground">Review what unlocked, choose what needs your input, and start your first week.</p></div><div className="sticky top-0 z-10 -mx-5 bg-shell/95 px-5 py-2 backdrop-blur-xl"><div className="flex gap-2 overflow-x-auto pb-1">{sectionTabs.map((tab) => <button key={tab} onClick={() => setActive(tab)} className={cn("shrink-0 rounded-full px-4 py-2 text-xs font-bold transition-smooth focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", active === tab ? "bg-primary text-primary-foreground shadow-card" : "bg-card text-accent shadow-card")}>{tab}</button>)}</div></div>{active === "Stack" && renderTab("Section 1", "Your month is built around one priority.", "This is the full care stack Stretch built from your quiz answers.", stackCards, "Review care", () => setActive("Care"), "Ask coach", onCoach, pathway.roadmap.next)}{active === "Care" && renderTab("Section 2", "Your care route is ready.", "This is where specialist routing, functional support, clinical review, and labs come together.", careCards, "Choose functional support", () => setActivePicker("functional"), "Keep recommended", onKeep, d.Labs)}{active === "Coach" && renderTab("Section 3", "Your coach and pods are paired.", "Pods give you the guided group rhythm. Coaching turns that into your weekly actions.", coachCards, "View pod agenda", () => setActivePicker("pods"), "Swap one pod", () => setActivePicker("pods"), activation.coach2)}{active === "Kit" && renderTab("Section 4", "Your kit is your at-home support.", "The kit gives you practical items and perks to use between care, coaching, and pods.", kitCards, "Build kit", () => setActivePicker("kit"), "Swap one item", () => setActivePicker("kit"), packsCatalog[key][0])}{active === "Pass + Unlocks" && renderTab("Section 5", "Pick one experience and see what opens next.", "Your monthly pass gives the month a real-world action. Your progress can unlock future packs, devices, and riders.", passCards, "Choose pass", () => setActivePicker("pass"), "See future unlocks", () => setActivePicker("future"), activation.future)}{detail && <ActivationDetailDrawer detail={detail} onClose={() => setDetail(null)} onAction={handleAction} />}{activePicker && <ActivationPickerDrawer type={activePicker} pathway={pathway} activation={activation} selected={pickerSelected} onSelect={pickerSelect} onClose={() => setActivePicker(null)} onSwap={onSwap} onCoach={onCoach} />}</section>;
-}
-
-function ConfirmScreen({ pathway, resetQuiz, onBuild, onOpenJourney }: { pathway: Pathway; resetQuiz: () => void; onBuild: () => void; onOpenJourney: () => void }) {
-  return <section className="space-y-6 px-5 py-7"><SectionTitle title="Keep your first month or swap one thing." copy="Your coach can help refine it after you begin." /><SoftCard onClick={onOpenJourney} className="space-y-4 border-Recommended/40"><div className="flex items-center justify-between"><p className="font-display text-2xl">First Month</p><Star className="size-5 text-accent" /></div><p className="text-muted-foreground">{pathway.title}</p><div className="grid grid-cols-3 gap-2 text-center text-xs">{pathway.guidedDefaults.slice(0, 3).map((item) => <span key={item} className="rounded-2xl bg-secondary px-2 py-3">{item}</span>)}</div></SoftCard><Button variant="hero" size="xl" className="w-full" onClick={onBuild}>Build my month</Button><Button variant="soft" size="xl" className="w-full" onClick={resetQuiz}>Swap answers</Button></section>;
-}
 
 function PerkStoreDrawer({ onClose }: { onClose: () => void }) {
   return <div className="absolute inset-0 z-[60] flex items-end bg-primary/25 p-3 backdrop-blur-sm" onClick={onClose}><div className="max-h-[84vh] w-full overflow-y-auto rounded-[2rem] bg-card p-6 shadow-float animate-slide-up" onClick={(event) => event.stopPropagation()}>
