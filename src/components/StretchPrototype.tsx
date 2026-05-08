@@ -1440,7 +1440,7 @@ function BuilderScreen({ pathway, onConfirm, onCoach, onSwap, onBack, initialPag
       {alternatives.length > 0 && <div className="mt-2 flex flex-wrap gap-1.5">{alternatives.slice(0, 3).map((alt) => (
         <span key={alt.name} className="inline-flex items-center gap-1.5 rounded-full bg-muted px-3 py-1.5 text-xs font-semibold text-muted-foreground">
           {alt.name}
-          <span className="rounded-full bg-card px-1.5 py-0.5 text-[10px] font-bold text-accent">{alt.state}</span>
+          {alt.state && <span className="rounded-full bg-card px-1.5 py-0.5 text-[10px] font-bold text-accent">{alt.state}</span>}
         </span>
       ))}</div>}
       <Button variant="soft" size="lg" className="mt-3 w-full" onClick={onCta}>{cta} <ArrowRight className="size-4" /></Button>
