@@ -1421,8 +1421,9 @@ function BuilderScreen({ pathway, onConfirm, onCoach, onSwap, onBack, initialPag
   const packs = pathwayPacks[key];
   const recommendedPack = packs[0];
   const recommendedPackMeta = packMetaFor(recommendedPack);
+  const statusChip = (status: PackMeta["status"]) => ({ preview: "Preview", "pack-only": "Pack-only", milestone: "Milestone unlock", "top-up": "Top-up" }[status]);
 
-  const compactCard = (eyebrow: string, title: string, description: string, recommended: string, explanation: string, status: string, cta: string, onCta: () => void) => (
+  const sectionCard = (eyebrow: string, title: string, description: string, recommended: string, recommendedExplanation: string, status: string, alternatives: { name: string; state: string }[], cta: string, onCta: () => void) => (
     <div className="rounded-[2rem] bg-card p-5 shadow-card">
       <p className="text-xs font-bold uppercase tracking-wide text-accent">{eyebrow}</p>
       <h2 className="mt-1 font-display text-2xl leading-tight">{title}</h2>
@@ -1431,31 +1432,41 @@ function BuilderScreen({ pathway, onConfirm, onCoach, onSwap, onBack, initialPag
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
             <p className="text-sm font-semibold text-foreground">{recommended}</p>
-            <p className="mt-1 text-xs leading-5 text-muted-foreground">{explanation}</p>
+            <p className="mt-1 text-xs leading-5 text-muted-foreground">{recommendedExplanation}</p>
           </div>
           <span className="shrink-0 rounded-full bg-primary px-2 py-0.5 text-[11px] font-bold text-primary-foreground">{status}</span>
         </div>
       </div>
+      {alternatives.length > 0 && <div className="mt-2 flex flex-wrap gap-1.5">{alternatives.slice(0, 3).map((alt) => (
+        <span key={alt.name} className="inline-flex items-center gap-1.5 rounded-full bg-muted px-3 py-1.5 text-xs font-semibold text-muted-foreground">
+          {alt.name}
+          <span className="rounded-full bg-card px-1.5 py-0.5 text-[10px] font-bold text-accent">{alt.state}</span>
+        </span>
+      ))}</div>}
       <Button variant="soft" size="lg" className="mt-3 w-full" onClick={onCta}>{cta} <ArrowRight className="size-4" /></Button>
     </div>
   );
 
-  const statusChip = (status: PackMeta["status"]) => ({ preview: "Preview", "pack-only": "Pack-only", milestone: "Milestone unlock", "top-up": "Top-up" }[status]);
+  const functionalAlts = (swap["Functional Care"]?.options || []).filter((o) => o.name !== functionalRecommended).slice(0, 3);
+  const podAlts = (swap.Pods?.options || []).filter((o) => o.name !== podPrimary && o.state !== "Recommended" && o.state !== "Included").slice(0, 3);
+  const passAlts = (swap["Experience Pass"]?.options || []).filter((o) => o.name !== passRecommended).slice(0, 3);
+  const kitAlts = (swap.Kit?.options || []).slice(0, 3);
 
-  if (customizePage === "core") return <section className="space-y-5 px-5 pb-32 pt-6">
-    <div className="rounded-[2rem] bg-hero p-6 shadow-float">
-      <p className="text-sm font-bold text-accent">Step 2 of 3 · Core Choices</p>
+  if (customizePage === "core") return <section className="relative space-y-5 px-5 pb-32 pt-6">
+    <img src={botanicalBg} alt="" className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-[0.08]" loading="lazy" width={1024} height={1024} />
+    <div className="relative rounded-[2rem] bg-hero p-6 shadow-float">
+      <p className="text-sm font-bold text-accent">Core Choices</p>
       <h1 className="mt-1 font-display text-4xl leading-tight">Customize Your Month</h1>
       <p className="mt-2 text-sm leading-6 text-muted-foreground">These are the choices that shape your month. Everything else stays clinically guided by your blueprint.</p>
     </div>
 
-    {compactCard("Section 1", "Choose your functional support", "This is the practical session that makes the plan real in your body — nutrition, movement, recovery, LED, acupuncture, breathwork, or pelvic support depending on your pathway.", functionalRecommended, explainOption(functionalRecommended), "Recommended", "Choose or swap", () => onSwap("Functional session"))}
+    <div className="relative">{sectionCard("Section 1", "Choose your functional support", "This is the practical session that makes the plan real in your body — nutrition, movement, recovery, LED, acupuncture, breathwork, or pelvic support depending on your pathway.", functionalRecommended, explainOption(functionalRecommended), "Recommended", functionalAlts, "Choose or swap", () => onSwap("Functional session"))}</div>
 
-    {compactCard("Section 2", "Choose your pod seats", "Pods are guided group sessions. Your coach uses the selected pods to shape your weekly actions.", podPrimary, explainOption(podPrimary), "Selected", "View pods or swap one", () => onSwap("Pods"))}
+    <div className="relative">{sectionCard("Section 2", "Choose your pod seats", "Pods are guided group sessions. Your coach uses the selected pods to shape your weekly actions.", podPrimary, explainOption(podPrimary), "Selected", podAlts, "View pods or swap one", () => onSwap("Pods"))}</div>
 
-    {compactCard("Section 3", "Choose your experience pass", "This is one bookable monthly experience — movement, recovery, breathwork, LED, workshop, or partner demo.", passRecommended, explainOption(passRecommended), "Recommended", "Choose your pass", () => onSwap("Experience pass"))}
+    <div className="relative">{sectionCard("Section 3", "Choose your experience pass", "This is one bookable monthly experience — movement, recovery, breathwork, LED, workshop, or partner demo.", passRecommended, explainOption(passRecommended), "Recommended", passAlts, "Choose your pass", () => onSwap("Experience pass"))}</div>
 
-    {compactCard("Section 4", "Build your kit", "Your kit is the at-home support for the month. It should make the plan easier to follow between care, coaching, and pods.", kitPrimary?.recommendation || activation.kit, kitPrimary?.explanation || explainOption(activation.kit), kitPrimary?.status || "Recommended", "Build your kit", () => onSwap("Kit item"))}
+    <div className="relative">{sectionCard("Section 4", "Build your kit", "Your kit is the at-home support for the month. It should make the plan easier to follow between care, coaching, and pods.", kitPrimary?.recommendation || activation.kit, kitPrimary?.explanation || explainOption(activation.kit), kitPrimary?.status || "Recommended", kitAlts, "Build your kit", () => onSwap("Kit item"))}</div>
 
     <div className="sticky bottom-0 -mx-5 grid gap-2 border-t border-border/70 bg-shell/95 px-5 py-4 backdrop-blur-xl">
       {onBack && <Button variant="soft" size="lg" onClick={onBack}><ChevronLeft className="size-4" /> Back to Blueprint</Button>}
@@ -1464,30 +1475,28 @@ function BuilderScreen({ pathway, onConfirm, onCoach, onSwap, onBack, initialPag
     </div>
   </section>;
 
-  return <section className="space-y-5 px-5 pb-32 pt-6">
-    <div className="rounded-[2rem] bg-hero p-6 shadow-float">
-      <p className="text-sm font-bold text-accent">Step 2 of 3 · Extras & Unlocks</p>
+  return <section className="relative space-y-5 px-5 pb-32 pt-6">
+    <img src={botanicalBg} alt="" className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-[0.08]" loading="lazy" width={1024} height={1024} />
+    <div className="relative rounded-[2rem] bg-hero p-6 shadow-float">
+      <p className="text-sm font-bold text-accent">Extras & Unlocks</p>
       <h1 className="mt-1 font-display text-4xl leading-tight">Customize Your Month</h1>
       <p className="mt-2 text-sm leading-6 text-muted-foreground">Optional perks, packs, progress rewards, and future unlocks. Your core plan stays the same.</p>
     </div>
 
-    {compactCard("Section 1", "Pick a sticky perk", "A small bonus that makes the month feel more useful, social, or motivating.", stickyPerks[0], explainOption(stickyPerks[0]), "Included", "Browse perks", onCoach)}
+    <div className="relative">{sectionCard("Section 1", "Pick a sticky perk", "A small bonus that makes the month feel more useful, social, or motivating.", stickyPerks[0], explainOption(stickyPerks[0]), "Included", stickyPerks.slice(1, 4).map((p) => ({ name: p, state: perkStatusMap[p] || "Preview" })), "Browse perks", () => setShowPerkStore(true))}</div>
 
-    <div className="rounded-[2rem] bg-card p-5 shadow-card">
+    <div className="relative rounded-[2rem] bg-card p-5 shadow-card">
       <p className="text-xs font-bold uppercase tracking-wide text-accent">Section 2</p>
       <h2 className="mt-1 font-display text-2xl leading-tight">Perk Store</h2>
       <p className="mt-1 text-sm leading-6 text-muted-foreground">Small extras that make your month feel more useful — demos, challenges, pod passes, tonic moments, partner perks, and workshops.</p>
-      <div className="mt-3 grid gap-2">{featuredPerks.map((perk) => <div key={perk} className="rounded-2xl bg-secondary px-4 py-3">
-        <div className="flex items-start justify-between gap-3">
-          <p className="text-sm font-semibold text-foreground">{perk}</p>
-          <span className={cn("shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold", perkStatusMap[perk] === "Included" ? "bg-primary text-primary-foreground" : "bg-card text-accent")}>{perkStatusMap[perk]}</span>
-        </div>
-        <p className="mt-1 text-xs leading-5 text-muted-foreground">{explainOption(perk)}</p>
+      <div className="mt-3 grid gap-2">{featuredPerks.slice(0, 3).map((perk) => <div key={perk} className="flex items-center justify-between gap-3 rounded-2xl bg-secondary px-4 py-3">
+        <p className="text-sm font-semibold text-foreground">{perk}</p>
+        <span className={cn("shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold", perkStatusMap[perk] === "Included" ? "bg-primary text-primary-foreground" : "bg-card text-accent")}>{perkStatusMap[perk]}</span>
       </div>)}</div>
       <Button variant="soft" size="lg" className="mt-3 w-full" onClick={() => setShowPerkStore(true)}>View all perks <ArrowRight className="size-4" /></Button>
     </div>
 
-    <div className="rounded-[2rem] bg-card p-5 shadow-card">
+    <div className="relative rounded-[2rem] bg-card p-5 shadow-card">
       <p className="text-xs font-bold uppercase tracking-wide text-accent">Section 3</p>
       <h2 className="mt-1 font-display text-2xl leading-tight">Pack Store</h2>
       <p className="mt-1 text-sm leading-6 text-muted-foreground">Packs are optional boosts for a specific need. Your core month still works without them.</p>
@@ -1496,13 +1505,12 @@ function BuilderScreen({ pathway, onConfirm, onCoach, onSwap, onBack, initialPag
           <p className="text-sm font-semibold text-foreground">{recPack}</p>
           <span className="shrink-0 rounded-full bg-card px-2 py-0.5 text-[11px] font-bold text-accent">{statusChip(meta.status)}</span>
         </div>
-        <p className="mt-2 text-xs leading-5 text-muted-foreground"><span className="font-bold text-accent">Includes:</span> {meta.includes}</p>
-        <p className="mt-1 text-xs leading-5 text-muted-foreground"><span className="font-bold text-accent">Useful when:</span> {meta.useful}</p>
+        <p className="mt-2 text-xs leading-5 text-muted-foreground">{meta.includes}</p>
       </div>; })()}
       <Button variant="soft" size="lg" className="mt-3 w-full" onClick={() => setShowPackStore(true)}>View pack options <ArrowRight className="size-4" /></Button>
     </div>
 
-    <div className="rounded-[2rem] bg-card p-5 shadow-card">
+    <div className="relative rounded-[2rem] bg-card p-5 shadow-card">
       <p className="text-xs font-bold uppercase tracking-wide text-accent">Section 4</p>
       <h2 className="mt-1 font-display text-2xl leading-tight">Track progress and earn MBC</h2>
       <p className="mt-1 text-sm leading-6 text-muted-foreground">Complete plan actions to earn Milestone Bonus Credits toward selected upgrades.</p>
@@ -1516,10 +1524,9 @@ function BuilderScreen({ pathway, onConfirm, onCoach, onSwap, onBack, initialPag
           <p className="mt-1 text-xs leading-5 text-muted-foreground">Packs, kit upgrades, devices, add-ons</p>
         </div>
       </div>
-      <Button variant="soft" size="lg" className="mt-3 w-full" onClick={onCoach}>Learn about MBC <ArrowRight className="size-4" /></Button>
     </div>
 
-    {compactCard("Section 5", "What can open later", "Devices, riders, advanced tests, and adjacent pathways appear only when your pattern and eligibility support them.", pathway.strongestPack, `${statusChip(packMetaFor(pathway.strongestPack).status)}. ${packMetaFor(pathway.strongestPack).includes}`, "Preview", "See future unlocks", onCoach)}
+    <div className="relative">{sectionCard("Section 5", "What can open later", "Devices, riders, advanced tests, and adjacent pathways appear only when your pattern and eligibility support them.", pathway.strongestPack, `${statusChip(packMetaFor(pathway.strongestPack).status)}. ${packMetaFor(pathway.strongestPack).includes}`, "Preview", packs.slice(1, 4).map((p) => ({ name: p, state: statusChip(packMetaFor(p).status) })), "See future unlocks", onCoach)}</div>
 
     <div className="sticky bottom-0 -mx-5 grid gap-2 border-t border-border/70 bg-shell/95 px-5 py-4 backdrop-blur-xl">
       <Button variant="soft" size="lg" onClick={() => setCustomizePage("core")}><ChevronLeft className="size-4" /> Back to Core Choices</Button>
@@ -1530,7 +1537,6 @@ function BuilderScreen({ pathway, onConfirm, onCoach, onSwap, onBack, initialPag
     {showPackStore && <PackStoreDrawer pathway={pathway} onClose={() => setShowPackStore(false)} />}
   </section>;
 }
-function ProgressRing({ value }: { value: number }) {
   return <div className="grid size-20 shrink-0 place-items-center rounded-full bg-card shadow-card" style={{ background: `conic-gradient(hsl(var(--primary)) ${value}%, hsl(var(--secondary)) 0)` }}><div className="grid size-14 place-items-center rounded-full bg-card"><span className="text-sm font-bold text-accent">{value}%</span></div></div>;
 }
 
