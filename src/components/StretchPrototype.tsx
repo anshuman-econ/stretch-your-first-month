@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import heroImage from "@/assets/stretch-wellness-hero.jpg";
+import botanicalBg from "@/assets/botanical-watercolor-bg.jpg";
 import { cn } from "@/lib/utils";
 
 type Step =
@@ -1078,6 +1079,7 @@ function ExplainerScreen({ onContinue, onClose }: { onContinue: () => void; onCl
   const openMbc = () => setDetail({ title: "Progress should unlock more care.", status: "Milestone Bonus Credits", copy: "Milestone Bonus Credits are Stretch-funded credits you earn when you complete the actions that make your plan work — like joining a pod, building your kit, finishing labs, booking your pass, or keeping a 7-day streak.", examples: ["build kit + join pod + book pass", "pack discount", "kit upgrade", "device buy-down later"] });
 
   return <section className="absolute inset-0 z-50 flex flex-col bg-shell p-4 pb-6">
+    <img src={botanicalBg} alt="" className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-[0.10]" loading="lazy" width={1024} height={1024} />
     <div className="mb-4 flex items-center justify-between gap-3">
       <div><p className="text-sm font-bold text-accent">Member explainer</p><h1 className="font-display text-3xl leading-tight">What’s Stretch?</h1></div>
       <button onClick={onClose} className="rounded-full bg-secondary px-4 py-2 text-sm font-bold text-accent shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Close</button>
@@ -1173,7 +1175,7 @@ function ExplainerDetailDrawer({ detail, onClose }: { detail: ExplainerDetail; o
 }
 
 function QuizScreen({ quizIndex, chooseAnswer, onExplain }: { quizIndex: number; chooseAnswer: (answer: string) => void; onExplain: () => void }) {
-  return <section className="space-y-6 px-5 py-7"><div className="flex justify-end"><button onClick={onExplain} className="rounded-full bg-card px-3 py-2 text-xs font-bold text-accent shadow-card transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">What’s Stretch?</button></div><div className="space-y-3"><SectionTitle title="What do you want to feel better in 30 days?" copy="Stretch turns your answer into a real first-month plan — the right expert touch, coach plan, guided kit, pod seat, experience pass, and next unlocks. Keep it as built, swap one part, or ask your coach to rebalance it." /><button onClick={onExplain} className="text-sm font-bold text-accent underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">New here? See how Stretch works.</button></div><div className="space-y-3"><p className="text-sm font-semibold text-accent">Question {quizIndex + 1} of 6</p><div className="h-2 overflow-hidden rounded-full bg-secondary"><div className="h-full rounded-full bg-primary transition-smooth" style={{ width: `${((quizIndex + 1) / 6) * 100}%` }} /></div></div><SectionTitle title={quiz[quizIndex].question} /><div className="grid gap-3">{quiz[quizIndex].options.map((option) => <SoftCard key={option} onClick={() => chooseAnswer(option)} className="p-4 capitalize"><span className="flex items-center justify-between gap-3"><span>{option}</span><ArrowRight className="size-4 text-accent" /></span></SoftCard>)}</div></section>;
+  return <section className="relative space-y-6 px-5 py-7"><img src={botanicalBg} alt="" className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-[0.06]" loading="lazy" width={1024} height={1024} /><div className="flex justify-end"><button onClick={onExplain} className="rounded-full bg-card px-3 py-2 text-xs font-bold text-accent shadow-card transition-smooth hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">What’s Stretch?</button></div><div className="space-y-3"><SectionTitle title="What do you want to feel better in 30 days?" copy="Stretch turns your answer into a real first-month plan — the right expert touch, coach plan, guided kit, pod seat, experience pass, and next unlocks. Keep it as built, swap one part, or ask your coach to rebalance it." /><button onClick={onExplain} className="text-sm font-bold text-accent underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">New here? See how Stretch works.</button></div><div className="space-y-3"><p className="text-sm font-semibold text-accent">Question {quizIndex + 1} of 6</p><div className="h-2 overflow-hidden rounded-full bg-secondary"><div className="h-full rounded-full bg-primary transition-smooth" style={{ width: `${((quizIndex + 1) / 6) * 100}%` }} /></div></div><SectionTitle title={quiz[quizIndex].question} /><div className="grid gap-3">{quiz[quizIndex].options.map((option) => <SoftCard key={option} onClick={() => chooseAnswer(option)} className="p-4 capitalize"><span className="flex items-center justify-between gap-3"><span>{option}</span><ArrowRight className="size-4 text-accent" /></span></SoftCard>)}</div></section>;
 }
 
 type ActivationCopy = { specialist: string; functional: string; clinical: string; labs: string; pods: string; podCovers: string; coach1: string; coach2: string; mental: string; kit: string; passes: string; future: string };
@@ -1333,7 +1335,7 @@ function BlueprintDrawer({ title, block, pathway, selectedOption, onSelect, onCl
     if (title === "Progress Passport") return [{ label: "Learn about MBC", variant: "hero" as const, action: () => onCustomize(title) }, ...base];
     return [{ label: "See future unlocks", variant: "hero" as const, action: () => onCustomize(title) }, ...base];
   })();
-  return <div className="absolute inset-0 z-50 flex items-end bg-primary/25 p-3 backdrop-blur-sm" onClick={onClose}><div className="max-h-[84vh] w-full overflow-y-auto rounded-[2rem] bg-card p-6 shadow-float animate-slide-up" onClick={(event) => event.stopPropagation()}><div className="mb-5 flex items-start justify-between gap-3"><div className="flex items-start gap-3"><div className="rounded-full bg-secondary p-3 text-accent">{iconForBlock(title)}</div><div><p className="text-sm font-bold text-accent">Blueprint detail</p><h2 className="font-display text-3xl leading-tight">{title}</h2>{selectedOption && <p className="mt-1 text-xs font-bold text-accent">Selected: {selectedOption}</p>}</div></div><button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Close</button></div><div className="grid gap-3">{sections.map((section) => <BlueprintSectionBlock key={section.label} section={section} selectedOption={selectedOption} onSelect={onSelect} />)}</div><div className="mt-5 grid gap-3">{contextActions.map((btn) => <Button key={btn.label} variant={btn.variant} size="xl" onClick={btn.action}>{btn.label}</Button>)}</div></div></div>;
+  return <div className="absolute inset-0 z-50 flex items-center bg-primary/25 p-3 backdrop-blur-sm" onClick={onClose}><div className="max-h-[84vh] w-full overflow-y-auto rounded-[2rem] bg-card p-6 shadow-float animate-slide-up" onClick={(event) => event.stopPropagation()}><div className="mb-5 flex items-start justify-between gap-3"><div className="flex items-start gap-3"><div className="rounded-full bg-secondary p-3 text-accent">{iconForBlock(title)}</div><div><p className="text-sm font-bold text-accent">Blueprint detail</p><h2 className="font-display text-3xl leading-tight">{title}</h2>{selectedOption && <p className="mt-1 text-xs font-bold text-accent">Selected: {selectedOption}</p>}</div></div><button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Close</button></div><div className="grid gap-3">{sections.map((section) => <BlueprintSectionBlock key={section.label} section={section} selectedOption={selectedOption} onSelect={onSelect} />)}</div><div className="mt-5 grid gap-3">{contextActions.map((btn) => <Button key={btn.label} variant={btn.variant} size="xl" onClick={btn.action}>{btn.label}</Button>)}</div></div></div>;
 }
 
 function BuiltScreen({ pathway, resetQuiz, onCustomize, onKeep, onCoach }: { pathway: Pathway; resetQuiz: () => void; onCustomize: (page?: "core" | "extras") => void; onKeep: () => void; onCoach: () => void }) {
@@ -1355,14 +1357,14 @@ function BuiltScreen({ pathway, resetQuiz, onCustomize, onKeep, onCoach }: { pat
     const extrasPages: BlueprintTitle[] = ["Progress Passport", "Future Unlocks"];
     onCustomize(extrasPages.includes(drawerTitle) ? "extras" : "core");
   };
-  return <section className="space-y-5 px-5 py-7"><div className="rounded-[2rem] bg-hero p-6 shadow-float"><Sparkles className="mb-5 size-8 text-accent" /><SectionTitle title="Stretch built your first-month blueprint." copy="Based on your answers, we built a guided month with care, coaching, pods, kit, pass, progress rewards, and future unlocks — all matched to what you want to feel better in 30 days." /></div><div className="rounded-[2rem] bg-card p-5 shadow-card"><p className="text-sm font-semibold text-accent">Recommended pathway</p><h2 className="mt-1 font-display text-3xl leading-tight">{pathway.title}</h2><InfoBlock label="Why" copy={pathway.reason} /></div><div className="grid gap-3">{blueprint.map((card, index) => <button key={card.title} onClick={() => setDrawerCard({ title: card.title, block: card.block })} className="group w-full rounded-[2rem] bg-card p-5 text-left shadow-card transition-smooth hover:-translate-y-0.5 hover:shadow-float focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><div className="flex items-start gap-4"><div className="grid size-12 shrink-0 place-items-center rounded-2xl bg-secondary text-accent shadow-card">{iconForBlock(card.title)}</div><div className="min-w-0 flex-1"><div className="flex items-center justify-between gap-3"><p className="text-xs font-bold uppercase tracking-wide text-accent">Blueprint {index + 1}</p><ArrowRight className="size-4 text-accent transition-smooth group-hover:translate-x-0.5" /></div><h2 className="mt-1 font-display text-2xl leading-tight">{card.title}</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">{blueprintSelections[card.title] || card.subtitle}</p></div></div></button>)}</div><div className="grid gap-3"><Button variant="hero" size="xl" onClick={() => onCustomize()}>Customize my month <ArrowRight className="size-4" /></Button><Button variant="soft" size="xl" onClick={onKeep}>Keep recommended</Button><Button variant="soft" size="lg" onClick={resetQuiz}>Change answers</Button></div>{drawerCard && <BlueprintDrawer title={drawerCard.title} block={drawerCard.block} pathway={pathway} selectedOption={blueprintSelections[drawerCard.title]} onSelect={(name) => setBlueprintSelections((current) => ({ ...current, [drawerCard.title]: name }))} onClose={() => setDrawerCard(null)} onCustomize={handleCustomizeFromDrawer} onCoach={onCoach} />}</section>;
+  return <section className="relative space-y-5 px-5 py-7"><img src={botanicalBg} alt="" className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-[0.08]" loading="lazy" width={1024} height={1024} /><div className="relative rounded-[2rem] bg-hero p-6 shadow-float"><Sparkles className="mb-5 size-8 text-accent" /><SectionTitle title="Stretch built your first-month blueprint." copy="Based on your answers, we built a guided month with care, coaching, pods, kit, pass, progress rewards, and future unlocks — all matched to what you want to feel better in 30 days." /></div><div className="relative rounded-[2rem] bg-card p-5 shadow-card"><p className="text-sm font-semibold text-accent">Recommended pathway</p><h2 className="mt-1 font-display text-3xl leading-tight">{pathway.title}</h2><InfoBlock label="Why" copy={pathway.reason} /></div><div className="relative grid gap-3">{blueprint.map((card, index) => <button key={card.title} onClick={() => setDrawerCard({ title: card.title, block: card.block })} className="group w-full rounded-[2rem] bg-card p-5 text-left shadow-card transition-smooth hover:-translate-y-0.5 hover:shadow-float focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><div className="flex items-start gap-4"><div className="grid size-12 shrink-0 place-items-center rounded-2xl bg-secondary text-accent shadow-card">{iconForBlock(card.title)}</div><div className="min-w-0 flex-1"><div className="flex items-center justify-between gap-3"><p className="text-xs font-bold uppercase tracking-wide text-accent">Blueprint {index + 1}</p><ArrowRight className="size-4 text-accent transition-smooth group-hover:translate-x-0.5" /></div><h2 className="mt-1 font-display text-2xl leading-tight">{card.title}</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">{blueprintSelections[card.title] || card.subtitle}</p></div></div></button>)}</div><div className="relative grid gap-3"><Button variant="hero" size="xl" onClick={() => onCustomize()}>Customize my month <ArrowRight className="size-4" /></Button><Button variant="soft" size="xl" onClick={onKeep}>Keep recommended</Button><Button variant="soft" size="lg" onClick={resetQuiz}>Change answers</Button></div>{drawerCard && <BlueprintDrawer title={drawerCard.title} block={drawerCard.block} pathway={pathway} selectedOption={blueprintSelections[drawerCard.title]} onSelect={(name) => setBlueprintSelections((current) => ({ ...current, [drawerCard.title]: name }))} onClose={() => setDrawerCard(null)} onCustomize={handleCustomizeFromDrawer} onCoach={onCoach} />}</section>;
 }
 
 
 
 
 function PerkStoreDrawer({ onClose }: { onClose: () => void }) {
-  return <div className="absolute inset-0 z-[60] flex items-end bg-primary/25 p-3 backdrop-blur-sm" onClick={onClose}><div className="max-h-[84vh] w-full overflow-y-auto rounded-[2rem] bg-card p-6 shadow-float animate-slide-up" onClick={(event) => event.stopPropagation()}>
+  return <div className="absolute inset-0 z-[60] flex items-center bg-primary/25 p-3 backdrop-blur-sm" onClick={onClose}><div className="max-h-[84vh] w-full overflow-y-auto rounded-[2rem] bg-card p-6 shadow-float animate-slide-up" onClick={(event) => event.stopPropagation()}>
     <div className="mb-5 flex items-start justify-between gap-3">
       <div><p className="text-sm font-bold text-accent">Browse</p><h2 className="font-display text-3xl leading-tight">Perk Store</h2></div>
       <button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent">Close</button>
@@ -1387,7 +1389,7 @@ function PackStoreDrawer({ pathway, onClose }: { pathway: Pathway; onClose: () =
   const key = pathwayKeyFromTitle(pathway);
   const packs = pathwayPacks[key];
   const statusLabel: Record<PackMeta["status"], string> = { preview: "Preview", "pack-only": "Pack-only", milestone: "Milestone unlock", "top-up": "Top-up" };
-  return <div className="absolute inset-0 z-[60] flex items-end bg-primary/25 p-3 backdrop-blur-sm" onClick={onClose}><div className="max-h-[84vh] w-full overflow-y-auto rounded-[2rem] bg-card p-6 shadow-float animate-slide-up" onClick={(event) => event.stopPropagation()}>
+  return <div className="absolute inset-0 z-[60] flex items-center bg-primary/25 p-3 backdrop-blur-sm" onClick={onClose}><div className="max-h-[84vh] w-full overflow-y-auto rounded-[2rem] bg-card p-6 shadow-float animate-slide-up" onClick={(event) => event.stopPropagation()}>
     <div className="mb-5 flex items-start justify-between gap-3">
       <div><p className="text-sm font-bold text-accent">Browse</p><h2 className="font-display text-3xl leading-tight">Pack Store</h2></div>
       <button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent">Close</button>
@@ -1420,8 +1422,9 @@ function BuilderScreen({ pathway, onConfirm, onCoach, onSwap, onBack, initialPag
   const packs = pathwayPacks[key];
   const recommendedPack = packs[0];
   const recommendedPackMeta = packMetaFor(recommendedPack);
+  const statusChip = (status: PackMeta["status"]) => ({ preview: "Preview", "pack-only": "Pack-only", milestone: "Milestone unlock", "top-up": "Top-up" }[status]);
 
-  const compactCard = (eyebrow: string, title: string, description: string, recommended: string, explanation: string, status: string, cta: string, onCta: () => void) => (
+  const sectionCard = (eyebrow: string, title: string, description: string, recommended: string, recommendedExplanation: string, status: string, alternatives: { name: string; state?: string }[], cta: string, onCta: () => void) => (
     <div className="rounded-[2rem] bg-card p-5 shadow-card">
       <p className="text-xs font-bold uppercase tracking-wide text-accent">{eyebrow}</p>
       <h2 className="mt-1 font-display text-2xl leading-tight">{title}</h2>
@@ -1430,31 +1433,41 @@ function BuilderScreen({ pathway, onConfirm, onCoach, onSwap, onBack, initialPag
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
             <p className="text-sm font-semibold text-foreground">{recommended}</p>
-            <p className="mt-1 text-xs leading-5 text-muted-foreground">{explanation}</p>
+            <p className="mt-1 text-xs leading-5 text-muted-foreground">{recommendedExplanation}</p>
           </div>
           <span className="shrink-0 rounded-full bg-primary px-2 py-0.5 text-[11px] font-bold text-primary-foreground">{status}</span>
         </div>
       </div>
+      {alternatives.length > 0 && <div className="mt-2 flex flex-wrap gap-1.5">{alternatives.slice(0, 3).map((alt) => (
+        <span key={alt.name} className="inline-flex items-center gap-1.5 rounded-full bg-muted px-3 py-1.5 text-xs font-semibold text-muted-foreground">
+          {alt.name}
+          {alt.state && <span className="rounded-full bg-card px-1.5 py-0.5 text-[10px] font-bold text-accent">{alt.state}</span>}
+        </span>
+      ))}</div>}
       <Button variant="soft" size="lg" className="mt-3 w-full" onClick={onCta}>{cta} <ArrowRight className="size-4" /></Button>
     </div>
   );
 
-  const statusChip = (status: PackMeta["status"]) => ({ preview: "Preview", "pack-only": "Pack-only", milestone: "Milestone unlock", "top-up": "Top-up" }[status]);
+  const functionalAlts = (swap["Functional Care"]?.options || []).filter((o) => o.name !== functionalRecommended).slice(0, 3);
+  const podAlts = (swap.Pods?.options || []).filter((o) => o.name !== podPrimary && o.state !== "Recommended" && o.state !== "Included").slice(0, 3);
+  const passAlts = (swap["Experience Pass"]?.options || []).filter((o) => o.name !== passRecommended).slice(0, 3);
+  const kitAlts = (swap.Kit?.options || []).slice(0, 3);
 
-  if (customizePage === "core") return <section className="space-y-5 px-5 pb-32 pt-6">
-    <div className="rounded-[2rem] bg-hero p-6 shadow-float">
-      <p className="text-sm font-bold text-accent">Step 2 of 3 · Core Choices</p>
+  if (customizePage === "core") return <section className="relative space-y-5 px-5 pb-32 pt-6">
+    <img src={botanicalBg} alt="" className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-[0.08]" loading="lazy" width={1024} height={1024} />
+    <div className="relative rounded-[2rem] bg-hero p-6 shadow-float">
+      <p className="text-sm font-bold text-accent">Core Choices</p>
       <h1 className="mt-1 font-display text-4xl leading-tight">Customize Your Month</h1>
       <p className="mt-2 text-sm leading-6 text-muted-foreground">These are the choices that shape your month. Everything else stays clinically guided by your blueprint.</p>
     </div>
 
-    {compactCard("Section 1", "Choose your functional support", "This is the practical session that makes the plan real in your body — nutrition, movement, recovery, LED, acupuncture, breathwork, or pelvic support depending on your pathway.", functionalRecommended, explainOption(functionalRecommended), "Recommended", "Choose or swap", () => onSwap("Functional session"))}
+    <div className="relative">{sectionCard("Section 1", "Choose your functional support", "This is the practical session that makes the plan real in your body — nutrition, movement, recovery, LED, acupuncture, breathwork, or pelvic support depending on your pathway.", functionalRecommended, explainOption(functionalRecommended), "Recommended", functionalAlts, "Choose or swap", () => onSwap("Functional session"))}</div>
 
-    {compactCard("Section 2", "Choose your pod seats", "Pods are guided group sessions. Your coach uses the selected pods to shape your weekly actions.", podPrimary, explainOption(podPrimary), "Selected", "View pods or swap one", () => onSwap("Pods"))}
+    <div className="relative">{sectionCard("Section 2", "Choose your pod seats", "Pods are guided group sessions. Your coach uses the selected pods to shape your weekly actions.", podPrimary, explainOption(podPrimary), "Selected", podAlts, "View pods or swap one", () => onSwap("Pods"))}</div>
 
-    {compactCard("Section 3", "Choose your experience pass", "This is one bookable monthly experience — movement, recovery, breathwork, LED, workshop, or partner demo.", passRecommended, explainOption(passRecommended), "Recommended", "Choose your pass", () => onSwap("Experience pass"))}
+    <div className="relative">{sectionCard("Section 3", "Choose your experience pass", "This is one bookable monthly experience — movement, recovery, breathwork, LED, workshop, or partner demo.", passRecommended, explainOption(passRecommended), "Recommended", passAlts, "Choose your pass", () => onSwap("Experience pass"))}</div>
 
-    {compactCard("Section 4", "Build your kit", "Your kit is the at-home support for the month. It should make the plan easier to follow between care, coaching, and pods.", kitPrimary?.recommendation || activation.kit, kitPrimary?.explanation || explainOption(activation.kit), kitPrimary?.status || "Recommended", "Build your kit", () => onSwap("Kit item"))}
+    <div className="relative">{sectionCard("Section 4", "Build your kit", "Your kit is the at-home support for the month. It should make the plan easier to follow between care, coaching, and pods.", kitPrimary?.recommendation || activation.kit, kitPrimary?.explanation || explainOption(activation.kit), kitPrimary?.status || "Recommended", kitAlts, "Build your kit", () => onSwap("Kit item"))}</div>
 
     <div className="sticky bottom-0 -mx-5 grid gap-2 border-t border-border/70 bg-shell/95 px-5 py-4 backdrop-blur-xl">
       {onBack && <Button variant="soft" size="lg" onClick={onBack}><ChevronLeft className="size-4" /> Back to Blueprint</Button>}
@@ -1463,30 +1476,28 @@ function BuilderScreen({ pathway, onConfirm, onCoach, onSwap, onBack, initialPag
     </div>
   </section>;
 
-  return <section className="space-y-5 px-5 pb-32 pt-6">
-    <div className="rounded-[2rem] bg-hero p-6 shadow-float">
-      <p className="text-sm font-bold text-accent">Step 2 of 3 · Extras & Unlocks</p>
+  return <section className="relative space-y-5 px-5 pb-32 pt-6">
+    <img src={botanicalBg} alt="" className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-[0.08]" loading="lazy" width={1024} height={1024} />
+    <div className="relative rounded-[2rem] bg-hero p-6 shadow-float">
+      <p className="text-sm font-bold text-accent">Extras & Unlocks</p>
       <h1 className="mt-1 font-display text-4xl leading-tight">Customize Your Month</h1>
       <p className="mt-2 text-sm leading-6 text-muted-foreground">Optional perks, packs, progress rewards, and future unlocks. Your core plan stays the same.</p>
     </div>
 
-    {compactCard("Section 1", "Pick a sticky perk", "A small bonus that makes the month feel more useful, social, or motivating.", stickyPerks[0], explainOption(stickyPerks[0]), "Included", "Browse perks", onCoach)}
+    <div className="relative">{sectionCard("Section 1", "Pick a sticky perk", "A small bonus that makes the month feel more useful, social, or motivating.", stickyPerks[0], explainOption(stickyPerks[0]), "Included", stickyPerks.slice(1, 4).map((p) => ({ name: p, state: perkStatusMap[p] || "Preview" })), "Browse perks", () => setShowPerkStore(true))}</div>
 
-    <div className="rounded-[2rem] bg-card p-5 shadow-card">
+    <div className="relative rounded-[2rem] bg-card p-5 shadow-card">
       <p className="text-xs font-bold uppercase tracking-wide text-accent">Section 2</p>
       <h2 className="mt-1 font-display text-2xl leading-tight">Perk Store</h2>
       <p className="mt-1 text-sm leading-6 text-muted-foreground">Small extras that make your month feel more useful — demos, challenges, pod passes, tonic moments, partner perks, and workshops.</p>
-      <div className="mt-3 grid gap-2">{featuredPerks.map((perk) => <div key={perk} className="rounded-2xl bg-secondary px-4 py-3">
-        <div className="flex items-start justify-between gap-3">
-          <p className="text-sm font-semibold text-foreground">{perk}</p>
-          <span className={cn("shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold", perkStatusMap[perk] === "Included" ? "bg-primary text-primary-foreground" : "bg-card text-accent")}>{perkStatusMap[perk]}</span>
-        </div>
-        <p className="mt-1 text-xs leading-5 text-muted-foreground">{explainOption(perk)}</p>
+      <div className="mt-3 grid gap-2">{featuredPerks.slice(0, 3).map((perk) => <div key={perk} className="flex items-center justify-between gap-3 rounded-2xl bg-secondary px-4 py-3">
+        <p className="text-sm font-semibold text-foreground">{perk}</p>
+        <span className={cn("shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold", perkStatusMap[perk] === "Included" ? "bg-primary text-primary-foreground" : "bg-card text-accent")}>{perkStatusMap[perk]}</span>
       </div>)}</div>
       <Button variant="soft" size="lg" className="mt-3 w-full" onClick={() => setShowPerkStore(true)}>View all perks <ArrowRight className="size-4" /></Button>
     </div>
 
-    <div className="rounded-[2rem] bg-card p-5 shadow-card">
+    <div className="relative rounded-[2rem] bg-card p-5 shadow-card">
       <p className="text-xs font-bold uppercase tracking-wide text-accent">Section 3</p>
       <h2 className="mt-1 font-display text-2xl leading-tight">Pack Store</h2>
       <p className="mt-1 text-sm leading-6 text-muted-foreground">Packs are optional boosts for a specific need. Your core month still works without them.</p>
@@ -1495,13 +1506,12 @@ function BuilderScreen({ pathway, onConfirm, onCoach, onSwap, onBack, initialPag
           <p className="text-sm font-semibold text-foreground">{recPack}</p>
           <span className="shrink-0 rounded-full bg-card px-2 py-0.5 text-[11px] font-bold text-accent">{statusChip(meta.status)}</span>
         </div>
-        <p className="mt-2 text-xs leading-5 text-muted-foreground"><span className="font-bold text-accent">Includes:</span> {meta.includes}</p>
-        <p className="mt-1 text-xs leading-5 text-muted-foreground"><span className="font-bold text-accent">Useful when:</span> {meta.useful}</p>
+        <p className="mt-2 text-xs leading-5 text-muted-foreground">{meta.includes}</p>
       </div>; })()}
       <Button variant="soft" size="lg" className="mt-3 w-full" onClick={() => setShowPackStore(true)}>View pack options <ArrowRight className="size-4" /></Button>
     </div>
 
-    <div className="rounded-[2rem] bg-card p-5 shadow-card">
+    <div className="relative rounded-[2rem] bg-card p-5 shadow-card">
       <p className="text-xs font-bold uppercase tracking-wide text-accent">Section 4</p>
       <h2 className="mt-1 font-display text-2xl leading-tight">Track progress and earn MBC</h2>
       <p className="mt-1 text-sm leading-6 text-muted-foreground">Complete plan actions to earn Milestone Bonus Credits toward selected upgrades.</p>
@@ -1515,10 +1525,9 @@ function BuilderScreen({ pathway, onConfirm, onCoach, onSwap, onBack, initialPag
           <p className="mt-1 text-xs leading-5 text-muted-foreground">Packs, kit upgrades, devices, add-ons</p>
         </div>
       </div>
-      <Button variant="soft" size="lg" className="mt-3 w-full" onClick={onCoach}>Learn about MBC <ArrowRight className="size-4" /></Button>
     </div>
 
-    {compactCard("Section 5", "What can open later", "Devices, riders, advanced tests, and adjacent pathways appear only when your pattern and eligibility support them.", pathway.strongestPack, `${statusChip(packMetaFor(pathway.strongestPack).status)}. ${packMetaFor(pathway.strongestPack).includes}`, "Preview", "See future unlocks", onCoach)}
+    <div className="relative">{sectionCard("Section 5", "What can open later", "Devices, riders, advanced tests, and adjacent pathways appear only when your pattern and eligibility support them.", pathway.strongestPack, `${statusChip(packMetaFor(pathway.strongestPack).status)}. ${packMetaFor(pathway.strongestPack).includes}`, "Preview", packs.slice(1, 4).map((p) => ({ name: p, state: statusChip(packMetaFor(p).status) })), "See future unlocks", onCoach)}</div>
 
     <div className="sticky bottom-0 -mx-5 grid gap-2 border-t border-border/70 bg-shell/95 px-5 py-4 backdrop-blur-xl">
       <Button variant="soft" size="lg" onClick={() => setCustomizePage("core")}><ChevronLeft className="size-4" /> Back to Core Choices</Button>
@@ -1542,7 +1551,7 @@ function SwapScreen({ pathway, reason, initialTarget, onBack, onCoach }: { pathw
 
 function SwapDrawer({ swap, onClose, onCoach }: { swap: ControlledSwap; onClose: () => void; onCoach: () => void }) {
   const [chosen, setChosen] = useState(swap.alternatives[0]);
-  return <div className="absolute inset-0 z-50 flex items-end bg-primary/25 p-3 backdrop-blur-sm" onClick={onClose}><div className="max-h-[84vh] w-full overflow-y-auto rounded-[2rem] bg-card p-6 shadow-float animate-slide-up" onClick={(event) => event.stopPropagation()}><div className="mb-5 flex items-start justify-between gap-3"><div><p className="text-sm font-bold text-accent">{swap.name} swap</p><h2 className="font-display text-3xl leading-tight">{swap.current}</h2></div><button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent">Close</button></div><div className="grid gap-3"><InfoBlock label="Recommended for you" copy={swap.current} /><InfoBlock label="Why we chose it" copy={swap.why} /><InfoBlock label="What it includes" copy={swap.includes} /><div className="rounded-2xl bg-secondary p-4"><p className="text-xs font-semibold uppercase tracking-wide text-accent">Available alternatives</p><div className="mt-3 grid gap-2">{swap.alternatives.slice(0, 3).map((item, index) => { const isSelected = chosen === item; const status = isSelected ? "Selected" : index === 0 ? "Recommended alternative" : "Alternative"; return <button key={item} onClick={() => setChosen(item)} className={cn("rounded-2xl px-4 py-3 text-left shadow-card transition-smooth focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", isSelected ? "bg-primary text-primary-foreground" : "bg-card text-foreground")}><span className="flex items-start justify-between gap-3"><span className="min-w-0 flex-1"><p className="text-sm font-semibold">{item}</p><p className={cn("mt-1 text-xs leading-5", isSelected ? "text-primary-foreground/85" : "text-muted-foreground")}>{explainOption(item)}</p><span className={cn("mt-2 inline-flex rounded-full px-2 py-0.5 text-[11px] font-bold", isSelected ? "bg-primary-foreground/15 text-primary-foreground" : "bg-secondary text-accent")}>{status}</span></span>{isSelected && <Check className="mt-0.5 size-4 shrink-0" />}</span></button>; })}</div></div><InfoBlock label="What changes if you swap" copy={swap.change} /><InfoBlock label="What stays the same" copy={swap.stays} /></div><div className="mt-5 grid gap-3"><Button variant="soft" size="xl" onClick={onClose}>Keep current</Button><Button variant="hero" size="xl" onClick={onClose}>{swap.action}</Button><Button variant="soft" size="xl" onClick={onCoach}>Ask coach</Button></div></div></div>;
+  return <div className="absolute inset-0 z-50 flex items-center bg-primary/25 p-3 backdrop-blur-sm" onClick={onClose}><div className="max-h-[84vh] w-full overflow-y-auto rounded-[2rem] bg-card p-6 shadow-float animate-slide-up" onClick={(event) => event.stopPropagation()}><div className="mb-5 flex items-start justify-between gap-3"><div><p className="text-sm font-bold text-accent">{swap.name} swap</p><h2 className="font-display text-3xl leading-tight">{swap.current}</h2></div><button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent">Close</button></div><div className="grid gap-3"><InfoBlock label="Recommended for you" copy={swap.current} /><InfoBlock label="Why we chose it" copy={swap.why} /><InfoBlock label="What it includes" copy={swap.includes} /><div className="rounded-2xl bg-secondary p-4"><p className="text-xs font-semibold uppercase tracking-wide text-accent">Available alternatives</p><div className="mt-3 grid gap-2">{swap.alternatives.slice(0, 3).map((item, index) => { const isSelected = chosen === item; const status = isSelected ? "Selected" : index === 0 ? "Recommended alternative" : "Alternative"; return <button key={item} onClick={() => setChosen(item)} className={cn("rounded-2xl px-4 py-3 text-left shadow-card transition-smooth focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", isSelected ? "bg-primary text-primary-foreground" : "bg-card text-foreground")}><span className="flex items-start justify-between gap-3"><span className="min-w-0 flex-1"><p className="text-sm font-semibold">{item}</p><p className={cn("mt-1 text-xs leading-5", isSelected ? "text-primary-foreground/85" : "text-muted-foreground")}>{explainOption(item)}</p><span className={cn("mt-2 inline-flex rounded-full px-2 py-0.5 text-[11px] font-bold", isSelected ? "bg-primary-foreground/15 text-primary-foreground" : "bg-secondary text-accent")}>{status}</span></span>{isSelected && <Check className="mt-0.5 size-4 shrink-0" />}</span></button>; })}</div></div><InfoBlock label="What changes if you swap" copy={swap.change} /><InfoBlock label="What stays the same" copy={swap.stays} /></div><div className="mt-5 grid gap-3"><Button variant="soft" size="xl" onClick={onClose}>Keep current</Button><Button variant="hero" size="xl" onClick={onClose}>{swap.action}</Button><Button variant="soft" size="xl" onClick={onCoach}>Ask coach</Button></div></div></div>;
 }
 
 function InlineSwapDrawer({ swap, onClose, onCoach }: { swap: ControlledSwap; onClose: () => void; onCoach: () => void }) {
@@ -1553,7 +1562,7 @@ function InlineSwapDrawer({ swap, onClose, onCoach }: { swap: ControlledSwap; on
   const currentSelection = applied ?? original;
   const apply = () => setApplied(chosen);
   const undo = () => { setApplied(null); setPreviewing(false); };
-  return <div className="absolute inset-0 z-[80] flex items-end bg-primary/30 p-3 backdrop-blur-sm" onClick={onClose}>
+  return <div className="absolute inset-0 z-[80] flex items-center bg-primary/30 p-3 backdrop-blur-sm" onClick={onClose}>
     <div className="max-h-[88vh] w-full overflow-y-auto rounded-[2rem] bg-card p-6 shadow-float animate-slide-up" onClick={(event) => event.stopPropagation()}>
       <div className="mb-5 flex items-start justify-between gap-3">
         <div>
@@ -1686,7 +1695,7 @@ function BlocksDemoDrawer({ onClose, onTile }: { onClose: () => void; onTile: (t
 }
 
 function DemoTileDrawer({ tile, onClose }: { tile: DemoTile; onClose: () => void }) {
-  return <div className="absolute inset-0 z-[60] flex items-end bg-primary/35 p-3 backdrop-blur-sm" onClick={onClose}><div className="max-h-[82vh] w-full overflow-y-auto rounded-[2rem] bg-card p-6 shadow-float" onClick={(event) => event.stopPropagation()}><div className="mb-4 flex items-center justify-between"><h2 className="font-display text-3xl">{tile.name}</h2><button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent">Close</button></div><InfoBlock label="What it is" copy={tile.what} /><div className="mt-3"><InfoBlock label="Which pathways can use it" copy={tile.pathways} /></div><div className="mt-3"><InfoBlock label="Status" copy={tile.status} /></div><div className="mt-3"><InfoBlock label="How it connects to the monthly plan" copy={tile.connects || tile.where} /></div></div></div>;
+  return <div className="absolute inset-0 z-[60] flex items-center bg-primary/35 p-3 backdrop-blur-sm" onClick={onClose}><div className="max-h-[82vh] w-full overflow-y-auto rounded-[2rem] bg-card p-6 shadow-float" onClick={(event) => event.stopPropagation()}><div className="mb-4 flex items-center justify-between"><h2 className="font-display text-3xl">{tile.name}</h2><button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent">Close</button></div><InfoBlock label="What it is" copy={tile.what} /><div className="mt-3"><InfoBlock label="Which pathways can use it" copy={tile.pathways} /></div><div className="mt-3"><InfoBlock label="Status" copy={tile.status} /></div><div className="mt-3"><InfoBlock label="How it connects to the monthly plan" copy={tile.connects || tile.where} /></div></div></div>;
 }
 
 function WeekScreen({ onHome }: { onHome: () => void }) {
@@ -1696,7 +1705,7 @@ function WeekScreen({ onHome }: { onHome: () => void }) {
 function HomeScreen({ pathway, answers, onCare, onFuture, onJourney, onStamp }: { pathway: Pathway; answers: string[]; onCare: () => void; onFuture: () => void; onJourney: () => void; onStamp: (stamp: PassportStamp) => void }) {
   const chips = (answers.length ? answers : ["poor sleep", "fatigue", "brain fog"]).slice(0, 4);
   const key = pathwayKeyFromTitle(pathway);
-  const nextUnlock: Record<PathwayKey, string> = { peri: "Smart Ring", endo: "PeriShield", metabo: "DermaShield+", longevity: "Longevity Lab Rider" };
+  const nextUnlock: Record<PathwayKey, string> = { peri: "Smart Ring", endo: "EndoShield", metabo: "DermaShield+", longevity: "Longevity Lab Rider" };
   const addOn: Record<PathwayKey, string> = { peri: "Sleep Reset Pack", endo: "Endo Relief Burst Pack", metabo: "Derma Actives Pack", longevity: "Brain Sprint Pack" };
   const stack = [{ label: "Care", state: "Done" }, { label: "Coach", state: "Included" }, { label: "Pods", state: "Needs input" }, { label: "Pass", state: "Needs input" }, { label: "Kit", state: "Future" }, { label: "Unlocks", state: "Locked" }];
   const journey = ["Care", "Coach", "Pods", "Pass", "Kit", "Unlocks"];
@@ -1822,7 +1831,7 @@ function OperatorConsolePreview({ onBlocks }: { onBlocks?: () => void }) {
 
 
 function StampDrawer({ stamp, onClose }: { stamp: PassportStamp; onClose: () => void }) {
-  return <div className="absolute inset-0 z-50 flex items-end bg-primary/35 p-3 backdrop-blur-sm" onClick={onClose}><div className="w-full rounded-[2rem] bg-card p-6 shadow-float" onClick={(event) => event.stopPropagation()}><div className="mb-4 flex items-center justify-between"><p className="font-display text-3xl">{stamp.title}</p><button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent">Close</button></div>{[["What it means", stamp.means], ["How to complete it", stamp.complete], ["What it unlocks", stamp.unlocks]].map(([label, copy]) => <div key={label} className="mb-4 rounded-2xl bg-secondary p-4 last:mb-0"><p className="text-xs font-semibold uppercase tracking-wide text-accent">{label}</p><p className="mt-2 text-sm leading-6 text-muted-foreground">{copy}</p></div>)}</div></div>;
+  return <div className="absolute inset-0 z-50 flex items-center bg-primary/35 p-3 backdrop-blur-sm" onClick={onClose}><div className="w-full rounded-[2rem] bg-card p-6 shadow-float" onClick={(event) => event.stopPropagation()}><div className="mb-4 flex items-center justify-between"><p className="font-display text-3xl">{stamp.title}</p><button onClick={onClose} className="rounded-full bg-secondary px-3 py-2 text-sm font-semibold text-accent">Close</button></div>{[["What it means", stamp.means], ["How to complete it", stamp.complete], ["What it unlocks", stamp.unlocks]].map(([label, copy]) => <div key={label} className="mb-4 rounded-2xl bg-secondary p-4 last:mb-0"><p className="text-xs font-semibold uppercase tracking-wide text-accent">{label}</p><p className="mt-2 text-sm leading-6 text-muted-foreground">{copy}</p></div>)}</div></div>;
 }
 
 function FutureScreen() {
