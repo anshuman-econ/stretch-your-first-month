@@ -1,0 +1,106 @@
+{
+  "version": 1,
+  "sdk_version": "0.22.2",
+  "path": "/mcp",
+  "auth": {
+    "type": "none"
+  },
+  "mcp": {
+    "server": {
+      "name": "stretch-prototype-mcp",
+      "version": "0.1.0",
+      "title": "Stretch Prototype MCP"
+    },
+    "tools": [
+      {
+        "name": "list_pathways",
+        "title": "List pathways",
+        "description": "List the four Stretch care pathways with their titles, best-fit summary, first unlock, and monthly promise.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_pathway",
+        "title": "Get pathway details",
+        "description": "Return details for a single Stretch pathway: title, best-for, first unlock, future unlock, monthly promise, strongest pack, and future device.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathway": {
+              "type": "string",
+              "enum": [
+                "peri",
+                "endo",
+                "metabo",
+                "longevity"
+              ],
+              "description": "Pathway key: peri, endo, metabo, or longevity."
+            }
+          },
+          "required": [
+            "pathway"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_perk_store",
+        "title": "Get Perk Store",
+        "description": "Return the Perk Store preview: title, copy, and featured perks with status labels.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_pack_store",
+        "title": "Get Pack Store",
+        "description": "Return the Pack Store preview. If a pathway is provided, include the recommended pack for that pathway.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathway": {
+              "description": "Optional pathway key to get the recommended pack.",
+              "type": "string",
+              "enum": [
+                "peri",
+                "endo",
+                "metabo",
+                "longevity"
+              ]
+            }
+          }
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
