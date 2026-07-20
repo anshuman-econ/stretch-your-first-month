@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   ArrowRight,
   CalendarDays,
@@ -930,8 +931,42 @@ export const SectionTitle = ({ eyebrow, title, copy }: { eyebrow?: string; title
   </div>
 );
 
-export default function StretchPrototype() {
-  const [step, setStep] = useState<Step>("landing");
+export const stepToPath: Record<Step, string> = {
+  landing: "/",
+  goal: "/",
+  explainer: "/explainer",
+  quiz: "/quiz",
+  built: "/blueprint",
+  swap: "/swap",
+  builder: "/customize",
+  week: "/week",
+  home: "/home",
+  wallet: "/credits",
+  future: "/future",
+  pathways: "/pathways",
+  journey: "/journey",
+  care: "/operator",
+};
+
+export const pathToStep = (path: string): Step => {
+  const match = (Object.entries(stepToPath) as [Step, string][]).find(([, p]) => p === path);
+  return match ? match[0] : "landing";
+};
+
+export default function StretchPrototype({ initialStep = "landing" as Step }: { initialStep?: Step } = {}) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [step, setStepRaw] = useState<Step>(initialStep);
+  const setStep = (next: Step) => {
+    setStepRaw(next);
+    const target = stepToPath[next];
+    if (target && target !== location.pathname) navigate(target);
+  };
+  useEffect(() => {
+    const derived = pathToStep(location.pathname);
+    setStepRaw((prev) => (prev === derived ? prev : derived));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname]);
   const [goal, setGoal] = useState("");
   const [quizIndex, setQuizIndex] = useState(0);
   const [answers, setAnswers] = useState<string[]>([]);
