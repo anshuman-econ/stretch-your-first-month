@@ -5,12 +5,33 @@ import {
   FEEL_OPTIONS,
   PATHWAYS,
   ROUTING_QUESTIONS,
+  STATUS_META,
   WORKS_OPTIONS,
   detectPathway,
   type BlockKey,
+  type ItemStatus,
   type Pathway,
   type PathwaySlug,
 } from "./data";
+
+function StatusChip({ status }: { status: ItemStatus }) {
+  const tone = STATUS_META[status].tone;
+  const cls =
+    tone === "primary"
+      ? "bg-primary/15 text-primary"
+      : tone === "sand"
+      ? "bg-sand/60 text-sand-foreground"
+      : tone === "accent"
+      ? "bg-accent/15 text-accent"
+      : tone === "locked"
+      ? "bg-foreground/10 text-foreground/60"
+      : "bg-secondary text-secondary-foreground";
+  return (
+    <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] uppercase tracking-wider ${cls}`}>
+      {status}
+    </span>
+  );
+}
 
 type Step =
   | "landing"
