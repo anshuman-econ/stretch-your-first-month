@@ -14,14 +14,16 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["Manrope", "ui-sans-serif", "system-ui"],
-        display: ["Fraunces", "ui-serif", "Georgia"],
+        sans: ["Karla", "ui-sans-serif", "system-ui"],
+        display: ["'Cormorant Garamond'", "ui-serif", "Georgia"],
+        serif: ["'Cormorant Garamond'", "ui-serif", "Georgia"],
       },
       colors: {
         shell: "hsl(var(--shell))",
         rose: { DEFAULT: "hsl(var(--rose))", foreground: "hsl(var(--rose-foreground))" },
         olive: { DEFAULT: "hsl(var(--olive))", foreground: "hsl(var(--olive-foreground))" },
         sand: { DEFAULT: "hsl(var(--sand))", foreground: "hsl(var(--sand-foreground))" },
+        clay: { DEFAULT: "hsl(var(--clay))", foreground: "hsl(var(--clay-foreground))" },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
