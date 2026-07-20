@@ -22,7 +22,7 @@ import heroImage from "@/assets/stretch-wellness-hero.jpg";
 import botanicalBg from "@/assets/botanical-watercolor-bg.jpg";
 import { cn } from "@/lib/utils";
 
-type Step =
+export type Step =
   | "landing"
   | "goal"
   | "explainer"
@@ -38,10 +38,10 @@ type Step =
   | "journey"
   | "care";
 
-type PathwayKey = "peri" | "endo" | "metabo" | "longevity";
-type JourneyTab = "Experience" | "Coach" | "Kit" | "Clinician Loop";
+export type PathwayKey = "peri" | "endo" | "metabo" | "longevity";
+export type JourneyTab = "Experience" | "Coach" | "Kit" | "Clinician Loop";
 
-type Pathway = {
+export type Pathway = {
   title: string;
   bestFor: string;
   firstUnlock: string;
@@ -63,7 +63,7 @@ type Pathway = {
   adjacent: PathwayKey;
 };
 
-const pathways: Record<PathwayKey, Pathway> = {
+export const pathways: Record<PathwayKey, Pathway> = {
   peri: {
     title: "Peri Sleep + Energy",
     bestFor: "Rest, temperature shifts, steady days",
@@ -170,11 +170,11 @@ const pathways: Record<PathwayKey, Pathway> = {
   },
 };
 
-const pathwayKeys: PathwayKey[] = ["peri", "endo", "metabo", "longevity"];
-const previewCards = pathwayKeys.map((key) => pathways[key]);
-const lockedCards = ["Fertility / IVF", "Surgery Track", "full GLP route", "advanced riders"];
-const goals = ["Sleep through the night", "Reduce hot flashes / night sweats", "Clear brain fog", "Steady my energy", "Reduce pelvic pain / flare days", "Improve glow / skin / hair", "Manage cravings / metabolic drift", "Feel stronger and more in control", "I am not sure"];
-const quiz = [
+export const pathwayKeys: PathwayKey[] = ["peri", "endo", "metabo", "longevity"];
+export const previewCards = pathwayKeys.map((key) => pathways[key]);
+export const lockedCards = ["Fertility / IVF", "Surgery Track", "full GLP route", "advanced riders"];
+export const goals = ["Sleep through the night", "Reduce hot flashes / night sweats", "Clear brain fog", "Steady my energy", "Reduce pelvic pain / flare days", "Improve glow / skin / hair", "Manage cravings / metabolic drift", "Feel stronger and more in control", "I am not sure"];
+export const quiz = [
   { question: "What feels most disruptive right now?", options: ["poor sleep", "hot flashes / night sweats", "brain fog / low focus", "low energy", "pelvic pain / flare days", "bloating / GI discomfort", "skin / hair / acne / glow concerns", "cravings / weight drift", "stress / overwhelm"] },
   { question: "When do you notice it most?", options: ["morning", "afternoon crash", "bedtime", "during work", "during workouts", "around my cycle", "randomly", "during flare days"] },
   { question: "What kind of support do you want first?", options: ["symptom relief", "labs and answers", "coaching and accountability", "visible results", "movement / recovery", "prescription / rider support later", "a 90-day plan"] },
@@ -182,20 +182,20 @@ const quiz = [
   { question: "Are you open to in-person experiences?", options: ["yes, if nearby", "online only", "maybe later"] },
   { question: "Are you open to future devices or add-ons?", options: ["not now", "maybe later", "yes"] },
 ];
-const kits = ["Sleep + cooling kit", "Comfort + recovery kit", "Glow + rhythm kit"];
-const pods = ["Calm nights pod", "Flare-days pod", "High-output pod"];
-const passes = ["Restorative studio pass", "Recovery session pass", "Glow appointment pass"];
+export const kits = ["Sleep + cooling kit", "Comfort + recovery kit", "Glow + rhythm kit"];
+export const pods = ["Calm nights pod", "Flare-days pod", "High-output pod"];
+export const passes = ["Restorative studio pass", "Recovery session pass", "Glow appointment pass"];
 
-type PassportStamp = { title: string; means: string; complete: string; unlocks: string; mbc?: string };
-type StackStatus = "Included" | "Recommended" | "Swap available" | "Locked preview" | "Pack-only" | "Rider-only";
-type MonthBlock = { name: string; selection: string; why: string; status: StackStatus; includes: string; plain: string; discovery: string; alternatives?: string[]; change?: string; swappable?: boolean };
-type DemoTile = { column: string; name: string; what: string; where: string; pathways: string; status: string; connects?: string };
-type CatalogOption = { name: string; state?: string };
-type ControlledSwap = { name: string; current: string; why: string; includes: string; alternatives: string[]; change: string; stays: string; action: string };
-type MonthCardSummary = { title: string; recommendation: string; reason: string; status: string; progress: string; cta: string; block: MonthBlock };
-const rebalanceOptions = ["more sleep support", "more energy support", "more glow / visible vitality", "more mood support", "more movement support", "less intensity this month"];
-const pathwayKeyFromTitle = (pathway: Pathway): PathwayKey => pathwayKeys.find((key) => pathways[key].title === pathway.title) || "peri";
-const pathwayDefaults: Record<PathwayKey, Record<string, string>> = {
+export type PassportStamp = { title: string; means: string; complete: string; unlocks: string; mbc?: string };
+export type StackStatus = "Included" | "Recommended" | "Swap available" | "Locked preview" | "Pack-only" | "Rider-only";
+export type MonthBlock = { name: string; selection: string; why: string; status: StackStatus; includes: string; plain: string; discovery: string; alternatives?: string[]; change?: string; swappable?: boolean };
+export type DemoTile = { column: string; name: string; what: string; where: string; pathways: string; status: string; connects?: string };
+export type CatalogOption = { name: string; state?: string };
+export type ControlledSwap = { name: string; current: string; why: string; includes: string; alternatives: string[]; change: string; stays: string; action: string };
+export type MonthCardSummary = { title: string; recommendation: string; reason: string; status: string; progress: string; cta: string; block: MonthBlock };
+export const rebalanceOptions = ["more sleep support", "more energy support", "more glow / visible vitality", "more mood support", "more movement support", "less intensity this month"];
+export const pathwayKeyFromTitle = (pathway: Pathway): PathwayKey => pathwayKeys.find((key) => pathways[key].title === pathway.title) || "peri";
+export const pathwayDefaults: Record<PathwayKey, Record<string, string>> = {
   peri: {
     Specialist: "peri-aware OB-GYN / women’s health / IM / Endo routing",
     "Functional Care": "cooling / sleep reset workshop or acupuncture or mobility / physio, based on quiz",
@@ -249,7 +249,7 @@ const pathwayDefaults: Record<PathwayKey, Record<string, string>> = {
     "Future Unlocks": "Brain Sprint, Nootropic Builder, Executive Jet Lag, Smart Ring, Longevity Lab Rider, NeuroSleep Rider",
   },
 };
-const blockWhy: Record<string, string> = {
+export const blockWhy: Record<string, string> = {
   Specialist: "This route is bounded so care stays safe for your pattern.",
   "Functional Care": "This is the strongest monthly support to start with based on your quiz.",
   Coaching: "Your coaching emphasis follows the chosen pods and rebalancing preference.",
@@ -262,7 +262,7 @@ const blockWhy: Record<string, string> = {
   Packs: "Packs are previews or pack-only options, not day-one marketplace choices.",
   "Future Unlocks": "Devices and riders appear later as Locked, Preview, Eligible, or Active.",
 };
-const blockPlain: Record<string, { plain: string; discovery: string }> = {
+export const blockPlain: Record<string, { plain: string; discovery: string }> = {
   Specialist: { plain: "Specialist access means the right human expert reviews your pattern and decides what is safe to do next.", discovery: "This is your clinical guardrail, not another appointment to figure out alone." },
   "Functional Care": { plain: "Functional care is the hands-on session, workshop, or recovery visit that helps your body feel better this month.", discovery: "It turns the plan into something you can feel in week one." },
   Coaching: { plain: "Coaching turns your plan into a simple weekly routine, with help adjusting sleep, food, stress, movement, or symptoms.", discovery: "Your coach keeps the month light, realistic, and personal." },
@@ -275,7 +275,7 @@ const blockPlain: Record<string, { plain: string; discovery: string }> = {
   Packs: { plain: "Packs are optional next-step bundles that may unlock after progress, coach review, or a specific need.", discovery: "They stay out of the way until they are the strongest next move." },
   "Future Unlocks": { plain: "Future unlocks are locked previews like devices, riders, advanced labs, or bigger care routes.", discovery: "You can see what may open later without being pushed into it today." },
 };
-const buildMonthStack = (pathway: Pathway): MonthBlock[] => {
+export const buildMonthStack = (pathway: Pathway): MonthBlock[] => {
   const key = pathwayKeyFromTitle(pathway);
   const d = pathwayDefaults[key];
   const block = (name: string, selection: string, status: StackStatus, swappable: boolean): MonthBlock => ({
@@ -303,7 +303,7 @@ const buildMonthStack = (pathway: Pathway): MonthBlock[] => {
   ];
 };
 
-const planPlain: Record<string, { plain: string; discovery: string }> = {
+export const planPlain: Record<string, { plain: string; discovery: string }> = {
   Care: { plain: "The right expert route, body support, and only the labs that matter.", discovery: "Clear next steps without shopping for care." },
   Coach: { plain: "A real person helps turn the month into simple weekly moves.", discovery: "Less guessing. More gentle follow-through." },
   Pods: { plain: "Small guided circles for the thing you are working on now.", discovery: "A rhythm, a checklist, and people moving with you." },
@@ -312,7 +312,7 @@ const planPlain: Record<string, { plain: string; discovery: string }> = {
   Unlocks: { plain: "Packs, devices, deeper labs, and add-ons that may open later.", discovery: "Preview the path without being pushed into it today." },
 };
 
-const buildPlanCards = (pathway: Pathway): MonthBlock[] => {
+export const buildPlanCards = (pathway: Pathway): MonthBlock[] => {
   const stack = buildMonthStack(pathway);
   const byName = Object.fromEntries(stack.map((block) => [block.name, block]));
   const card = (name: keyof typeof planPlain, selection: string, status: StackStatus, includes: string, swappable: boolean): MonthBlock => ({
@@ -335,7 +335,7 @@ const buildPlanCards = (pathway: Pathway): MonthBlock[] => {
   ];
 };
 
-const builderSummaries = (pathway: Pathway, planCards: MonthBlock[]): MonthCardSummary[] => {
+export const builderSummaries = (pathway: Pathway, planCards: MonthBlock[]): MonthCardSummary[] => {
   const key = pathwayKeyFromTitle(pathway);
   const copy: Record<PathwayKey, Record<string, string>> = {
     peri: { Care: "Peri-aware review + sleep reset session", Coach: "2 touches + Mood Check", Pods: "Peri Reset + Sleep Reset", "Experience Pass": "Cooling / Sleep Reset Workshop", Kit: "Sleep kit + visible vitality support", Unlocks: "Smart Ring and PeriShield preview" },
@@ -356,25 +356,25 @@ const builderSummaries = (pathway: Pathway, planCards: MonthBlock[]): MonthCardS
   ];
 };
 
-const demoTiles: DemoTile[] = ["Care", "Coach", "Labs", "Pods", "Experience", "Kit", "Unlocks"].flatMap((column) => [
+export const demoTiles: DemoTile[] = ["Care", "Coach", "Labs", "Pods", "Experience", "Kit", "Unlocks"].flatMap((column) => [
     { column, name: `${column} core`, what: `The main ${column.toLowerCase()} piece selected for this month.`, where: "Your Month Stack and pathway dashboards", pathways: "Peri Sleep + Energy, Endo Flare + Function, MetaboGlow Camera-Ready + Drift Lite, Longevity Brain + Focus", status: column === "Unlocks" ? "Milestone unlock" : "Included" },
   { column, name: `${column} advanced`, what: `${column} advanced shows the operator logic: safe swaps, gated previews, inventory limits, or clinician review before a bigger step opens.`, where: "Demo mode and detail drawers", pathways: "Pathway-dependent", status: ["Labs", "Unlocks"].includes(column) ? "Clinician-gated" : "Swap available" },
 ]);
 
 
-const specialistCatalog = ["Peri-aware OB-GYN / women’s health review", "OB-GYN / Endo-aware gyne", "Dermatologist", "Trichologist / derm-tricho review", "Endocrinologist / internal medicine", "Longevity-oriented internal medicine review", "GI specialist, only if GI overlap is flagged", "Fertility / REI specialist, locked preview unless fertility pathway is active"];
-const functionalCatalog = ["RDN consult", "mobility / physio session", "Pilates / Barre seat", "acupuncture for stress / sleep / recovery", "clinic LED / red-light session", "recovery coaching", "pelvic-floor PT", "pain-aware Pilates / movement", "breathwork reset", "strength + VO2 prep", "movement-compliance micro-session", "cooling / sleep reset workshop"];
-const coachingCatalog = ["sleep routine coaching", "symptom routine coaching", "food cadence coaching", "strength routine coaching", "pain pacing coaching", "flare map coaching", "metabolic habits coaching", "glow routine coaching", "focus / workday design coaching", "adherence coaching", "partner task / family support coaching", "procedure / clinic prep coaching"];
-const mentalCatalog = ["Mood Check", "Micro-CBT", "pain psychology micro-support", "CBT-i / anxiety support", "body image / stress support", "binge trigger / stress-eating support", "performance / identity stress support", "full mental-health session, quarterly or pack-based"];
-const reviewCatalog = ["recovery review", "body-composition review", "visible-aging / derm-aging review", "30-minute in-clinic LED for face", "30-minute in-clinic LED for body", "30-minute in-clinic LED for hair / scalp", "quick derm review", "tricho review", "clinic LED relax", "symptom documentation review / doctor export", "Glow Token accrual", "Scalp Token accrual", "Back Facial / Body Acne Token, Locked unless body-acne path active", "procedure token redemption, milestone / pack-gated"];
-const diagnosticsCatalog: Record<PathwayKey, string[]> = {
+export const specialistCatalog = ["Peri-aware OB-GYN / women’s health review", "OB-GYN / Endo-aware gyne", "Dermatologist", "Trichologist / derm-tricho review", "Endocrinologist / internal medicine", "Longevity-oriented internal medicine review", "GI specialist, only if GI overlap is flagged", "Fertility / REI specialist, locked preview unless fertility pathway is active"];
+export const functionalCatalog = ["RDN consult", "mobility / physio session", "Pilates / Barre seat", "acupuncture for stress / sleep / recovery", "clinic LED / red-light session", "recovery coaching", "pelvic-floor PT", "pain-aware Pilates / movement", "breathwork reset", "strength + VO2 prep", "movement-compliance micro-session", "cooling / sleep reset workshop"];
+export const coachingCatalog = ["sleep routine coaching", "symptom routine coaching", "food cadence coaching", "strength routine coaching", "pain pacing coaching", "flare map coaching", "metabolic habits coaching", "glow routine coaching", "focus / workday design coaching", "adherence coaching", "partner task / family support coaching", "procedure / clinic prep coaching"];
+export const mentalCatalog = ["Mood Check", "Micro-CBT", "pain psychology micro-support", "CBT-i / anxiety support", "body image / stress support", "binge trigger / stress-eating support", "performance / identity stress support", "full mental-health session, quarterly or pack-based"];
+export const reviewCatalog = ["recovery review", "body-composition review", "visible-aging / derm-aging review", "30-minute in-clinic LED for face", "30-minute in-clinic LED for body", "30-minute in-clinic LED for hair / scalp", "quick derm review", "tricho review", "clinic LED relax", "symptom documentation review / doctor export", "Glow Token accrual", "Scalp Token accrual", "Back Facial / Body Acne Token, Locked unless body-acne path active", "procedure token redemption, milestone / pack-gated"];
+export const diagnosticsCatalog: Record<PathwayKey, string[]> = {
   peri: ["Included: CBC, ferritin, TSH / FT4, HbA1c, Vitamin D, lipids", "Selective: B12 / folate, magnesium, metabolic repeats"],
   endo: ["Included: CBC, ferritin, Vitamin D, B12 conditional, TVUS support", "GI selective: stool calprotectin, celiac tTG-IgA, H. pylori selective", "MRI: Locked / pre-auth / rider-supported if indicated"],
   metabo: ["Selective metabolic mini-check only if metabolic-lite flags it", "Optional: HbA1c, fasting glucose, lipids, ALT / AST, CBC baseline"],
   longevity: ["First rotation: HbA1c, lipids, ApoB", "Second rotation: hs-CRP, Vitamin D, ferritin", "Third rotation: TSH / FT4, Lp(a) if family history", "Advanced add-ons: DNA methylation, CAC, DEXA, fasting insulin / HOMA-IR, homocysteine, microbiome"],
 };
-const podCatalog = ["Peri Reset Pod", "Sleep Reset Pod", "Mood / Fog Pod", "Metabolic Drift Pod", "Skin / Hair Pod", "Bone / Joint Pod", "Endo Toolkit Pod", "GI / Function Support Pod", "Pain Pacing Pod", "Fatigue Support Pod", "Skin Sunday Pod", "Insight Night / Metabolic Drift Lite Pod", "Brain & Focus Pod", "Executive Performance & Travel Pod", "Healthspan Lab Pod"];
-const podAgendas: Record<string, string> = {
+export const podCatalog = ["Peri Reset Pod", "Sleep Reset Pod", "Mood / Fog Pod", "Metabolic Drift Pod", "Skin / Hair Pod", "Bone / Joint Pod", "Endo Toolkit Pod", "GI / Function Support Pod", "Pain Pacing Pod", "Fatigue Support Pod", "Skin Sunday Pod", "Insight Night / Metabolic Drift Lite Pod", "Brain & Focus Pod", "Executive Performance & Travel Pod", "Healthspan Lab Pod"];
+export const podAgendas: Record<string, string> = {
   "Peri Reset Pod": "Hot flashes, night sweats, sleep disruption, mood, brain fog, strength and joint changes. Outputs: 2-week reset plan, ask-your-gyn script, symptom checklist.",
   "Sleep Reset Pod": "Waking at night, wind-down routine, light and temperature, caffeine timing, sleep regularity. Outputs: 14-day sleep reset checklist, night waking action plan.",
   "Mood / Fog Pod": "Irritability, anxiety, cognitive load, brain fog, meeting-day coping. Outputs: mood/fog routine, recovery pacing plan.",
@@ -391,8 +391,8 @@ const podAgendas: Record<string, string> = {
   "Executive Performance & Travel Pod": "Jet lag, calendar load, travel food, hydration, crash points. Outputs: travel / workday recovery plan.",
   "Healthspan Lab Pod": "ApoB, hs-CRP, biomarkers, prevention timing, sleep / strength patterns. Outputs: 90-day healthspan action plan.",
 };
-type PodDetail = { covers: string; leaveWith: string; coachUse: string };
-const podDetails: Record<string, PodDetail> = {
+export type PodDetail = { covers: string; leaveWith: string; coachUse: string };
+export const podDetails: Record<string, PodDetail> = {
   "Peri Reset Pod": { covers: "hot flashes, night sweats, mood, brain fog, symptom tracking.", leaveWith: "2-week reset plan + ask-your-gyn script.", coachUse: "your symptom routine setup." },
   "Sleep Reset Pod": { covers: "night waking, wind-down routine, light, temperature, caffeine timing.", leaveWith: "14-day sleep reset checklist.", coachUse: "your evening rhythm and adherence." },
   "Mood / Fog Pod": { covers: "irritability, anxiety, cognitive load, brain fog, meeting-day coping.", leaveWith: "mood/fog routine + recovery pacing.", coachUse: "weekly load and recovery prompts." },
@@ -409,8 +409,8 @@ const podDetails: Record<string, PodDetail> = {
   "Executive Performance & Travel Pod": { covers: "calendar load, travel, hydration, crash points, recovery windows.", leaveWith: "travel / workday recovery plan.", coachUse: "fatigue pattern review." },
   "Healthspan Lab Pod": { covers: "ApoB, hs-CRP, biomarkers, prevention timing, sleep + strength patterns.", leaveWith: "90-day healthspan action plan.", coachUse: "biomarker-driven prevention prompts." },
 };
-type KitCategory = { label: string; recommendation: string; explanation: string; status: "Recommended" | "Eligible swap" | "Sticky perk" | "Locked" };
-const kitCategoriesFor = (key: PathwayKey): KitCategory[] => {
+export type KitCategory = { label: string; recommendation: string; explanation: string; status: "Recommended" | "Eligible swap" | "Sticky perk" | "Locked" };
+export const kitCategoriesFor = (key: PathwayKey): KitCategory[] => {
   const items = kitCatalog[key];
   const foundationByKey: Record<PathwayKey, string> = { peri: "Magnesium glycinate", endo: "Omega-3", metabo: "Creatine + electrolytes", longevity: "Creatine + omega-3" };
   const pantryByKey: Record<PathwayKey, string> = { peri: "Protein / fiber pantry pick", endo: "Broth + ginger / peppermint support", metabo: "Fiber or protein mini", longevity: "Protein + pantry snack tool" };
@@ -425,23 +425,23 @@ const kitCategoriesFor = (key: PathwayKey): KitCategory[] => {
     { label: "Locked upgrades", recommendation: "Advanced tests, devices, premium packs, riders", explanation: "Not included day one. Open later through milestones, packs, or coach review.", status: "Locked" },
   ];
 };
-const passCatalog: Record<PathwayKey, string[]> = {
+export const passCatalog: Record<PathwayKey, string[]> = {
   peri: ["cooling / sleep reset workshop", "joint mobility primer", "dryness care routine workshop", "restorative yoga", "breathwork reset"],
   endo: ["pelvic relaxation + flare pacing", "gentle Pilates flow", "flare day plan", "restorative yoga", "pain-aware movement"],
   metabo: ["aftercare coaching", "at-home LED routine coaching", "acne-safe routine workshop", "skin routine demo", "LED booth where inventory allows", "Pilates / Barre intro"],
   longevity: ["breathwork reset", "mobility micro-class", "HRV routine", "movement-compliance session", "Biopeak intro group talk"],
 };
-const highTierPasses = ["Longefit cold plunge", "sauna / contrast", "Biopeak red-light", "facility breathwork", "clinic red-light recovery", "small-group strength", "in-clinic LED recovery", "pelvic PT group", "pain-aware reformer", "in-clinic LED booth add-on", "post-facial recovery", "camera-ready skin prep", "glow / derm partner demo"];
-const stickyPerks = ["Friend Pod Pass", "Masterclass Access", "Partner Demo", "Pop-Up Event Access", "Step / Stretch Challenge", "Tonic-Bar Visit", "Broth / Nourish Circle Moment", "Recovery Facility Prompt", "Premium Workshop Invite"];
-const perkStatusMap: Record<string, string> = {
+export const highTierPasses = ["Longefit cold plunge", "sauna / contrast", "Biopeak red-light", "facility breathwork", "clinic red-light recovery", "small-group strength", "in-clinic LED recovery", "pelvic PT group", "pain-aware reformer", "in-clinic LED booth add-on", "post-facial recovery", "camera-ready skin prep", "glow / derm partner demo"];
+export const stickyPerks = ["Friend Pod Pass", "Masterclass Access", "Partner Demo", "Pop-Up Event Access", "Step / Stretch Challenge", "Tonic-Bar Visit", "Broth / Nourish Circle Moment", "Recovery Facility Prompt", "Premium Workshop Invite"];
+export const perkStatusMap: Record<string, string> = {
   "Friend Pod Pass": "Included", "Masterclass Access": "Swappable", "Partner Demo": "Swappable",
   "Pop-Up Event Access": "Inventory-gated", "Step / Stretch Challenge": "Included",
   "Tonic-Bar Visit": "Inventory-gated", "Broth / Nourish Circle Moment": "Swappable",
   "Recovery Facility Prompt": "Preview", "Premium Workshop Invite": "Milestone",
 };
-const featuredPerks = ["Friend Pod Pass", "Masterclass Access", "Partner Demo", "Step / Stretch Challenge"];
-const recommendedPackForPathway: Record<PathwayKey, string> = { peri: "Sleep Reset Pack", endo: "Endo Relief Burst Pack", metabo: "Camera-Ready Sprint", longevity: "Brain Sprint Pack" };
-const optionExplainers: Record<string, string> = {
+export const featuredPerks = ["Friend Pod Pass", "Masterclass Access", "Partner Demo", "Step / Stretch Challenge"];
+export const recommendedPackForPathway: Record<PathwayKey, string> = { peri: "Sleep Reset Pack", endo: "Endo Relief Burst Pack", metabo: "Camera-Ready Sprint", longevity: "Brain Sprint Pack" };
+export const optionExplainers: Record<string, string> = {
   // Care / specialist
   "Peri-aware OB-GYN / women’s health review": "A women’s-health review for sleep, VMS, cycle changes, mood, and midlife symptom patterns.",
   "OB-GYN / Endo-aware gyne": "A gyne route for pelvic pain, flare days, endo-like symptoms, imaging, and escalation.",
@@ -539,7 +539,7 @@ const optionExplainers: Record<string, string> = {
   "Recovery Facility Prompt": "Longefit / Biopeak-style booking prompt when available.",
   "Premium Workshop Invite": "Tier-high or quarterly premium workshop access.",
 };
-const aliasExplainers: Record<string, string> = {
+export const aliasExplainers: Record<string, string> = {
   "rdn": "Nutrition strategy for energy, meal timing, protein, cravings, gut comfort, or GLP support.",
   "rdn consult": "Nutrition strategy for energy, meal timing, protein, cravings, gut comfort, or GLP support.",
   "pilates / barre": "A structured strength and mobility session, often off-peak or inventory-gated.",
@@ -655,7 +655,7 @@ const aliasExplainers: Record<string, string> = {
   "tonic bar moment": "A tonic bar or nourish moment experience.",
   "workshop seat": "A seat in a premium or seasonal workshop.",
 };
-const keywordExplainers: [RegExp, string][] = [
+export const keywordExplainers: [RegExp, string][] = [
   [/rdn/i, "Nutrition strategy for energy, meal timing, protein, cravings, gut comfort, or GLP support."],
   [/pilates|barre/i, "A structured strength and mobility session, often off-peak or inventory-gated."],
   [/mobility|physio/i, "Movement and posture support for stiffness, recovery, pain, strength, or function."],
@@ -683,8 +683,8 @@ const keywordExplainers: [RegExp, string][] = [
   [/sleep/i, "Sleep support for temperature, wind-down, and night-waking."],
   [/vitamin c|niacinamide|ceramide|azelaic|spf|ha\b/i, "Skincare active for glow, barrier, or visible-vitality support."],
 ];
-const normalizeOptionName = (name: string): string => name.trim().toLowerCase().replace(/\s+/g, " ").replace(/['']/g, "'").replace(/[""]/g, '"');
-const explainOption = (name: string): string => {
+export const normalizeOptionName = (name: string): string => name.trim().toLowerCase().replace(/\s+/g, " ").replace(/['']/g, "'").replace(/[""]/g, '"');
+export const explainOption = (name: string): string => {
   if (optionExplainers[name]) return optionExplainers[name];
   const norm = normalizeOptionName(name);
   // Check alias map
@@ -699,21 +699,21 @@ const explainOption = (name: string): string => {
   }
   return "Preview item. More detail appears once this is selected or unlocked.";
 };
-const kitCatalog: Record<PathwayKey, string[]> = {
+export const kitCatalog: Record<PathwayKey, string[]> = {
   peri: ["magnesium", "omega-3", "D3+K2", "sleep kit", "collagen", "electrolyte", "HA-ceramide", "pantry support"],
   endo: ["omega-3", "magnesium", "broths", "heat patches", "ginger / peppermint support", "GI-safe swap", "anti-inflammatory box"],
   metabo: ["SPF", "HA", "vitamin C", "niacinamide", "azelaic", "ceramide", "underarm AHA", "fiber mini", "protein mini"],
   longevity: ["foundational supplement pick", "pantry / snack tool", "powder pick", "nootropic pick", "longevity pulse stack", "visible-vitality pick", "sticky perk"],
 };
-const packsCatalog: Record<PathwayKey, string[]> = {
+export const packsCatalog: Record<PathwayKey, string[]> = {
   peri: ["Sleep Reset Pack", "Mood / Fog Pack", "Metabolic Drift Pack", "Skin & Hair Pack"],
   endo: ["Endo Relief Burst Pack", "Surgery Track preview", "Endo→IVF Bridge preview"],
   metabo: ["Derma Actives Pack", "Camera-Ready Sprint", "Protein & Pantry Pack", "Procedure Token Booster", "Hair Actives Pack", "Hair Shedding Guard", "GLP packs locked unless GLP route active"],
   longevity: ["Brain Sprint Pack", "Nootropic Builder Pack", "Executive Jet Lag Pack", "Recovery Contrast Pack", "BioAge Test Pack", "CAC / Cardio Screen Pack", "DEXA / Bone Screen Pack"],
 };
-const futureCatalog = ["Smart Ring", "LED Mask", "CGM", "Oura-style ring", "home LED / red-light where relevant", "PeriShield Rx", "Nutrition Rider", "Skin / Hair Longevity Rider", "Prevention / Cardio Rider", "EndoShield Rider", "Endo OPD + Diagnostics Rider", "DermaShield+", "MetaboRx", "Longevity Lab Rider", "NeuroSleep Rider", "Bone & Screening Rider"];
-type PackMeta = { includes: string; useful: string; status: "preview" | "pack-only" | "milestone" | "top-up" };
-const packMeta: Record<string, PackMeta> = {
+export const futureCatalog = ["Smart Ring", "LED Mask", "CGM", "Oura-style ring", "home LED / red-light where relevant", "PeriShield Rx", "Nutrition Rider", "Skin / Hair Longevity Rider", "Prevention / Cardio Rider", "EndoShield Rider", "Endo OPD + Diagnostics Rider", "DermaShield+", "MetaboRx", "Longevity Lab Rider", "NeuroSleep Rider", "Bone & Screening Rider"];
+export type PackMeta = { includes: string; useful: string; status: "preview" | "pack-only" | "milestone" | "top-up" };
+export const packMeta: Record<string, PackMeta> = {
   // Peri
   "Sleep Reset Pack": { includes: "Magnesium, sleep tea, wind-down cues, cooling workshop seat.", useful: "When night waking, temperature, or wind-down is the dominant issue.", status: "pack-only" },
   "Mood / Fog Pack": { includes: "Mood / Fog Pod seats, focus support, and coaching emphasis on cognitive load.", useful: "When irritability, anxiety, or brain fog dominate the month.", status: "pack-only" },
@@ -734,8 +734,8 @@ const packMeta: Record<string, PackMeta> = {
   "Executive Jet Lag Pack": { includes: "Travel routine, hydration, sleep reset cues, recovery booking.", useful: "When travel load is breaking the weekly rhythm.", status: "pack-only" },
   "Recovery Contrast Pack": { includes: "Sauna / contrast access, mobility seat, recovery coaching.", useful: "When recovery and resilience are the bottleneck.", status: "milestone" },
 };
-const packMetaFor = (name: string): PackMeta => packMeta[name] || { includes: "Bundle details preview only.", useful: "Becomes useful as the plan progresses.", status: "preview" };
-const pathwayPacks: Record<PathwayKey, string[]> = {
+export const packMetaFor = (name: string): PackMeta => packMeta[name] || { includes: "Bundle details preview only.", useful: "Becomes useful as the plan progresses.", status: "preview" };
+export const pathwayPacks: Record<PathwayKey, string[]> = {
   peri: ["Sleep Reset Pack", "Mood / Fog Pack", "Metabolic Drift Pack", "Skin & Hair Pack"],
   endo: ["Endo Relief Burst Pack", "Surgery Track preview", "Endo→IVF Bridge preview"],
   metabo: ["Derma Actives Pack", "Camera-Ready Sprint", "Protein & Pantry Pack", "Procedure Token Booster"],
@@ -774,7 +774,7 @@ const pathwaySwapCatalog: Record<PathwayKey, Record<string, { rule: string; opti
   },
 };
 
-const controlledSwapOptions = (pathway: Pathway, reason: string): ControlledSwap[] => {
+export const controlledSwapOptions = (pathway: Pathway, reason: string): ControlledSwap[] => {
   const key = pathwayKeyFromTitle(pathway);
   const d = pathwayDefaults[key];
   const details: Record<PathwayKey, (Omit<ControlledSwap, "why" | "stays"> & { stays?: string })[]> = {
@@ -821,7 +821,7 @@ const controlledSwapOptions = (pathway: Pathway, reason: string): ControlledSwap
       stays: swap.stays || "Your diagnostics, prescriptions, devices, riders, high-cost procedures, and major pathway identity stay unchanged.",
     }));
 };
-const swapTargetName = (blockName?: string | null) => {
+export const swapTargetName = (blockName?: string | null) => {
   const map: Record<string, string> = {
     Care: "Care route",
     Specialist: "Care route",
@@ -834,7 +834,7 @@ const swapTargetName = (blockName?: string | null) => {
   return blockName ? map[blockName] : undefined;
 };
 
-const catalogForBlock = (block: MonthBlock, pathway: Pathway): { rule: string; options: CatalogOption[]; agenda?: string } => {
+export const catalogForBlock = (block: MonthBlock, pathway: Pathway): { rule: string; options: CatalogOption[]; agenda?: string } => {
   const key = pathwayKeyFromTitle(pathway);
   const planCatalog: Record<string, { rule: string; options: CatalogOption[]; agenda?: string }> = {
     Care: {
@@ -896,7 +896,7 @@ const catalogForBlock = (block: MonthBlock, pathway: Pathway): { rule: string; o
   return { rule: "Riders and devices are not active day 1. States: Locked, Preview, Eligible, Active.", options: futureCatalog.map((name, i) => ({ name, state: i < 2 ? "Preview" : "Locked" })) };
 };
 
-const passportStamps: PassportStamp[] = [
+export const passportStamps: PassportStamp[] = [
   { title: "Plan selected", means: "Your first monthly pathway is confirmed.", complete: "Choose Keep this recommendation or finish the Month Builder.", unlocks: "Your guided first week opens." },
   { title: "Kit built", means: "Your support items are selected for this month.", complete: "Pick your kit defaults and confirm shipping preferences.", unlocks: "Badge only unless configured.", mbc: "complete kit build = badge only unless configured" },
   { title: "Pods selected", means: "Your guided group seats are reserved.", complete: "Choose and join your pod sessions.", unlocks: "+MBC indicator.", mbc: "attend pod = +MBC indicator" },
@@ -908,7 +908,7 @@ const passportStamps: PassportStamp[] = [
   { title: "Future unlock eligible", means: "Stretch can show the next useful option without overwhelming you.", complete: "Complete Month 1 and review your pattern with your coach.", unlocks: "Selected packs, devices, or upgrades." },
 ];
 
-const detectPathway = (answers: string[], goal: string): PathwayKey => {
+export const detectPathway = (answers: string[], goal: string): PathwayKey => {
   const text = `${goal} ${answers.join(" ")}`.toLowerCase();
   if (/pelvic|flare|bloating|gi|cycle|painful/.test(text)) return "endo";
   if (/glow|skin|hair|acne|cravings|weight|metabolic|drift|visible/.test(text)) return "metabo";
@@ -916,13 +916,13 @@ const detectPathway = (answers: string[], goal: string): PathwayKey => {
   return "peri";
 };
 
-const SoftCard = ({ children, className, onClick }: { children: React.ReactNode; className?: string; onClick?: () => void }) => (
+export const SoftCard = ({ children, className, onClick }: { children: React.ReactNode; className?: string; onClick?: () => void }) => (
   <button onClick={onClick} className={cn("w-full rounded-3xl border border-border bg-card p-5 text-left shadow-card transition-smooth hover:-translate-y-0.5 hover:shadow-float focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", className)}>
     {children}
   </button>
 );
 
-const SectionTitle = ({ eyebrow, title, copy }: { eyebrow?: string; title: string; copy?: string }) => (
+export const SectionTitle = ({ eyebrow, title, copy }: { eyebrow?: string; title: string; copy?: string }) => (
   <div className="space-y-2">
     {eyebrow && <p className="text-xs font-semibold uppercase tracking-wide text-accent">{eyebrow}</p>}
     <h1 className="font-display text-4xl leading-tight text-foreground">{title}</h1>
