@@ -1,26 +1,31 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import JourneyApp from "@/features/journey/JourneyApp";
 import StretchPrototype, { type Step } from "@/features/stretch/StretchPrototype";
 import NotFound from "@/pages/NotFound";
 
-const Screen = ({ step }: { step: Step }) => <StretchPrototype initialStep={step} />;
+const Legacy = ({ step }: { step: Step }) => <StretchPrototype initialStep={step} />;
 
 export const AppRouter = () => (
   <BrowserRouter>
     <Routes>
-      <Route path="/" element={<Screen step="landing" />} />
-      <Route path="/explainer" element={<Screen step="explainer" />} />
-      <Route path="/quiz" element={<Screen step="quiz" />} />
-      <Route path="/blueprint" element={<Screen step="built" />} />
-      <Route path="/customize" element={<Screen step="builder" />} />
-      <Route path="/swap" element={<Screen step="swap" />} />
-      <Route path="/week" element={<Screen step="week" />} />
-      <Route path="/home" element={<Screen step="home" />} />
-      <Route path="/credits" element={<Screen step="wallet" />} />
-      <Route path="/future" element={<Screen step="future" />} />
-      <Route path="/pathways" element={<Screen step="pathways" />} />
-      <Route path="/journey" element={<Screen step="journey" />} />
-      <Route path="/operator" element={<Screen step="care" />} />
-      {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+      {/* New continuous flow */}
+      <Route path="/" element={<JourneyApp />} />
+
+      {/* Legacy prototype (preserved) */}
+      <Route path="/prototype" element={<Legacy step="landing" />} />
+      <Route path="/prototype/explainer" element={<Legacy step="explainer" />} />
+      <Route path="/prototype/quiz" element={<Legacy step="quiz" />} />
+      <Route path="/prototype/blueprint" element={<Legacy step="built" />} />
+      <Route path="/prototype/customize" element={<Legacy step="builder" />} />
+      <Route path="/prototype/swap" element={<Legacy step="swap" />} />
+      <Route path="/prototype/week" element={<Legacy step="week" />} />
+      <Route path="/prototype/home" element={<Legacy step="home" />} />
+      <Route path="/prototype/credits" element={<Legacy step="wallet" />} />
+      <Route path="/prototype/future" element={<Legacy step="future" />} />
+      <Route path="/prototype/pathways" element={<Legacy step="pathways" />} />
+      <Route path="/prototype/journey" element={<Legacy step="journey" />} />
+      <Route path="/prototype/operator" element={<Legacy step="care" />} />
+
       <Route path="*" element={<NotFound />} />
     </Routes>
   </BrowserRouter>
