@@ -457,6 +457,7 @@ function BlockDrawer({
         <div className="mt-1 font-display text-[28px] leading-tight text-foreground">{meta.label}</div>
         <div className="mt-1 text-[13px] text-muted-foreground">{meta.tagline}</div>
         <p className="mt-4 text-[14px] text-foreground/80">{block.summary}</p>
+        <div className="mt-2 text-[11px] italic text-muted-foreground">{meta.owns}</div>
         <div className="mt-5 space-y-3">
           {block.items.map((it) => (
             <div key={it.name} className="rounded-lg border border-border/60 bg-background/60 p-3">
@@ -476,12 +477,34 @@ function BlockDrawer({
                 </span>
               </div>
               <div className="mt-1 text-[13px] text-muted-foreground">{it.what}</div>
-              {it.eligibleToSwap && (
-                <div className="mt-2 text-[11px] text-accent">Eligible to swap</div>
-              )}
+              <div className="mt-2 flex flex-wrap items-center gap-2">
+                <StatusChip status={it.status} />
+                <span className="text-[11px] text-muted-foreground">{STATUS_META[it.status].note}</span>
+                {it.eligibleToSwap && (
+                  <span className="text-[11px] text-accent">· Eligible to swap</span>
+                )}
+              </div>
             </div>
           ))}
         </div>
+        {pathway.discovery && (
+          <div className="mt-6 rounded-lg border border-accent/30 bg-accent/5 p-4">
+            <div className="text-[11px] uppercase tracking-[0.22em] text-accent">Discovery bundle</div>
+            <div className="mt-1 font-display text-[20px] text-foreground">{pathway.discovery.title}</div>
+            <div className="mt-1 text-[13px] text-muted-foreground">{pathway.discovery.blurb}</div>
+            <div className="mt-3 space-y-2">
+              {pathway.discovery.items.map((d) => (
+                <div key={d.name} className="rounded-md border border-border/50 bg-card/70 p-2.5">
+                  <div className="flex items-baseline justify-between gap-2">
+                    <div className="text-[14px] text-foreground">{d.name}</div>
+                    <StatusChip status={d.status} />
+                  </div>
+                  <div className="text-[12px] text-muted-foreground">{d.what}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         <div className="mt-6">
           <PrimaryButton onClick={onClose}>Close</PrimaryButton>
         </div>
